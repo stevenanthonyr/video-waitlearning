@@ -1,0 +1,32 @@
+
+#learningPanel{
+	width: 200px;
+	height: 75px;
+	position: absolute;
+	font-size: 24px;
+	z-index: 1000;
+	background-color: #f1f1f1;
+	opacity: 1;
+	color: black;
+}
+
+.l1panel, .l2panel{
+	position: relative;
+	width: 40%;
+}
+
+
+.l1panel{
+	color: gray;
+	display: none;
+}
+
+.reveal{
+	position: relative;
+	font-style: italic;
+	border: 1px solid gray;
+	border-radius: 5px;
+	width: 40%;
+	text-align: center;
+
+} 
