@@ -1,5 +1,7 @@
 
 //the LearnBox object is responsible for all UI interactions with the learningPanel
+//It is composed of a container div that is passed in (learningPanel) and other divs
+//that are created to store/display content for the questions.
 var LearnBox = function(leftpos, toppos, learningPanel){
 	var that = {};
 
@@ -7,12 +9,13 @@ var LearnBox = function(leftpos, toppos, learningPanel){
 	var l1panel = $("<div>").addClass("l1panel");
 	var revealbutton = $("<div>").addClass("reveal").html("flip");
 
-	
+	//this method is private to this function only.
 	var setPosition = function(){
 		learningPanel.css("left", leftpos + "px");
 		learningPanel.css("top", toppos + "px");
-	}
+	};
 
+    //this is, basically, a class method that can be called outside of this function on a LearnBox.
 	that.showExercise = function(l1, l2){
 		l1panel.html(l1);
 		l2panel.html(l2);
@@ -23,27 +26,28 @@ var LearnBox = function(leftpos, toppos, learningPanel){
 			l1panel.show();
 		});
 		return;
-	}
+	};
 
 	setPosition();
 	Object.freeze(that);
 	return that;
-}
+};
 
-
+//$('.videoAdUiAttribution') contains ad time left information, and returns null if no ad is playing.
+//design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
 	attach_css();
 
-	// get scrollbar and position
-	var scrollbar = $(".html5-video-controls");
-	var scrollbar_leftpos = scrollbar.position().left;
-	var scrollbar_toppos = scrollbar.position().top;
+	// get controls and position
+	var controls = $(".html5-video-controls");
+	var controls_leftpos = controls.position().left;
+	var controls_toppos = controls.position().top;
 	
-	// create and attach learningPanel before scrollbar
-	var learnbox_leftpos = scrollbar_leftpos;
-	var learnbox_toppos = scrollbar_toppos - 100;
+	// create and attach learningPanel before controls
+	var learnbox_leftpos = controls_leftpos;
+	var learnbox_toppos = controls_toppos - 100;
 	var learningPanel = $("<div>").attr("id", "learningPanel").addClass("learningPanel");
-	learningPanel.insertBefore(scrollbar);
+	learningPanel.insertBefore(controls);
 
 	// create LearnBox object, giving it the learningPanel element
 	var learnbox = LearnBox(learnbox_leftpos, learnbox_toppos, learningPanel);
@@ -54,7 +58,7 @@ $(document).ready(function(){
 
 	videoElement.addEventListener("timeupdate", function () { 
 	    var vTime = videoElement.currentTime;
-	    console.log("current timestamp: " + vTime);
+	   // console.log("current timestamp: " + vTime);
 	}, false);
 
 
@@ -66,14 +70,10 @@ $(document).ready(function(){
 
 });
 
-
-
 var Exercises = function(){
 	var vocab = [{"l1": "people", "l2": "personas"}, {"l1": "government", "l2": "gobierno"}, {"l1": "thing", "l2": "cosa"}];
 
-}
-
-
+};
 
 function attach_css(){
 	var link = document.createElement("link");
@@ -82,4 +82,3 @@ function attach_css(){
 	link.rel = "stylesheet";
 	document.getElementsByTagName("head")[0].appendChild(link);
 }
-
