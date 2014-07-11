@@ -1,46 +1,61 @@
 #learningPanel{
-	width: 200px;
-	height: 75px;
-	position: absolute;
-	font-size: 24px;
-	z-index: 1000;
-	background-color: #f1f1f1;
-	opacity: 1;
-	color: black;
+    width: 200px;
+    height: 75px;
+    position: absolute;
+    font-size: 24px;
+    z-index: 1000;
+    background-color: #f1f1f1;
+    opacity: 1;
+    color: black;
 }
 
-.lSpan{
+.left{
     width: 40%;
+    float: left;
+    margin-right: 5px;
 }
 
-.rSpan{
+.left > div {
+    float: left;
+}
+
+.right{
     width: 40%;
     float: right;
 }
 
 .nativePanel, .foreignPanel{
-	position: relative;
-	width: 40%;
-	float: left;
+    position: relative;
+    width: 40%;
+    float: left;
 }
 
 .foreignPanel {
     /*to center the words vertically on the learningPanel*/
-    margin-top: 15px;
+    margin: 15px 0px;
 }
 
-.nativePanel{
-	color: gray;
-	display: none;
+#fitb_translation_container{
+    margin: 15px 0px;
 }
+
+#fitb_translation_field {
+    display: block;   
+}
+
+/*.nativePanel .flashcard{
+    color: gray;
+    display: none;
+}*/
 
 .reveal{
-	position: relative;
-	font-style: italic;
-	border: 1px solid gray;
-	border-radius: 5px;
-	width: 40%;
-	text-align: center;
+    /*position: relative;*/
+    font-style: italic;
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin-top: 30px;
+    width: 40%;
+    text-align: center;
 
 } 
 
