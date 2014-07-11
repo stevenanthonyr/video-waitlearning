@@ -10,7 +10,7 @@ function checkForValidUrl(tabId, changeInfo, tab) {
           code: "if(!window.ChatChromeExtensionLoaded){chrome.extension.sendRequest({});}"
     });
   }
-};
+}
 
 chrome.extension.onRequest.addListener(function(req, sender, sendResponse) {
       var tabId = sender.tab.id;

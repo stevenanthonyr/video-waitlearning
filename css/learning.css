@@ -1,4 +1,3 @@
-
 #learningPanel{
 	width: 200px;
 	height: 75px;
@@ -10,13 +9,27 @@
 	color: black;
 }
 
-.l1panel, .l2panel{
-	position: relative;
-	width: 40%;
+.lSpan{
+    width: 40%;
 }
 
+.rSpan{
+    width: 40%;
+    float: right;
+}
 
-.l1panel{
+.nativePanel, .foreignPanel{
+	position: relative;
+	width: 40%;
+	float: left;
+}
+
+.foreignPanel {
+    /*to center the words vertically on the learningPanel*/
+    margin-top: 15px;
+}
+
+.nativePanel{
 	color: gray;
 	display: none;
 }
@@ -30,3 +43,13 @@
 	text-align: center;
 
 } 
+
+.checkbutton{
+    position: relative;
+    float: right;
+    width: 40%;
+    border: 1px solid gray;
+    border-radius: 5px;
+    font-size: 10pt;
+    text-align: center;
+}
