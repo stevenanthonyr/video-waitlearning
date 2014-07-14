@@ -22,10 +22,14 @@ function getRandomInt(min, max) {
 var Word = function(englishWord, translationDict) {
     var that = {};
     var self = this;
-    var numUnderstood = 0;
+    that.numUnderstood = 0;
 
     that.addTranslation = function(language, translation) {
         translationDict[language] = translation;
+    }
+
+    that.getTranslationDict = function() {
+        return translationDict;
     }
 
     // Object.freeze(that); don't think this should be done : adding words to dictionary in future?
@@ -33,7 +37,7 @@ var Word = function(englishWord, translationDict) {
 }
 
 //vocab - list of Word objects
-var Model = function(learningPanel, vocab) {
+var Model = function(learningPanel, vocab, leftpos, toppos) {
     var that = {};
     var self = this;
 
@@ -53,15 +57,16 @@ var Model = function(learningPanel, vocab) {
         while (selectNewCard) {
             var word = getRandomWord();
             if (word.numUnderstood < 2) {
-                card = Flashcard(0, 0, learningPanel);
+                card = Flashcard(leftpos, toppos, learningPanel);
                 selectNewCard = false;
             }
             else if (word.numUnderstood < 4) {
-                card = Fill_In_The_Blank(0, 0, learningPanel);
+                card = Fill_In_The_Blank(leftpos, toppos, learningPanel);
                 selectNewCard = false;
             }
         }
-        card.showExercise(word.englishWord, word.translationDict['spanish']);
+        var translationDict = word.getTranslationDict();
+        card.showExercise(word.englishWord, translationDict['spanish']);
     }
     return that;
 }
@@ -250,7 +255,7 @@ $(document).ready(function(){
     learningPanel.insertBefore(controls);
 
     //create the model object
-    var model = Model(learningPanel, vocab);
+    var model = Model(learningPanel, vocab, flashcard_leftpos, flashcard_toppos);
 
     model.getExercise();
 
