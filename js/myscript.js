@@ -37,7 +37,7 @@ var Model = function(learningPanel, vocab) {
     var that = {};
     var self = this;
 
-    that.getRandomWord = function() {
+    var getRandomWord = function() {
         var num = getRandomInt(0, vocab.length - 1);
         return vocab[num];
     }
@@ -63,6 +63,7 @@ var Model = function(learningPanel, vocab) {
         }
         card.showExercise(word.englishWord, word.translationDict['spanish']);
     }
+    return that;
 }
 
 //CARD TYPES
@@ -126,15 +127,16 @@ var Flashcard = function(leftpos, toppos, learningPanel){
         });
 
         $('.checkbutton').click(function() {
-            learningPanel.empty();
-            var newCard = Flashcard(leftpos, toppos, learningPanel);
+            Model.getExercise();
+            //learningPanel.empty();
+            //var newCard = Flashcard(leftpos, toppos, learningPanel);
 
-            var i = getRandomInt(0,vocab.length);
+            /*var i = getRandomInt(0,vocab.length);
             while (vocab[i].l1 == l1) {
                 i = getRandomInt(0,vocab.length);
-            }
+            }*/
 
-            newCard.showExercise(vocab[i].l1, vocab[i].l2);
+            //newCard.showExercise(vocab[i].l1, vocab[i].l2);
         });
         return;
     };
@@ -172,11 +174,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel) {
             //success message
             // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
             learningPanel.empty();
-            var newCard = Fill_In_The_Blank(leftpos, toppos, learningPanel);
-
-            var i = getRandomInt(0, vocab.length);
-
-            newCard.showExercise(vocab[i].l1, vocab[i].l2);
+            Model.getExercise();
         }
         else {
             //TODO: have a 'reveal answer' button appear.
@@ -227,6 +225,12 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel) {
     return that;
 }
 
+//all vocab should be lowercase, no punctuation.
+var people = Word('people', {'spanish': 'personas'})
+var government = Word('government', {'spanish': 'gobierno'})
+var thing = Word('thing', {'spanish': 'cosa'})
+var vocab = [people, government, thing];
+
 //VIEW (kind of)
 
 //$('.videoAdUiAttribution') contains ad time left information, and returns null if no ad is playing.
@@ -245,9 +249,14 @@ $(document).ready(function(){
     var learningPanel = $("<div>").attr("id", "learningPanel").addClass("learningPanel");
     learningPanel.insertBefore(controls);
 
+    //create the model object
+    var model = Model(learningPanel, vocab);
+
+    model.getExercise();
+
     // create Flashcard object, giving it the learningPanel element
-    var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
-    flashcard.showExercise("people", "personas");
+    // var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
+    // flashcard.showExercise("people", "personas");
 
     //create Fill_In_The_Blank object
 //    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
@@ -269,9 +278,3 @@ $(document).ready(function(){
     //----------------------------------------------------
 
 });
-
-//all vocab should be lowercase, no punctuation.
-//var Exercises = function(){
-    var vocab = [{"l1": "people", "l2": "personas"}, {"l1": "government", "l2": "gobierno"}, {"l1": "thing", "l2": "cosa"}];
-
-//};
