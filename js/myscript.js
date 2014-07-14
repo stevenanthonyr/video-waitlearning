@@ -41,6 +41,7 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
     var that = {};
     var self = this;
 
+    //Gets a random Word object stored in vocab and returns it to the user.
     var getRandomWord = function() {
         var num = getRandomInt(0, vocab.length - 1);
         return vocab[num];
@@ -51,6 +52,8 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
         vocab.append(word)
     }
 
+    //Gets an exercise for the user to complete, based on how well the randomly
+    //picked word for the exercise is understood.
     that.getExercise = function() {
         var card;
         var selectNewCard = true;
@@ -264,8 +267,8 @@ $(document).ready(function(){
     // flashcard.showExercise("people", "personas");
 
     //create Fill_In_The_Blank object
-//    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
-//    fitb.showExercise("people", "personas");
+    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
+    fitb.showExercise("people", "personas");
 
     // ------ other useful methods (currently these don't do anything) --------
     var videoElement = document.getElementsByClassName('video-stream')[0];
