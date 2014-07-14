@@ -1,9 +1,21 @@
+//HELPER METHODS
+
+function attach_css(){
+    var link = document.createElement("link");
+    link.href = chrome.extension.getURL("css/learning.css");
+    link.type = "text/css";
+    link.rel = "stylesheet";
+    document.getElementsByTagName("head")[0].appendChild(link);
+}
+
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+//MODELS
+
 //Objects of the Word class are stored in model to pull words
-//for the user to use in their exercises. 
+//for the user to use in their exercises.
 //englishWord - the word in English
 //translationDict - a dictionary of the words translations, in the form {language: translation}
 //numUnderstood - number of times the user has said they understand this word.
@@ -15,17 +27,45 @@ var Word = function(englishWord, translationDict) {
     that.addTranslation = function(language, translation) {
         translationDict[language] = translation;
     }
-    
+
     // Object.freeze(that); don't think this should be done : adding words to dictionary in future?
     return that;
 }
 
-var Model = function() {
+//vocab - list of Word objects
+var Model = function(learningPanel, vocab) {
     var that = {};
     var self = this;
-    
-    
+
+    that.getRandomWord = function() {
+        var num = getRandomInt(0, vocab.length - 1);
+        return vocab[num];
+    }
+
+    //word - Word object to be added to the vocab list
+    that.addWord = function(word) {
+        vocab.append(word)
+    }
+
+    that.getExercise = function() {
+        var card;
+        var selectNewCard = true;
+        while (selectNewCard) {
+            var word = getRandomWord();
+            if (word.numUnderstood < 2) {
+                card = Flashcard(0, 0, learningPanel);
+                selectNewCard = false;
+            }
+            else if (word.numUnderstood < 4) {
+                card = Fill_In_The_Blank(0, 0, learningPanel);
+                selectNewCard = false;
+            }
+        }
+        card.showExercise(word.englishWord, word.translationDict['spanish']);
+    }
 }
+
+//CARD TYPES
 
 //IMPORTANT:
 //FOR ALL CLASSES, THE ORDER OF WORDS IS:
@@ -63,7 +103,7 @@ var Flashcard = function(leftpos, toppos, learningPanel){
         learningPanel.append(right);
         left.append(foreignPanel).append(nativePanel).append(revealButton);
         right.append(yesButton).append(noButton);
-        
+
         if (Math.random() >= .5) {
             nativePanel.hide();
             //nativePanel.append(revealButton);
@@ -72,7 +112,7 @@ var Flashcard = function(leftpos, toppos, learningPanel){
             foreignPanel.hide();
             //foreignPanel.append(revealButton);
         }
-        
+
         revealButton.click(function() {
             console.log('click')
             if (nativePanel.is(':hidden')) {
@@ -84,16 +124,16 @@ var Flashcard = function(leftpos, toppos, learningPanel){
                 foreignPanel.show();
             }
         });
-        
+
         $('.checkbutton').click(function() {
             learningPanel.empty();
             var newCard = Flashcard(leftpos, toppos, learningPanel);
-            
+
             var i = getRandomInt(0,vocab.length);
             while (vocab[i].l1 == l1) {
                 i = getRandomInt(0,vocab.length);
             }
-            
+
             newCard.showExercise(vocab[i].l1, vocab[i].l2);
         });
         return;
@@ -133,9 +173,9 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel) {
             // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
             learningPanel.empty();
             var newCard = Fill_In_The_Blank(leftpos, toppos, learningPanel);
-            
+
             var i = getRandomInt(0, vocab.length);
-            
+
             newCard.showExercise(vocab[i].l1, vocab[i].l2);
         }
         else {
@@ -143,10 +183,10 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel) {
             // $('.answerStatus.fill_in_the_blank').prepend('<img id="redX" src="static/redX.png" />')
             $('#fitb_translation_field').attr('placeholder', 'try again').val('');
             // $('.revealButton.fill_in_the_blank').attr('display', inline);
-            
-            
+
+
             revealButton.click(function() {
-                
+
             });
         }
     }
@@ -166,7 +206,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel) {
             nativeBlank = false;
             answer = l2;
         }
-        
+
         left.append(foreignPanel).append(nativePanel);
         right.append(answerStatus).append(revealButton);
         learningPanel.append(left).append(right);
@@ -187,6 +227,8 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel) {
     return that;
 }
 
+//VIEW (kind of)
+
 //$('.videoAdUiAttribution') contains ad time left information, and returns null if no ad is playing.
 //design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
@@ -196,7 +238,7 @@ $(document).ready(function(){
     var controls = $(".html5-video-controls");
     var controls_leftpos = controls.position().left;
     var controls_toppos = controls.position().top;
-    
+
     // create and attach learningPanel before controls
     var flashcard_leftpos = controls_leftpos;
     var flashcard_toppos = controls_toppos - 100;
@@ -206,7 +248,7 @@ $(document).ready(function(){
     // create Flashcard object, giving it the learningPanel element
     var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
     flashcard.showExercise("people", "personas");
-    
+
     //create Fill_In_The_Blank object
 //    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
 //    fitb.showExercise("people", "personas");
@@ -214,7 +256,7 @@ $(document).ready(function(){
     // ------ other useful methods (currently these don't do anything) --------
     var videoElement = document.getElementsByClassName('video-stream')[0];
 
-    videoElement.addEventListener("timeupdate", function () { 
+    videoElement.addEventListener("timeupdate", function () {
         var vTime = videoElement.currentTime;
         // console.log("current timestamp: " + vTime);
     }, false);
@@ -233,11 +275,3 @@ $(document).ready(function(){
     var vocab = [{"l1": "people", "l2": "personas"}, {"l1": "government", "l2": "gobierno"}, {"l1": "thing", "l2": "cosa"}];
 
 //};
-
-function attach_css(){
-    var link = document.createElement("link");
-    link.href = chrome.extension.getURL("css/learning.css"); 
-    link.type = "text/css";
-    link.rel = "stylesheet";
-    document.getElementsByTagName("head")[0].appendChild(link);
-}
