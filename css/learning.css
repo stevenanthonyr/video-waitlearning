@@ -1,3 +1,5 @@
+/* Basic containers*/
+/* LEAVE THESE OR ADD TO THEM. TO SPECIFY FOR YOUR TYPE, USE MORE SPECIFIC SELECTORS*/
 #learningPanel{
     width: 200px;
     height: 75px;
@@ -9,38 +11,43 @@
     color: black;
 }
 
-.left{
+.nativePanel, .foreignPanel{
+    width: 40%;
+    float: left;
+}
+
+/* alternating positions necessary for vertical alignment of divs*/
+.foreignPanel {
+    position: relative;
+    margin-top: 13px;
+}
+
+.nativePanel {
+    position: absolute;
+    height: 38px;
+    top: 50%;
+    margin-top: 1px;
+}
+
+/* Flashcard items */
+
+.left .flashcard {
     width: 40%;
     float: left;
     margin-right: 5px;
 }
 
-.left > div {
+.left .flashcard > div {
     float: left;
 }
 
-.right{
+.right .flashcard{
     width: 40%;
     float: right;
 }
 
-.nativePanel, .foreignPanel{
-    position: relative;
-    width: 40%;
-    float: left;
-}
-
-.foreignPanel {
-    /*to center the words vertically on the learningPanel*/
-    margin: 15px 0px;
-}
-
-#fitb_translation_container{
-    margin: 15px 0px;
-}
-
-#fitb_translation_field {
-    display: block;   
+.flashcard .foreignPanel {
+    left: 15px;
 }
 
 /*.nativePanel .flashcard{
@@ -49,11 +56,11 @@
 }*/
 
 .reveal{
-    /*position: relative;*/
+    position: relative;
     font-style: italic;
     border: 1px solid gray;
     border-radius: 5px;
-    margin-top: 30px;
+    /*margin-top: 50px;*/
     width: 40%;
     text-align: center;
 
@@ -68,3 +75,19 @@
     font-size: 10pt;
     text-align: center;
 }
+
+/* Fill_in_the_blank items */
+#fitb_translation_field {
+    display: block;   
+}
+
+.left .fill_in_the_blank {
+    /*width: 40%;*/
+    float: left;
+}
+
+.right .fill_in_the_blank{
+    /*width: 40%;*/
+    float: right;
+}
+
