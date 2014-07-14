@@ -33,6 +33,7 @@
 
 .left .flashcard {
     width: 40%;
+    height: 100%;
     float: left;
     margin-right: 5px;
 }
@@ -43,6 +44,7 @@
 
 .right .flashcard{
     width: 40%;
+    height: 100%;
     float: right;
 }
 

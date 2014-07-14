@@ -2,6 +2,31 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+//Objects of the Word class are stored in model to pull words
+//for the user to use in their exercises. 
+//englishWord - the word in English
+//translationDict - a dictionary of the words translations, in the form {language: translation}
+//numUnderstood - number of times the user has said they understand this word.
+var Word = function(englishWord, translationDict) {
+    var that = {};
+    var self = this;
+    var numUnderstood = 0;
+
+    that.addTranslation = function(language, translation) {
+        translationDict[language] = translation;
+    }
+    
+    // Object.freeze(that); don't think this should be done : adding words to dictionary in future?
+    return that;
+}
+
+var Model = function() {
+    var that = {};
+    var self = this;
+    
+    
+}
+
 //IMPORTANT:
 //FOR ALL CLASSES, THE ORDER OF WORDS IS:
 //Foreign Word (on top)
@@ -18,9 +43,9 @@ var Flashcard = function(leftpos, toppos, learningPanel){
     var right = $("<div>").addClass("right flashcard");
     var foreignPanel = $("<div>").addClass("foreignPanel flashcard");
     var nativePanel = $("<div>").addClass("nativePanel flashcard");
-    var revealButton = $("<div>").addClass("reveal").text("flip");
-    //var yesButton = $("<div>").addClass("checkbutton").text("I knew this word");
-    //var noButton = $("<div>").addClass("checkbutton").text("I didn't know this word");
+    var revealButton = $("<button>").addClass("reveal").text("flip");
+    var yesButton = $("<button>").addClass("checkbutton").text("I knew this word");
+    var noButton = $("<button>").addClass("checkbutton").text("I didn't know this word");
 
     //this method is private to this function only.
     var setPosition = function(){
@@ -37,7 +62,7 @@ var Flashcard = function(leftpos, toppos, learningPanel){
         learningPanel.append(left);
         learningPanel.append(right);
         left.append(foreignPanel).append(nativePanel).append(revealButton);
-        //right.append(yesButton).append(noButton);
+        right.append(yesButton).append(noButton);
         
         if (Math.random() >= .5) {
             nativePanel.hide();
@@ -94,7 +119,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel) {
     var foreignPanel = $("<div>").addClass("foreignPanel fill_in_the_blank");
     var nativePanel = $("<div>").addClass("nativePanel fill_in_the_blank");
     var answerStatus = $("<div>").addClass("answerStatus fill_in_the_blank");
-    var revealButton = $("<div>").addClass("revealButton fill_in_the_blank");
+    var revealButton = $("<div>").addClass("revealButton fill_in_the_blank").text('').attr('display', 'none');
 
     var setPosition = function(){
         learningPanel.css("left", leftpos + "px");
@@ -105,12 +130,24 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel) {
         var submittedTranslation = $('#fitb_translation_field').val().toLowerCase();
         if (submittedTranslation == answer) {
             //success message
-            learningPanel.css('display', 'none');
-            console.log('correct');
+            // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
+            learningPanel.empty();
+            var newCard = Fill_In_The_Blank(leftpos, toppos, learningPanel);
+            
+            var i = getRandomInt(0, vocab.length);
+            
+            newCard.showExercise(vocab[i].l1, vocab[i].l2);
         }
         else {
             //TODO: have a 'reveal answer' button appear.
+            // $('.answerStatus.fill_in_the_blank').prepend('<img id="redX" src="static/redX.png" />')
             $('#fitb_translation_field').attr('placeholder', 'try again').val('');
+            // $('.revealButton.fill_in_the_blank').attr('display', inline);
+            
+            
+            revealButton.click(function() {
+                
+            });
         }
     }
 
@@ -167,7 +204,7 @@ $(document).ready(function(){
     learningPanel.insertBefore(controls);
 
     // create Flashcard object, giving it the learningPanel element
-    var flashcard = Flashcard(flashcard_leftpos + 400, flashcard_toppos - 300, learningPanel);
+    var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
     flashcard.showExercise("people", "personas");
     
     //create Fill_In_The_Blank object
