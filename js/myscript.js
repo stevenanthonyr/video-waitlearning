@@ -40,6 +40,7 @@ var Word = function(englishWord, translationDict) {
 var Model = function(learningPanel, vocab, leftpos, toppos) {
     var that = {};
     var self = this;
+    var foreignLanguage = 'spanish'
 
     //Gets a random Word object stored in vocab and returns it to the user.
     var getRandomWord = function() {
@@ -52,19 +53,24 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
         vocab.append(word)
     }
 
+    //language - lowercase, spelled out name for the language.
+    that.setLanguage = function(language) {
+        self.foreignLanguage = language.toLowerCase();
+    }
+
     //Gets an exercise for the user to complete, based on how well the randomly
     //picked word for the exercise is understood.
-    that.getExercise = function() {
+    that.getExercise = function(self) {
         var card;
         var selectNewCard = true;
         while (selectNewCard) {
             var word = getRandomWord();
             if (word.numUnderstood < 2) {
-                card = Flashcard(leftpos, toppos, learningPanel);
+                card = Flashcard(leftpos, toppos, learningPanel, self);
                 selectNewCard = false;
             }
             else if (word.numUnderstood < 4) {
-                card = Fill_In_The_Blank(leftpos, toppos, learningPanel);
+                card = Fill_In_The_Blank(leftpos, toppos, learningPanel, self);
                 selectNewCard = false;
             }
         }
@@ -84,7 +90,7 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
 //the Flashcard object is responsible for all UI interactions with the learningPanel
 //It is composed of a container div that is passed in (learningPanel) and other divs
 //that are created to store/display content for the questions.
-var Flashcard = function(leftpos, toppos, learningPanel){
+var Flashcard = function(leftpos, toppos, learningPanel, model){
     var that = {};
     var self = this;
     //console.log(Exercises[0])
@@ -137,7 +143,7 @@ var Flashcard = function(leftpos, toppos, learningPanel){
         $('.checkbutton').click(function() {
             Model.getExercise();
             //learningPanel.empty();
-            //var newCard = Flashcard(leftpos, toppos, learningPanel);
+            //var newCard = Flashcard(leftpos, toppos, learningPanel, model);
 
             /*var i = getRandomInt(0,vocab.length);
             while (vocab[i].l1 == l1) {
@@ -157,7 +163,7 @@ var Flashcard = function(leftpos, toppos, learningPanel){
 //Fill_In_The_Blank is a question type that lets the user
 //type in their translation to a word, either native or foreign.
 //Takes in two position arguments (left and top) and a learningPanel div.
-var Fill_In_The_Blank = function(leftpos, toppos, learningPanel) {
+var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var that = {};
     //variables below used for showExercise method.
     var answer;
@@ -238,6 +244,7 @@ var people = Word('people', {'spanish': 'personas'})
 var government = Word('government', {'spanish': 'gobierno'})
 var thing = Word('thing', {'spanish': 'cosa'})
 var vocab = [people, government, thing];
+var languageCodeDict = {'spanish': 'ES', 'english': 'ENG', 'german': 'DEU', 'italian': 'ITA', 'portuguese': 'POR', 'elvish': 'elf'}
 
 //VIEW (kind of)
 
@@ -263,11 +270,11 @@ $(document).ready(function(){
     model.getExercise();
 
     // create Flashcard object, giving it the learningPanel element
-    // var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
+    // var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel, model);
     // flashcard.showExercise("people", "personas");
 
     //create Fill_In_The_Blank object
-    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
+    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
     fitb.showExercise("people", "personas");
 
     // ------ other useful methods (currently these don't do anything) --------
