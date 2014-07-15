@@ -55,6 +55,7 @@ var Word = function(englishWord, translationDict) {
 var Model = function(learningPanel, vocab, leftpos, toppos) {
     var that = {};
     var self = this;
+    var nativeLanguage = 'english'
     var foreignLanguage = 'spanish'
     var languageCodeDict = {'spanish': 'ES', 'english': 'ENG', 'german': 'DEU', 'italian': 'ITA', 'portuguese': 'POR', 'elvish': 'elf'}
 
@@ -72,6 +73,14 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
     //language - lowercase, spelled out name for the language.
     that.setLanguage = function(language) {
         self.foreignLanguage = language.toLowerCase();
+    }
+
+    that.getNativeLanguage = function() {
+        return nativeLanguage;
+    }
+
+    that.getForeignLanguage = function() {
+        return foreignLanguage;
     }
 
     //returns the languageCodeDict
@@ -189,8 +198,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
 var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var that = {};
     //variables below used for showExercise method.
-    var answer;
-    var nativeBlank = true;
+    var answer; //this is set as l1 or l2 in showExercise.
     var rand = Math.random();
 
     var left = $("<div>").addClass("left fill_in_the_blank");
@@ -208,8 +216,6 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var compareAnswer = function(answer) {
         var submittedTranslation = $('#fitb_translation_field').val().toLowerCase();
         if (submittedTranslation == answer) {
-            //success message
-            // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
             var url = chrome.extension.getURL("static/right.png");
             $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
@@ -218,15 +224,20 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
         }
         else {
-            var url = chrome.extension.getURL("static/wrong.png");
-            $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />')
             //TODO: have a 'reveal answer' button appear.
+            var url = chrome.extension.getURL("static/wrong.png");
+            $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />');
+            $('.answerStatus.fill_in_the_blank').css('align', 'right');
             $('#fitb_translation_field').attr('placeholder', 'try again').val('');
-            // $('.revealButton.fill_in_the_blank').attr('display', inline);
+            $('.revealButton.fill_in_the_blank').attr('display', inline);
 
 
             revealButton.click(function() {
-
+                $('#fitb_translation_field').val(answer);
+                $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />')
+                var map = model.getExerciseMap(model);
+                var newCard = parseMap(map);
+                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1250);
             });
         }
     }
@@ -235,24 +246,31 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     that.showExercise = function(l1, l2){
         learningPanel.empty();
         var langDict = model.getLanguageCodeDict();
+        var lang;
+        var nativeBlank = true;
         foreignPanel.html(l2);
         nativePanel.html(l1);
-        var inputField = '<div id="fitb_translation_container"><input type="text" id="fitb_translation_field" placeholder="translate"></div>';
+        var inputField = '<div id="fitb_translation_container"><input type="text" value="" autocomplete="off" id="fitb_translation_field"></div>';
         if (rand > .5) {
             nativePanel.html(inputField);
-            //case where nativeBlank is true.
+            lang = model.getNativeLanguage();
             answer = l1;
         }
         else {
             foreignPanel.html(inputField);
-            nativeBlank = false;
+            lang = model.getForeignLanguage();
             answer = l2;
+            nativeBlank = false;
         }
 
         left.append(foreignPanel).append(nativePanel);
         right.append(answerStatus).append(revealButton);
         learningPanel.append(left).append(right);
-        nativeBlank ? nativePanel.focus() : foreignPanel.focus();
+
+        //CSS below used to align text in input field and text in div.
+        (nativeBlank) ? $('.foreignPanel.fill_in_the_blank').css('left', '4px') : $('.nativePanel.fill_in_the_blank').css('left', '4px')
+        $('#fitb_translation_field').attr('placeholder', 'translate to ' + lang);
+        $('#fitb_translation_field').focus();
 
         $('#fitb_translation_field').keydown(function(e) {
             if (e.which==13 || e.keyCode==13) {
@@ -303,6 +321,7 @@ $(document).ready(function(){
     var model = Model(learningPanel, vocab, flashcard_leftpos, flashcard_toppos);
     var map = model.getExerciseMap(model);
     var newCard = parseMap(map);
+    $('input[autocomplete]').removeAttr('autocomplete');
 
     newCard.showExercise(map['native'], map['foreign']);
 
