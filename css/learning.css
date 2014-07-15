@@ -32,19 +32,17 @@
 /* Flashcard items */
 
 .left .flashcard {
+	position: relative;
     width: 50%;
     height: 100%;
-    float: left;
-}
-
-.left .flashcard > div {
-    float: left;
+    left: 0;
 }
 
 .right .flashcard{
+	position: relative;
     width: 50%;
     height: 100%;
-    float: right;
+    right: 0;
 }
 
 .flashcard .foreignPanel {
@@ -70,7 +68,8 @@
 } 
 
 .checkbutton{
-    position: relative;
+    position: relative
+	display: inline-block;
     float: right;
     width: 40%;
     border: 1px solid gray;

@@ -121,12 +121,10 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     var right = $("<div>").addClass("right flashcard");
     var foreignPanel = $("<div>").addClass("foreignPanel flashcard");
     var nativePanel = $("<div>").addClass("nativePanel flashcard");
-    var revealButton = $("<button>").addClass("reveal").text("flip");
-    var correct = $("<img src='/static/checkmark.png'>").addClass("checkbutton").text("I knew this word");
-    var wrong = $("<img src='/static/x.png'>").addClass("checkbutton").text("I didn't know this word");
-    var yesButton = $("<button>").addClass("checkbutton").text("I knew this word");
-    var noButton = $("<button>").addClass("checkbutton").text("I didn't know this word");
-    console.log('in the construction ' + model);
+    var revealButton = $("<button/>").addClass("reveal").text("flip");
+    var yesButton = $("<button/>").addClass("checkbutton").text("I knew this word");
+    var noButton = $("<button/>").addClass("checkbutton").text("I didn't know this word");
+   // console.log('in the construction ' + model);
 
     //this method is private to this function only.
     var setPosition = function(){
@@ -167,7 +165,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         });
 
         $('.checkbutton').click(function() {
-            model.getExercise();
+            //model.getExercise();
             //learningPanel.empty();
             //var newCard = Flashcard(leftpos, toppos, learningPanel, model);
 
