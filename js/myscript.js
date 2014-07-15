@@ -41,6 +41,7 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
     var that = {};
     var self = this;
     var foreignLanguage = 'spanish'
+    var languageCodeDict = {'spanish': 'ES', 'english': 'ENG', 'german': 'DEU', 'italian': 'ITA', 'portuguese': 'POR', 'elvish': 'elf'}
 
     //Gets a random Word object stored in vocab and returns it to the user.
     var getRandomWord = function() {
@@ -58,24 +59,29 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
         self.foreignLanguage = language.toLowerCase();
     }
 
+    that.getLanguageCodeDict = function() {
+        return languageCodeDict;
+    }
+
     //Gets an exercise for the user to complete, based on how well the randomly
     //picked word for the exercise is understood.
-    that.getExercise = function(self) {
+    that.getExercise = function() {
         var card;
         var selectNewCard = true;
         while (selectNewCard) {
             var word = getRandomWord();
             if (word.numUnderstood < 2) {
-                card = Flashcard(leftpos, toppos, learningPanel, self);
+                card = Flashcard(leftpos, toppos, learningPanel, model);
+                console.log('check model in get exercise ' + model);
                 selectNewCard = false;
             }
             else if (word.numUnderstood < 4) {
-                card = Fill_In_The_Blank(leftpos, toppos, learningPanel, self);
+                card = Fill_In_The_Blank(leftpos, toppos, learningPanel, model);
                 selectNewCard = false;
             }
         }
         var translationDict = word.getTranslationDict();
-        card.showExercise(word.englishWord, translationDict['spanish']);
+        card.showExercise(word.englishWord, translationDict[foreignLanguage]);
     }
     return that;
 }
@@ -101,6 +107,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     var revealButton = $("<button>").addClass("reveal").text("flip");
     var yesButton = $("<button>").addClass("checkbutton").text("I knew this word");
     var noButton = $("<button>").addClass("checkbutton").text("I didn't know this word");
+    console.log('in the construction ' + model);
 
     //this method is private to this function only.
     var setPosition = function(){
@@ -141,7 +148,8 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         });
 
         $('.checkbutton').click(function() {
-            Model.getExercise();
+            console.log("in the clicker " + model);
+            model.getExercise();
             //learningPanel.empty();
             //var newCard = Flashcard(leftpos, toppos, learningPanel, model);
 
@@ -188,7 +196,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             //success message
             // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
             learningPanel.empty();
-            Model.getExercise();
+            model.getExercise();
         }
         else {
             //TODO: have a 'reveal answer' button appear.
@@ -205,8 +213,9 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
     //l1 and l2 are strings
     that.showExercise = function(l1, l2){
-        foreignPanel.html(l2);
-        nativePanel.html(l1);
+        var langDict = model.getLanguageCodeDict();
+        foreignPanel.html(langDict[model.foreignLanguage] + " " + l2);
+        nativePanel.html(langDict['english'] + " " + l1);
         var inputField = '<div id="fitb_translation_container"><input type="text" id="fitb_translation_field" placeholder="translate"></div>';
         if (rand > .5) {
             nativePanel.html(inputField);
@@ -222,6 +231,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         left.append(foreignPanel).append(nativePanel);
         right.append(answerStatus).append(revealButton);
         learningPanel.append(left).append(right);
+        nativeBlank ? nativePanel.focus() : foreignPanel.focus();
 
         $('#fitb_translation_field').keydown(function(e) {
             if (e.which==13 || e.keyCode==13) {
@@ -244,7 +254,6 @@ var people = Word('people', {'spanish': 'personas'})
 var government = Word('government', {'spanish': 'gobierno'})
 var thing = Word('thing', {'spanish': 'cosa'})
 var vocab = [people, government, thing];
-var languageCodeDict = {'spanish': 'ES', 'english': 'ENG', 'german': 'DEU', 'italian': 'ITA', 'portuguese': 'POR', 'elvish': 'elf'}
 
 //VIEW (kind of)
 
@@ -266,7 +275,7 @@ $(document).ready(function(){
 
     //create the model object
     var model = Model(learningPanel, vocab, flashcard_leftpos, flashcard_toppos);
-
+    console.log('doc ready ' + model);
     model.getExercise();
 
     // create Flashcard object, giving it the learningPanel element
@@ -274,8 +283,8 @@ $(document).ready(function(){
     // flashcard.showExercise("people", "personas");
 
     //create Fill_In_The_Blank object
-    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
-    fitb.showExercise("people", "personas");
+//    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
+//    fitb.showExercise("people", "personas");
 
     // ------ other useful methods (currently these don't do anything) --------
     var videoElement = document.getElementsByClassName('video-stream')[0];
