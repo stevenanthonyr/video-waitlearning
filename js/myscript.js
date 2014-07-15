@@ -60,7 +60,7 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
 
     //Gets a random Word object stored in vocab and returns it to the user.
     var getRandomWord = function() {
-        var num = getRandomInt(0, vocab.length - 1);
+        var num = getRandomInt(0, vocab.length);
         return vocab[num];
     }
 
@@ -97,6 +97,7 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
                 selectNewCard = false;
             }
         }
+        console.log(vocab);
         return map;
     }
     return that;
@@ -123,7 +124,6 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     var revealButton = $("<button>").addClass("reveal").text("flip");
     var yesButton = $("<button>").addClass("checkbutton").text("I knew this word");
     var noButton = $("<button>").addClass("checkbutton").text("I didn't know this word");
-    console.log('in the construction ' + model);
 
     //this method is private to this function only.
     var setPosition = function(){
@@ -134,13 +134,13 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     //this is, basically, a class method that can be called outside of this function on a Flashcard.
     //l1 = native, l2 = foreign
     that.showExercise = function(l1, l2){
-       // foreignPanel.text(l2);
-        //nativePanel.text(l1);
+        foreignPanel.text(l2);
+        nativePanel.text(l1);
 
-        /*left.append(foreignPanel).append(nativePanel).append(revealButton);
+        left.append(foreignPanel).append(nativePanel).append(revealButton);
         right.append(yesButton).append(noButton);
         learningPanel.append(left);
-        learningPanel.append(right);*/
+        learningPanel.append(right);
 
         if (Math.random() >= .5) {
             nativePanel.hide();
@@ -164,7 +164,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         });
 
         $('.checkbutton').click(function() {
-            var map = model.getExerciseMap();
+            var map = model.getExerciseMap(model);
             learningPanel.empty();
             var newCard = parseMap(map);
             newCard.showExercise(map['native'], map['foreign']);
@@ -211,7 +211,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             //success message
             // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
             learningPanel.empty();
-            var map = model.getExerciseMap();
+            var map = model.getExerciseMap(model);
             var newCard = parseMap(map);
             newCard.showExercise(map['native'], map['foreign']);
         }
@@ -272,6 +272,7 @@ var people = Word('people', {'spanish': 'personas'})
 var government = Word('government', {'spanish': 'gobierno'})
 var thing = Word('thing', {'spanish': 'cosa'})
 var vocab = [people, government, thing];
+console.log(vocab);
 
 //VIEW (kind of)
 
@@ -293,16 +294,10 @@ $(document).ready(function(){
 
     //create the model object
     var model = Model(learningPanel, vocab, flashcard_leftpos, flashcard_toppos);
-    console.log('doc ready model below:');
-    console.log(model);
     var map = model.getExerciseMap(model);
-    console.log(map);
     var newCard = parseMap(map);
-    console.log('newcard:')
-    console.log(newCard);
 
     newCard.showExercise(map['native'], map['foreign']);
-    console.log(newCard.showExercise(map['native'], map['foreign']));
 
     // create Flashcard object, giving it the learningPanel element
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
