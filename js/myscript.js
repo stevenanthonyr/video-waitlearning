@@ -16,7 +16,7 @@ function getRandomInt(min, max) {
 //                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
 function parseMap(map) {
     if (map['type'] == 'flashcard') {
-        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
     else if (map['type'] == 'fill_in_the_blank') {
         return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
@@ -219,13 +219,17 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             learningPanel.empty();
             model.getExercise();
             //var map = model.getExerciseMap();
+            var url = chrome.extension.getURL("static/right.png");
+            $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
             var newCard = parseMap(map);
-            newCard.showExercise(map['native'], map['foreign']);
+            setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1250);
+
         }
         else {
+            var url = chrome.extension.getURL("static/wrong.png");
+            $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />')
             //TODO: have a 'reveal answer' button appear.
-            // $('.answerStatus.fill_in_the_blank').prepend('<img id="redX" src="static/redX.png" />')
             $('#fitb_translation_field').attr('placeholder', 'try again').val('');
             // $('.revealButton.fill_in_the_blank').attr('display', inline);
 
@@ -240,8 +244,8 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     that.showExercise = function(l1, l2){
         learningPanel.empty();
         var langDict = model.getLanguageCodeDict();
-        foreignPanel.html(langDict[model.foreignLanguage] + " " + l2);
-        nativePanel.html(langDict['english'] + " " + l1);
+        foreignPanel.html(l2);
+        nativePanel.html(l1);
         var inputField = '<div id="fitb_translation_container"><input type="text" id="fitb_translation_field" placeholder="translate"></div>';
         if (rand > .5) {
             nativePanel.html(inputField);
@@ -279,7 +283,11 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 var people = Word('people', {'spanish': 'personas'})
 var government = Word('government', {'spanish': 'gobierno'})
 var thing = Word('thing', {'spanish': 'cosa'})
-var vocab = [people, government, thing];
+var cat = Word('cat', {'spanish': 'gato'})
+var war = Word('war', {'spanish': 'guerra'})
+var computer = Word('computer', {'spanish': 'computadora'})
+var sad = Word('sad', {'spanish': 'triste'})
+var vocab = [people, government, thing, cat, war, computer, sad];
 console.log(vocab);
 
 //VIEW (kind of)
