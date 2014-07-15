@@ -99,8 +99,8 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     var foreignPanel = $("<div>").addClass("foreignPanel flashcard");
     var nativePanel = $("<div>").addClass("nativePanel flashcard");
     var revealButton = $("<button>").addClass("reveal").text("flip");
-    var yesButton = $("<button>").addClass("checkbutton").text("I knew this word");
-    var noButton = $("<button>").addClass("checkbutton").text("I didn't know this word");
+    var correct = $("<img src='/static/checkmark.png'>").addClass("checkbutton").text("I knew this word");
+    var wrong = $("<img src='/static/x.png'>").addClass("checkbutton").text("I didn't know this word");
 
     //this method is private to this function only.
     var setPosition = function(){
@@ -141,7 +141,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         });
 
         $('.checkbutton').click(function() {
-            Model.getExercise();
+            model.getExercise();
             //learningPanel.empty();
             //var newCard = Flashcard(leftpos, toppos, learningPanel, model);
 
@@ -188,7 +188,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             //success message
             // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
             learningPanel.empty();
-            Model.getExercise();
+            model.getExercise();
         }
         else {
             //TODO: have a 'reveal answer' button appear.
@@ -276,12 +276,12 @@ $(document).ready(function(){
     //create Fill_In_The_Blank object
     //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
     //fitb.showExercise("people", "personas");
-    // var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel, model);
-    // flashcard.showExercise("people", "personas");
+    var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel, model);
+    flashcard.showExercise("people", "personas");
 
     //create Fill_In_The_Blank object
-    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
-    fitb.showExercise("people", "personas");
+    //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
+    //fitb.showExercise("people", "personas");
 
     // ------ other useful methods (currently these don't do anything) --------
     var videoElement = document.getElementsByClassName('video-stream')[0];
