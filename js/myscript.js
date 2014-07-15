@@ -232,8 +232,8 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     that.showExercise = function(l1, l2){
         learningPanel.empty();
         var langDict = model.getLanguageCodeDict();
-        foreignPanel.html(langDict[model.foreignLanguage] + " " + l2);
-        nativePanel.html(langDict['english'] + " " + l1);
+        foreignPanel.html(l2);
+        nativePanel.html(l1);
         var inputField = '<div id="fitb_translation_container"><input type="text" id="fitb_translation_field" placeholder="translate"></div>';
         if (rand > .5) {
             nativePanel.html(inputField);
@@ -271,7 +271,11 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 var people = Word('people', {'spanish': 'personas'})
 var government = Word('government', {'spanish': 'gobierno'})
 var thing = Word('thing', {'spanish': 'cosa'})
-var vocab = [people, government, thing];
+var cat = Word('cat', {'spanish': 'gato'})
+var war = Word('war', {'spanish': 'guerra'})
+var computer = Word('computer', {'spanish': 'computadora'})
+var sad = Word('sad', {'spanish': 'triste'})
+var vocab = [people, government, thing, cat, war, computer, sad];
 console.log(vocab);
 
 //VIEW (kind of)
