@@ -32,10 +32,9 @@
 /* Flashcard items */
 
 .left .flashcard {
-    width: 40%;
+    width: 50%;
     height: 100%;
     float: left;
-    margin-right: 5px;
 }
 
 .left .flashcard > div {
@@ -43,19 +42,21 @@
 }
 
 .right .flashcard{
-    width: 40%;
+    width: 50%;
     height: 100%;
     float: right;
 }
 
 .flashcard .foreignPanel {
+	position: absolute;
     left: 15px;
 }
 
-/*.nativePanel .flashcard{
-    color: gray;
-    display: none;
-}*/
+.flashcard .nativePanel {
+	position: absolute;
+	top: 40px;
+	left: 15px;
+}
 
 .reveal{
     position: relative;
@@ -63,7 +64,7 @@
     border: 1px solid gray;
     border-radius: 5px;
     /*margin-top: 50px;*/
-    width: 40%;
+    width: 30%;
     text-align: center;
 
 } 
