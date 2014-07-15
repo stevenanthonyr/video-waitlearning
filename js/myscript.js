@@ -12,6 +12,17 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+//map = {'type': 'flashcard', 'native': word.englishWord, 'foreign': translationDict[foreignLanguage],
+//                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
+function parseMap(map) {
+    if (map['type'] == 'flashcard') {
+        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+    }
+    else if (map['type'] == 'fill_in_the_blank') {
+        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+    }
+}
+
 //MODELS
 
 //Objects of the Word class are stored in model to pull words
@@ -26,6 +37,10 @@ var Word = function(englishWord, translationDict) {
 
     that.addTranslation = function(language, translation) {
         translationDict[language] = translation;
+    }
+
+    that.getEnglishWord = function () {
+        return englishWord;
     }
 
     that.getTranslationDict = function() {
@@ -59,29 +74,30 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
         self.foreignLanguage = language.toLowerCase();
     }
 
+    //returns the languageCodeDict
     that.getLanguageCodeDict = function() {
         return languageCodeDict;
     }
 
-    //Gets an exercise for the user to complete, based on how well the randomly
-    //picked word for the exercise is understood.
-    that.getExercise = function() {
-        var card;
+    //Returns an object of information to be used to create the exercise.
+    that.getExerciseMap = function(model) {
+        var map;
         var selectNewCard = true;
         while (selectNewCard) {
             var word = getRandomWord();
+            var translationDict = word.getTranslationDict();
             if (word.numUnderstood < 2) {
-                card = Flashcard(leftpos, toppos, learningPanel, model);
-                console.log('check model in get exercise ' + model);
+                map = {'type': 'flashcard', 'native': word.getEnglishWord(), 'foreign': translationDict[foreignLanguage],
+                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos, 'model': model};
                 selectNewCard = false;
             }
             else if (word.numUnderstood < 4) {
-                card = Fill_In_The_Blank(leftpos, toppos, learningPanel, model);
+                map = {'type': 'fill_in_the_blank', 'native': word.getEnglishWord(), 'foreign': translationDict[foreignLanguage],
+                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos, 'model': model};
                 selectNewCard = false;
             }
         }
-        var translationDict = word.getTranslationDict();
-        card.showExercise(word.englishWord, translationDict[foreignLanguage]);
+        return map;
     }
     return that;
 }
@@ -148,11 +164,10 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         });
 
         $('.checkbutton').click(function() {
-            console.log("in the clicker " + model);
-            model.getExercise();
-            //learningPanel.empty();
-            //var newCard = Flashcard(leftpos, toppos, learningPanel, model);
-
+            var map = model.getExerciseMap();
+            learningPanel.empty();
+            var newCard = parseMap(map);
+            newCard.showExercise(map['native'], map['foreign']);
             /*var i = getRandomInt(0,vocab.length);
             while (vocab[i].l1 == l1) {
                 i = getRandomInt(0,vocab.length);
@@ -196,7 +211,9 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             //success message
             // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
             learningPanel.empty();
-            model.getExercise();
+            var map = model.getExerciseMap();
+            var newCard = parseMap(map);
+            newCard.showExercise(map['native'], map['foreign']);
         }
         else {
             //TODO: have a 'reveal answer' button appear.
@@ -213,6 +230,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
     //l1 and l2 are strings
     that.showExercise = function(l1, l2){
+        learningPanel.empty();
         var langDict = model.getLanguageCodeDict();
         foreignPanel.html(langDict[model.foreignLanguage] + " " + l2);
         nativePanel.html(langDict['english'] + " " + l1);
@@ -275,8 +293,16 @@ $(document).ready(function(){
 
     //create the model object
     var model = Model(learningPanel, vocab, flashcard_leftpos, flashcard_toppos);
-    console.log('doc ready ' + model);
-    model.getExercise();
+    console.log('doc ready model below:');
+    console.log(model);
+    var map = model.getExerciseMap(model);
+    console.log(map);
+    var newCard = parseMap(map);
+    console.log('newcard:')
+    console.log(newCard);
+
+    newCard.showExercise(map['native'], map['foreign']);
+    console.log(newCard.showExercise(map['native'], map['foreign']));
 
     // create Flashcard object, giving it the learningPanel element
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
