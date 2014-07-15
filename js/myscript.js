@@ -105,13 +105,13 @@ var Flashcard = function(leftpos, toppos, learningPanel){
     //this is, basically, a class method that can be called outside of this function on a Flashcard.
     //l1 = native, l2 = foreign
     that.showExercise = function(l1, l2){
-        foreignPanel.text(l2);
-        nativePanel.text(l1);
+       // foreignPanel.text(l2);
+        //nativePanel.text(l1);
 
-        learningPanel.append(left);
-        learningPanel.append(right);
-        left.append(foreignPanel).append(nativePanel).append(revealButton);
+        /*left.append(foreignPanel).append(nativePanel).append(revealButton);
         right.append(yesButton).append(noButton);
+		learningPanel.append(left);
+        learningPanel.append(right);*/
 
         if (Math.random() >= .5) {
             nativePanel.hide();
@@ -260,15 +260,15 @@ $(document).ready(function(){
     //create the model object
     var model = Model(learningPanel, vocab, flashcard_leftpos, flashcard_toppos);
 
-    model.getExercise();
+    //model.getExercise();
 
     // create Flashcard object, giving it the learningPanel element
-    // var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
-    // flashcard.showExercise("people", "personas");
+    //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
+    //flashcard.showExercise("people", "personas");
 
     //create Fill_In_The_Blank object
-    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
-    fitb.showExercise("people", "personas");
+    //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
+    //fitb.showExercise("people", "personas");
 
     // ------ other useful methods (currently these don't do anything) --------
     var videoElement = document.getElementsByClassName('video-stream')[0];
