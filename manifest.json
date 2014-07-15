@@ -16,7 +16,9 @@
     "https://www.youtube.com/*"
   ],
   "web_accessible_resources":[
-    "css/learning.css"
+    "css/learning.css",
+    "static/right.png",
+    "static/wrong.png"
   ],
   "manifest_version": 2
 }

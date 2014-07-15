@@ -1,8 +1,8 @@
 /* Basic containers*/
 /* LEAVE THESE OR ADD TO THEM. TO SPECIFY FOR YOUR TYPE, USE MORE SPECIFIC SELECTORS*/
 #learningPanel{
-    width: 200px;
-    height: 75px;
+    width: 400px;
+    height: 125px;
     position: absolute;
     font-size: 24px;
     z-index: 1000;
@@ -48,14 +48,14 @@
 }
 
 .flashcard .foreignPanel {
-	position: absolute;
+    position: absolute;
     left: 15px;
 }
 
 .flashcard .nativePanel {
-	position: absolute;
-	top: 40px;
-	left: 15px;
+    position: absolute;
+    top: 40px;
+    left: 15px;
 }
 
 .reveal{
@@ -67,7 +67,7 @@
     width: 30%;
     text-align: center;
 
-} 
+}
 
 .checkbutton{
     position: relative;
@@ -81,7 +81,7 @@
 
 /* Fill_in_the_blank items */
 #fitb_translation_field {
-    display: block;   
+    display: block;
 }
 
 .left .fill_in_the_blank {

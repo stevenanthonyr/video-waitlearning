@@ -16,7 +16,7 @@ function getRandomInt(min, max) {
 //                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
 function parseMap(map) {
     if (map['type'] == 'flashcard') {
-        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
     else if (map['type'] == 'fill_in_the_blank') {
         return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
@@ -210,14 +210,17 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         if (submittedTranslation == answer) {
             //success message
             // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
-            learningPanel.empty();
+            var url = chrome.extension.getURL("static/right.png");
+            $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
             var newCard = parseMap(map);
-            newCard.showExercise(map['native'], map['foreign']);
+            setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1250);
+
         }
         else {
+            var url = chrome.extension.getURL("static/wrong.png");
+            $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />')
             //TODO: have a 'reveal answer' button appear.
-            // $('.answerStatus.fill_in_the_blank').prepend('<img id="redX" src="static/redX.png" />')
             $('#fitb_translation_field').attr('placeholder', 'try again').val('');
             // $('.revealButton.fill_in_the_blank').attr('display', inline);
 
