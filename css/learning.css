@@ -29,56 +29,69 @@
     margin-top: 1px;
 }
 
+
 /* Flashcard items */
 
-.left .flashcard {
+.flash-left{
 	position: relative;
     width: 50%;
     height: 100%;
-    left: 0;
+    float: left;
 }
 
-.right .flashcard{
+.flash-right{
 	position: relative;
     width: 50%;
     height: 100%;
-    right: 0;
+    float: right;
 }
 
-.flashcard .foreignPanel {
-    position: absolute;
-    left: 15px;
+
+.subsection {
+	position: relative;
+	height: 50%;
 }
 
-.flashcard .nativePanel {
-    position: absolute;
-    top: 40px;
-    left: 15px;
+.flash-langPanel {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 30%;
+	margin: auto;
+	margin-left: 25%;
+	height: 30%;
 }
 
-.reveal{
-    position: relative;
+.flash-reveal {
     font-style: italic;
     border: 1px solid gray;
     border-radius: 5px;
-    /*margin-top: 50px;*/
-    width: 30%;
+	/*background-color: gray;*/
     text-align: center;
-
+	font-weight: bold;
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 30%;
+	margin: auto;
+	margin-left: 25%;
+	height: 30%;
 }
 
-.checkbutton{
-    position: relative
-	display: inline-block;
-    float: right;
-    width: 40%;
-    border: 1px solid gray;
-    border-radius: 5px;
-    font-size: 10pt;
-    text-align: center;
+.check {
+	cursor: pointer;
+	height: 90%;
+	float: left;`
 }
+
 
 /* Fill_in_the_blank items */
+
 #fitb_translation_field {
     display: block;
 }
