@@ -9,6 +9,8 @@
     background-color: #f1f1f1;
     opacity: 1;
     color: black;
+    border: solid;
+    border-width: thin;
 }
 
 .nativePanel, .foreignPanel{
@@ -92,17 +94,24 @@
 
 /* Fill_in_the_blank items */
 
+
 #fitb_translation_field {
-    display: block;
+    font-size: 24px;
 }
 
-.left .fill_in_the_blank {
-    /*width: 40%;*/
+.left.fill_in_the_blank {
+/*    width: 40%;*/
+    width: 190px;
+    height: 125px;
     float: left;
+    border: solid;
 }
 
-.right .fill_in_the_blank{
-    /*width: 40%;*/
+.right.fill_in_the_blank{
+/*    width: 40%;*/
+    width: 190px;
+    height: 125px;
     float: right;
+    border: dotted;
 }
 
