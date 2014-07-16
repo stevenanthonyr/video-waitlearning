@@ -74,17 +74,12 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
         vocab.append(word)
     }
 
-    //language - lowercase, spelled out name for the language.
-    that.setLanguage = function(language) {
-        self.foreignLanguage = language.toLowerCase();
-    }
-
     that.getNativeLanguage = function() {
-        return nativeLanguage;
+        return nativeLang;
     }
 
     that.getForeignLanguage = function() {
-        return foreignLanguage;
+        return foreignLang;
     }
 
     //returns the languageCodeDict
@@ -390,8 +385,8 @@ $(document).ready(function(){
     //flashcard.showExercise("people", "personas");
 
     //create Fill_In_The_Blank object
-    //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
-    //fitb.showExercise("people", "personas");
+    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
+    fitb.showExercise("people", "personas");
 //    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
 //    fitb.showExercise("people", "personas");
 
