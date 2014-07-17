@@ -130,6 +130,7 @@
     float: left;
 }
 
+/*
 .foreignPanel.fill_in_the_blank div {
     vertical-align: middle;
 }
@@ -137,13 +138,15 @@
 .nativePanel.fill_in_the_blank div{
     vertical-align: middle;
 }
+*/
 
-.foreignPanel.fill_in_the_blank input {
+.fill_in_the_blank input {
     vertical-align: middle;
 }
 
-.nativePanel.fill_in_the_blank input{
+.fill_in_the_blank input{
     vertical-align: middle;
+    margin-top: -5px;
 }
 
 .right.fill_in_the_blank{
@@ -153,6 +156,6 @@
 }
 
 .left_subsection {
-    position: relative;
     height: 50%;
+    vertical-align: middle;
 }
