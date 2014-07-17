@@ -83,10 +83,6 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
     var nativeLang = 'english';
     var languageCodeDict = {'spanish': 'ESP', 'english': 'ENG', 'german': 'DEU', 'italian': 'ITA', 'portuguese': 'POR', 'elvish': 'elf'}
 
-    //foreignLang and nativeLang attributes of Model
-    that.foreignLang = 'spanish';
-    that.nativeLang = 'english';
-
     //Gets a random Word object stored in vocab and returns it to the user.
     var getRandomWord = function() {
         var num = getRandomInt(0, vocab.length);
@@ -158,6 +154,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     var foreignPanel = $("<div>").addClass("flash-langPanel");
     var nativePanel = $("<div>").addClass("flash-langPanel");
     var revealButton = $("<button>").addClass("flash-reveal").text("reveal");
+    var revealed = false;
     //var knownButton = $("<button>").addClass("flash-knownbutton").text("Already knew");
     var correct = $("<img>").addClass("check");
     correct.attr('src', chrome.extension.getURL('static/right.png'));
@@ -176,8 +173,8 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         nativePanel.text(l1);
 
         var langCodeDict = model.getLanguageCodeDict();
-        var l1Code = langCodeDict[model.nativeLang];
-        var l2Code = langCodeDict[model.foreignLang];
+        var l1Code = langCodeDict[model.getNativeLanguage()];
+        var l2Code = langCodeDict[model.getForeignLanguage()];
 
         left.append(left_top).append(left_bottom);
         left_top.text(l2Code).append(foreignPanel);
@@ -199,6 +196,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         }
 
         revealButton.click(function() {
+            revealed = true;
             if (nativePanel.is(':hidden')) {
                 revealButton.hide();
                 nativePanel.show();
@@ -228,11 +226,11 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         });*/
 
         $('.check').click(function() {
-            console.log('click')
+            console.log('click');
             var map = model.getExerciseMap(model);
             learningPanel.empty();
             var newCard = parseMap(map);
-            newCard.showExercise(map['native'], map['foreign']);
+            setTimeout(function(){newCard.showExercise(map['native'], map['foreign'])}, 300);
         });
         return;
     };
@@ -406,7 +404,7 @@ $(document).ready(function(){
     var newCard = parseMap(map);
     $('input[autocomplete]').removeAttr('autocomplete');
 
-    //newCard.showExercise(map['native'], map['foreign']);
+    newCard.showExercise(map['native'], map['foreign']);
 
     // create Flashcard object, giving it the learningPanel element
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
@@ -419,8 +417,8 @@ $(document).ready(function(){
     //flashcard.showExercise("people", "personas");
 
     //create Fill_In_The_Blank object
-    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
-    fitb.showExercise("people", "personas");
+    //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
+    //fitb.showExercise("people", "personas");
 //    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
 //    fitb.showExercise("people", "personas");
 

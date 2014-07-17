@@ -54,6 +54,26 @@
 	height: 50%;
 }
 
+#topPanel {
+	font-size: 50%;
+	color: gray;
+}
+
+#topPanel > div {
+	font-size: 200%;
+	color: black;
+}
+
+#bottomPanel {
+	font-size: 50%;
+	color: gray;
+}
+
+#bottomPanel > div {
+	font-size: 200%;
+	color: black;
+}
+
 .flash-langPanel {
 	position: absolute;
 	top: 0;
@@ -64,6 +84,7 @@
 	margin: auto;
 	margin-left: 25%;
 	height: 30%;
+	/*font-size: 50%;*/
 }
 
 .flash-reveal {
