@@ -329,21 +329,6 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     return that;
 }
 
-var Word_Order = function(leftpos, toppos, learningPanel, model) {
-	var that = {};
-	
-	var setPosition = function() {
-		learningPanel.css("left", leftpos + "px");
-        learningPanel.css("top", toppos + "px");
-	}
-	
-	that.showExercise = function(l1, l2) {
-		
-	}
-	
-	return that;
-}
-
 //all vocab should be lowercase, no punctuation.
 var people = Word('people', {'spanish': 'personas'})
 var government = Word('government', {'spanish': 'gobierno'})
