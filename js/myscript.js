@@ -256,7 +256,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var foreignPanel = $("<div>").addClass("foreignPanel fill_in_the_blank");
     var nativePanel = $("<div>").addClass("nativePanel fill_in_the_blank");
     var answerStatus = $("<div>").addClass("answerStatus fill_in_the_blank");
-    var revealButton = $("<div>").addClass("revealButton fill_in_the_blank").text('').attr('display', 'none');
+    var revealButton = $("<button>").addClass("revealButton fill_in_the_blank").text('reveal').attr('type', 'button');
 
     var setPosition = function(){
         learningPanel.css("left", leftpos + "px");
@@ -276,11 +276,9 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         else {
             //TODO: have a 'reveal answer' button appear.
             var url = chrome.extension.getURL("static/wrong.png");
-            //TODO: align image on the right.
             $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />');
-//            $('.answerStatus.fill_in_the_blank').css('align', 'right');
             $('#fitb_translation_field').attr('placeholder', 'try again').val('');
-            $('.revealButton.fill_in_the_blank').attr('display', 'inline');
+            $('.revealButton.fill_in_the_blank').css('display', 'inline');
 
 
             revealButton.click(function() {
@@ -288,7 +286,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
                 $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />')
                 var map = model.getExerciseMap(model);
                 var newCard = parseMap(map);
-                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1250);
+                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 2000);
             });
         }
     }
@@ -309,7 +307,6 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             lang = model.getNativeLanguage();
             answer = l1;
             nativeBlank = true;
-            topQuantity = '-6px';
 
         }
         else {
@@ -317,8 +314,8 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             lang = model.getForeignLanguage();
             answer = l2;
             nativeBlank = false;
-            topQuantity = '-1px';
         }
+
         lefttop.append(foreignPanel);
         leftbottom.append(nativePanel);
         left.append(lefttop).append(leftbottom);
@@ -326,10 +323,16 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         learningPanel.append(left).append(right);
 
         //CSS below used to align text in input field and text in div.
-        (nativeBlank) ? $('.foreignPanel.fill_in_the_blank').css('left', '4px') : $('.nativePanel.fill_in_the_blank').css('left', '4px')
+        if (nativeBlank) {
+            $('.foreignPanel.fill_in_the_blank').css('left', '4px');
+            $('.revealButton.fill_in_the_blank').css('top', '53%');
+        }
+        else {
+            $('.nativePanel.fill_in_the_blank').css('left', '4px');
+            $('.revealButton.fill_in_the_blank').css('top', '12%');
+        }
         $('#fitb_translation_field').attr('placeholder', 'translate to ' + lang);
         $('#fitb_translation_field').focus();
-//        $("#fitb_translation_field").css('margin-top', topQuantity);
 
         $('#fitb_translation_field').keydown(function(e) {
             if (e.which==13 || e.keyCode==13) {
@@ -418,12 +421,6 @@ $(document).ready(function(){
     //fitb.showExercise("people", "personas");
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel, model);
     //flashcard.showExercise("people", "personas");
-
-    //create Fill_In_The_Blank object
-    //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
-    //fitb.showExercise("people", "personas");
-//    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
-//    fitb.showExercise("people", "personas");
 
     // ------ other useful methods (currently these don't do anything) --------
     var videoElement = document.getElementsByClassName('video-stream')[0];

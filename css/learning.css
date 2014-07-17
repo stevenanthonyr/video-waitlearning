@@ -130,18 +130,19 @@
     float: left;
 }
 
-/*
-.foreignPanel.fill_in_the_blank div {
-    vertical-align: middle;
-}
-
-.nativePanel.fill_in_the_blank div{
-    vertical-align: middle;
-}
-*/
-
-.fill_in_the_blank input {
-    vertical-align: middle;
+.revealButton.fill_in_the_blank {
+    display: none;
+    font-style: italic;
+    border: 1px solid gray;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 54%;
+    left: 57%;
+    width: 50px;
+    height: 20px;
 }
 
 .fill_in_the_blank input{
