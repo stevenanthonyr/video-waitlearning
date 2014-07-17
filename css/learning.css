@@ -64,6 +64,12 @@
 	color: black;
 }
 
+#topPanel > p {
+	position: absolute;
+	bottom: 15%;
+	left: 13%;
+}
+
 #bottomPanel {
 	font-size: 50%;
 	color: gray;
@@ -72,6 +78,12 @@
 #bottomPanel > div {
 	font-size: 200%;
 	color: black;
+}
+
+#bottomPanel > p {
+	position: absolute;
+	bottom: 15%;
+	left: 13%;
 }
 
 .flash-langPanel {
