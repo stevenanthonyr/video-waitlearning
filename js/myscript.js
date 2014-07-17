@@ -16,7 +16,7 @@ function getRandomInt(min, max) {
 //                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
 function parseMap(map) {
     if (map['type'] == 'flashcard') {
-        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
     else if (map['type'] == 'fill_in_the_blank') {
         return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
@@ -264,10 +264,12 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
     var left = $("<div>").addClass("left fill_in_the_blank");
     var right = $("<div>").addClass("right fill_in_the_blank");
+    var lefttop = $("<div>").addClass("left_subsection fill_in_the_blank");
+    var leftbottom = $("<div>").addClass("left_subsection fill_in_the_blank");
     var foreignPanel = $("<div>").addClass("foreignPanel fill_in_the_blank");
     var nativePanel = $("<div>").addClass("nativePanel fill_in_the_blank");
     var answerStatus = $("<div>").addClass("answerStatus fill_in_the_blank");
-    var revealButton = $("<div>").addClass("revealButton fill_in_the_blank").text('').attr('display', 'none');
+    var revealButton = $("<button>").addClass("revealButton fill_in_the_blank").text('reveal').attr('type', 'button');
 
     var setPosition = function(){
         learningPanel.css("left", leftpos + "px");
@@ -277,12 +279,6 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var compareAnswer = function(answer) {
         var submittedTranslation = $('#fitb_translation_field').val().toLowerCase();
         if (submittedTranslation == answer) {
-            //success message
-            // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
-            learningPanel.empty();
-            //model.getExercise();
-            //var map = model.getExerciseMap();
-
             var url = chrome.extension.getURL("static/right.png");
             $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
@@ -293,19 +289,20 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         else {
             //TODO: have a 'reveal answer' button appear.
             var url = chrome.extension.getURL("static/wrong.png");
-            //TODO: align image on the right.
             $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />');
-//            $('.answerStatus.fill_in_the_blank').css('align', 'right');
             $('#fitb_translation_field').attr('placeholder', 'try again').val('');
-            $('.revealButton.fill_in_the_blank').attr('display', inline);
+            $('.revealButton.fill_in_the_blank').css('display', 'inline');
 
 
             revealButton.click(function() {
-                $('#fitb_translation_field').val(answer);
+                var replacementDiv = $('<div>').addClass("fitb_translation").attr('id', 'fitb_translation_div').text(answer);
+                $('#fitb_translation_field').replaceWith(replacementDiv);
+                replacementDiv.css('position', 'absolute').css('left', '4px');
+                $('.revealButton.fill_in_the_blank').css('display', 'none');
                 $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />')
                 var map = model.getExerciseMap(model);
                 var newCard = parseMap(map);
-                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1250);
+                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1750);
             });
         }
     }
@@ -313,17 +310,20 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     //l1 and l2 are strings
     //l1 = native, l2 = foreign
     that.showExercise = function(l1, l2){
-        learningPanel.empty();
-        var langDict = model.getLanguageCodeDict();
         var lang;
-        var nativeBlank = true;
+        var topQuantity;
+        var nativeBlank;
+        var langDict = model.getLanguageCodeDict();
+        learningPanel.empty();
         foreignPanel.html(l2);
         nativePanel.html(l1);
-        var inputField = '<div id="fitb_translation_container"><input type="text" value="" autocomplete="off" id="fitb_translation_field"></div>';
+        var inputField = '<input type="text" value="" autocomplete="off" class="fitb_translation" id="fitb_translation_field">';
         if (rand > .5) {
             nativePanel.html(inputField);
             lang = model.getNativeLanguage();
             answer = l1;
+            nativeBlank = true;
+
         }
         else {
             foreignPanel.html(inputField);
@@ -332,12 +332,21 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             nativeBlank = false;
         }
 
-        left.append(foreignPanel).append(nativePanel);
+        lefttop.append(foreignPanel);
+        leftbottom.append(nativePanel);
+        left.append(lefttop).append(leftbottom);
         right.append(answerStatus).append(revealButton);
         learningPanel.append(left).append(right);
 
         //CSS below used to align text in input field and text in div.
-        (nativeBlank) ? $('.foreignPanel.fill_in_the_blank').css('left', '4px') : $('.nativePanel.fill_in_the_blank').css('left', '4px')
+        if (nativeBlank) {
+            $('.foreignPanel.fill_in_the_blank').css('left', '4px');
+            $('.revealButton.fill_in_the_blank').css('top', '53%');
+        }
+        else {
+            $('.nativePanel.fill_in_the_blank').css('left', '4px');
+            $('.revealButton.fill_in_the_blank').css('top', '12%');
+        }
         $('#fitb_translation_field').attr('placeholder', 'translate to ' + lang);
         $('#fitb_translation_field').focus();
 
@@ -426,10 +435,11 @@ $(document).ready(function(){
     var controls = $(".html5-video-controls");
     var controls_leftpos = controls.position().left;
     var controls_toppos = controls.position().top;
+    console.log(controls_leftpos, controls_toppos)
 
     // create and attach learningPanel before controls
     var flashcard_leftpos = controls_leftpos;
-    var flashcard_toppos = controls_toppos - 120;
+    var flashcard_toppos = controls_toppos - 131;
     var learningPanel = $("<div>").attr("id", "learningPanel").addClass("learningPanel");
     learningPanel.insertBefore(controls);
 
@@ -450,12 +460,6 @@ $(document).ready(function(){
     //fitb.showExercise("people", "personas");
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel, model);
     //flashcard.showExercise("people", "personas");
-
-    //create Fill_In_The_Blank object
-    //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
-    //fitb.showExercise("people", "personas");
-//    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
-//    fitb.showExercise("people", "personas");
 
     // ------ other useful methods (currently these don't do anything) --------
     var videoElement = document.getElementsByClassName('video-stream')[0];
