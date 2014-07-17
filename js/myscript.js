@@ -16,7 +16,7 @@ function getRandomInt(min, max) {
 //                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
 function parseMap(map) {
     if (map['type'] == 'flashcard') {
-        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
     else if (map['type'] == 'fill_in_the_blank') {
         return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
@@ -251,6 +251,8 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
     var left = $("<div>").addClass("left fill_in_the_blank");
     var right = $("<div>").addClass("right fill_in_the_blank");
+    var lefttop = $("<div>").addClass("left_subsection fill_in_the_blank");
+    var leftbottom = $("<div>").addClass("left_subsection fill_in_the_blank");
     var foreignPanel = $("<div>").addClass("foreignPanel fill_in_the_blank");
     var nativePanel = $("<div>").addClass("nativePanel fill_in_the_blank");
     var answerStatus = $("<div>").addClass("answerStatus fill_in_the_blank");
@@ -264,12 +266,6 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var compareAnswer = function(answer) {
         var submittedTranslation = $('#fitb_translation_field').val().toLowerCase();
         if (submittedTranslation == answer) {
-            //success message
-            // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
-            learningPanel.empty();
-            //model.getExercise();
-            //var map = model.getExerciseMap();
-
             var url = chrome.extension.getURL("static/right.png");
             $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
@@ -284,7 +280,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />');
 //            $('.answerStatus.fill_in_the_blank').css('align', 'right');
             $('#fitb_translation_field').attr('placeholder', 'try again').val('');
-            $('.revealButton.fill_in_the_blank').attr('display', inline);
+            $('.revealButton.fill_in_the_blank').attr('display', 'inline');
 
 
             revealButton.click(function() {
@@ -300,26 +296,32 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     //l1 and l2 are strings
     //l1 = native, l2 = foreign
     that.showExercise = function(l1, l2){
-        learningPanel.empty();
-        var langDict = model.getLanguageCodeDict();
         var lang;
-        var nativeBlank = true;
+        var topQuantity;
+        var nativeBlank;
+        var langDict = model.getLanguageCodeDict();
+        learningPanel.empty();
         foreignPanel.html(l2);
         nativePanel.html(l1);
-        var inputField = '<div id="fitb_translation_container"><input type="text" value="" autocomplete="off" id="fitb_translation_field"></div>';
+        var inputField = '<input type="text" value="" autocomplete="off" id="fitb_translation_field">';
         if (rand > .5) {
             nativePanel.html(inputField);
             lang = model.getNativeLanguage();
             answer = l1;
+            nativeBlank = true;
+            topQuantity = '-6px';
+
         }
         else {
             foreignPanel.html(inputField);
             lang = model.getForeignLanguage();
             answer = l2;
             nativeBlank = false;
+            topQuantity = '-1px';
         }
-
-        left.append(foreignPanel).append(nativePanel);
+        lefttop.append(foreignPanel);
+        leftbottom.append(nativePanel);
+        left.append(lefttop).append(leftbottom);
         right.append(answerStatus).append(revealButton);
         learningPanel.append(left).append(right);
 
@@ -327,6 +329,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         (nativeBlank) ? $('.foreignPanel.fill_in_the_blank').css('left', '4px') : $('.nativePanel.fill_in_the_blank').css('left', '4px')
         $('#fitb_translation_field').attr('placeholder', 'translate to ' + lang);
         $('#fitb_translation_field').focus();
+//        $("#fitb_translation_field").css('margin-top', topQuantity);
 
         $('#fitb_translation_field').keydown(function(e) {
             if (e.which==13 || e.keyCode==13) {
@@ -370,14 +373,15 @@ var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
 Sentence_Order.prototype = new Draggable_Box;
 
 //all vocab should be lowercase, no punctuation.
-var people = Word('people', {'spanish': 'personas'})
-var government = Word('government', {'spanish': 'gobierno'})
-var thing = Word('thing', {'spanish': 'cosa'})
+//var people = Word('people', {'spanish': 'personas'})
+//var government = Word('government', {'spanish': 'gobierno'})
+//var thing = Word('thing', {'spanish': 'cosa'})
 var cat = Word('cat', {'spanish': 'gato'})
-var war = Word('war', {'spanish': 'guerra'})
-var computer = Word('computer', {'spanish': 'computadora'})
-var sad = Word('sad', {'spanish': 'triste'})
-var vocab = [people, government, thing, cat, war, computer, sad];
+//var war = Word('war', {'spanish': 'guerra'})
+//var computer = Word('computer', {'spanish': 'computadora'})
+//var sad = Word('sad', {'spanish': 'triste'})
+//var vocab = [people, government, thing, cat, war, computer, sad];
+var vocab = [cat];
 console.log(vocab);
 
 //VIEW (kind of)

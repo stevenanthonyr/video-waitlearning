@@ -35,14 +35,14 @@
 /* Flashcard items */
 
 .flash-left{
-	position: relative;
+    position: relative;
     width: 50%;
     height: 100%;
     float: left;
 }
 
 .flash-right{
-	position: relative;
+    position: relative;
     width: 50%;
     height: 100%;
     float: right;
@@ -50,89 +50,109 @@
 
 
 .subsection {
-	position: relative;
-	height: 50%;
+    position: relative;
+    height: 50%;
 }
 
 #topPanel {
-	font-size: 50%;
-	color: gray;
+    font-size: 50%;
+    color: gray;
 }
 
 #topPanel > div {
-	font-size: 200%;
-	color: black;
+    font-size: 200%;
+    color: black;
 }
 
 #bottomPanel {
-	font-size: 50%;
-	color: gray;
+    font-size: 50%;
+    color: gray;
 }
 
 #bottomPanel > div {
-	font-size: 200%;
-	color: black;
+    font-size: 200%;
+    color: black;
 }
 
 .flash-langPanel {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	width: 30%;
-	margin: auto;
-	margin-left: 25%;
-	height: 30%;
-	/*font-size: 50%;*/
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 30%;
+    margin: auto;
+    margin-left: 25%;
+    height: 30%;
+    /*font-size: 50%;*/
 }
 
 .flash-reveal {
     font-style: italic;
     border: 1px solid gray;
     border-radius: 5px;
-	/*background-color: gray;*/
+    /*background-color: gray;*/
     text-align: center;
-	font-weight: bold;
-	cursor: pointer;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	width: 30%;
-	margin: auto;
-	margin-left: 25%;
-	height: 30%;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 30%;
+    margin: auto;
+    margin-left: 25%;
+    height: 30%;
 }
 
 .check {
-	cursor: pointer;
-	height: 90%;
-	float: left;`
+    cursor: pointer;
+    height: 90%;
+    float: left;`
 }
 
 
 /* Fill_in_the_blank items */
 
+.answerStatus.fill_in_the_blank img{
+    float: right;
+    height: 90%;
+}
 
 #fitb_translation_field {
     font-size: 24px;
 }
 
 .left.fill_in_the_blank {
-/*    width: 40%;*/
-    width: 190px;
-    height: 125px;
+    width: 47.5%;
+    height: 100%;
     float: left;
-    border: solid;
+}
+
+.foreignPanel.fill_in_the_blank div {
+    vertical-align: middle;
+}
+
+.nativePanel.fill_in_the_blank div{
+    vertical-align: middle;
+}
+
+.foreignPanel.fill_in_the_blank input {
+    vertical-align: middle;
+}
+
+.nativePanel.fill_in_the_blank input{
+    vertical-align: middle;
 }
 
 .right.fill_in_the_blank{
-/*    width: 40%;*/
-    width: 190px;
-    height: 125px;
+    width: 47.5%;
+    height: 100%;
     float: right;
-    border: dotted;
 }
 
+.left_subsection {
+    position: relative;
+    height: 50%;
+}
