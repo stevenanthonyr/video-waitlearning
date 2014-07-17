@@ -226,8 +226,9 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         else {
             //TODO: have a 'reveal answer' button appear.
             var url = chrome.extension.getURL("static/wrong.png");
+            //TODO: align image on the right.
             $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />');
-            $('.answerStatus.fill_in_the_blank').css('align', 'right');
+//            $('.answerStatus.fill_in_the_blank').css('align', 'right');
             $('#fitb_translation_field').attr('placeholder', 'try again').val('');
             $('.revealButton.fill_in_the_blank').attr('display', inline);
 
