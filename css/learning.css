@@ -120,8 +120,12 @@
     height: 90%;
 }
 
-#fitb_translation_field {
+.fitb_translation {
     font-size: 24px;
+}
+
+#fitb_translation_div {
+
 }
 
 .left.fill_in_the_blank {

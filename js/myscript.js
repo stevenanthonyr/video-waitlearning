@@ -282,11 +282,14 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
 
             revealButton.click(function() {
-                $('#fitb_translation_field').val(answer);
+                var replacementDiv = $('<div>').addClass("fitb_translation").attr('id', 'fitb_translation_div').text(answer);
+                $('#fitb_translation_field').replaceWith(replacementDiv);
+                replacementDiv.css('position', 'absolute').css('left', '4px');
+                $('.revealButton.fill_in_the_blank').css('display', 'none');
                 $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />')
                 var map = model.getExerciseMap(model);
                 var newCard = parseMap(map);
-                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 2000);
+                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1750);
             });
         }
     }
@@ -301,7 +304,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         learningPanel.empty();
         foreignPanel.html(l2);
         nativePanel.html(l1);
-        var inputField = '<input type="text" value="" autocomplete="off" id="fitb_translation_field">';
+        var inputField = '<input type="text" value="" autocomplete="off" class="fitb_translation" id="fitb_translation_field">';
         if (rand > .5) {
             nativePanel.html(inputField);
             lang = model.getNativeLanguage();
@@ -397,10 +400,11 @@ $(document).ready(function(){
     var controls = $(".html5-video-controls");
     var controls_leftpos = controls.position().left;
     var controls_toppos = controls.position().top;
+    console.log(controls_leftpos, controls_toppos)
 
     // create and attach learningPanel before controls
     var flashcard_leftpos = controls_leftpos;
-    var flashcard_toppos = controls_toppos - 120;
+    var flashcard_toppos = controls_toppos - 131;
     var learningPanel = $("<div>").attr("id", "learningPanel").addClass("learningPanel");
     learningPanel.insertBefore(controls);
 
