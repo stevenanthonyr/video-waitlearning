@@ -373,15 +373,14 @@ var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
 Sentence_Order.prototype = new Draggable_Box;
 
 //all vocab should be lowercase, no punctuation.
-//var people = Word('people', {'spanish': 'personas'})
-//var government = Word('government', {'spanish': 'gobierno'})
-//var thing = Word('thing', {'spanish': 'cosa'})
+var people = Word('people', {'spanish': 'personas'})
+var government = Word('government', {'spanish': 'gobierno'})
+var thing = Word('thing', {'spanish': 'cosa'})
 var cat = Word('cat', {'spanish': 'gato'})
-//var war = Word('war', {'spanish': 'guerra'})
-//var computer = Word('computer', {'spanish': 'computadora'})
-//var sad = Word('sad', {'spanish': 'triste'})
-//var vocab = [people, government, thing, cat, war, computer, sad];
-var vocab = [cat];
+var war = Word('war', {'spanish': 'guerra'})
+var computer = Word('computer', {'spanish': 'computadora'})
+var sad = Word('sad', {'spanish': 'triste'})
+var vocab = [people, government, thing, cat, war, computer, sad];
 console.log(vocab);
 
 //VIEW (kind of)
