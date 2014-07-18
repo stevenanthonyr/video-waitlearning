@@ -408,6 +408,8 @@ var Draggable_Box = function() {
     var that = {};
     var top = $('<div>').attr('id', 'draggable-top');
     var bottom = $('<div>').attr('id', 'draggable-bottom');
+	that.top = top;
+	that.bottom = bottom;
     var userAnswer = []
 
     var allAtTop = function() {
@@ -487,6 +489,9 @@ var Draggable_Box = function() {
 
             learningPanel.append(top).append(bottom);
         }
+		console.log(top);
+		console.log(bottom);
+        learningPanel.append(Draggable_Box.top).append(Draggable_Box.bottom);
 
         setPosition();
         Object.freeze(that);
