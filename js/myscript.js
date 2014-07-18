@@ -468,7 +468,7 @@ var Draggable_Box = function() {
             shuffle(userItems);
             for (i in userItems) {
                 item = userItems[i];
-                bottom.append(item);
+                bottom.append(item.generateHTML());
                 createDashedBox();
 
                 item.click(function() {
