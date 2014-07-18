@@ -350,24 +350,35 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 }
 
 //Class that creates objects to be used for larger, draggable problems.
-//helpText - text to accompany the image or, if no filename is provided, text used for the draggable item.
-//filename - optional argument, used to link to an existing image. if passed in, start with static/...
-var Item = function(helpText, filename) {
-    //note: if filename not passed in, expect it to be 'undefined'
+//helpText - text to accompany the image or, if no path is provided, text used for the draggable item.
+//path - optional argument, used to link to an existing image. if passed in, start with static/...
+var Item = function(helpText, path) {
+    //note: if path not passed in, expect it to be 'undefined'
     var that = {};
     var self = this;
     var atTop = false;
 
     that.getInfo = function() {
-        return {'helpText': helpText, 'filename': filename};
+        return {'helpText': helpText, 'path': path};
     }
 
     that.getAtTop = function() {
         return atTop;
     }
 
-    that.getFilename = function() {
-        return filename;
+    that.getPath = function() {
+        return path;
+    }
+
+//    var wrong = $("<img>").addClass("check")//.addClass("not-clickable");
+//    wrong.attr('src', chrome.extension.getURL('static/wrong.png'));
+    that.generateHTML = function() {
+        var image = $("<img>").addClass("item_image");
+        image.attr('src', chrome.extension.getURL(path));
+        var helpText = $("<span>").text(helpText);
+        var container = $("<div>").addClass('item_container');
+        container.append(image).append(helpText);
+        return container;
     }
 
     that.toggleAtTop = function() {
@@ -473,8 +484,7 @@ var Draggable_Box = function() {
                     self.moveItem(item);
                 })
             }
-            console.log('top ' + top);
-            console.log('bottom ' + bottom);
+
             learningPanel.append(top).append(bottom);
         }
 
