@@ -137,6 +137,8 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     wrong.attr('src', chrome.extension.getURL('static/wrong.png'));
 
     var setPosition = function(){
+        learningPanel.css("width", "400px");
+        learningPanel.css("height", "125px");
         learningPanel.css("left", leftpos + "px");
         learningPanel.css("top", toppos + "px");
     };
@@ -231,6 +233,8 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var revealButton = $("<button>").addClass("revealButton fill_in_the_blank").text('reveal').attr('type', 'button');
 
     var setPosition = function(){
+        learningPanel.css("width", "400px");
+        learningPanel.css("height", "125px");
         learningPanel.css("left", leftpos + "px");
         learningPanel.css("top", toppos + "px");
     };
@@ -357,6 +361,7 @@ var Draggable_Box = function() {
         }
     }
 
+    //todo: do animations in here.
     that.moveItem = function(item) {
         if (item.getAtTop() == true) {
             item.toggleAtTop();
@@ -398,6 +403,9 @@ var How_To = function(leftpos, toppos, learningPanel, model) {
     var that = {};
 
     var setPosition = function() {
+        //854 x 480
+        learningPanel.css('width', '854px');
+        learningPanel.css('height', '480px');
         learningPanel.css("left", leftpos + "px");
         learningPanel.css("top", toppos + "px");
     }
