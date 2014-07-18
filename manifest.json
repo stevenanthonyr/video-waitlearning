@@ -18,7 +18,8 @@
   "web_accessible_resources":[
     "css/learning.css",
     "static/right.png",
-    "static/wrong.png"
+    "static/wrong.png",
+	"static/stepimages/egg1.png"
   ],
   "manifest_version": 2
 }
