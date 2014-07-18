@@ -433,58 +433,59 @@ var Draggable_Box = function() {
             compareAnswer();
         }
     }
+
+    that.How_To = function(leftpos, toppos, learningPanel, model, group) {
+        var self = this;
+        var that = {};
+        var ANSWER = group.getItems();
+
+        var setPosition = function() {
+            learningPanel.css('width', '854px');
+            learningPanel.css('height', '475px');
+            learningPanel.css("left", leftpos + "px");
+            learningPanel.css("top", toppos + "px");
+        }
+
+        var createDashedBox = function() {
+
+        }
+
+        that.compareAnswer = function() {
+            if (ANSWER === getUserAnswer()) {
+                //yay
+            }
+            else {
+                //wrong
+            }
+        }
+
+        that.showExercise = function() {
+            //TODO: TEST THIS HARD
+            //IF THIS IS BROKEN, LIFE SUCKS
+            var userItems = $.extend([], ANSWER);
+            shuffle(userItems);
+            for (i in userItems) {
+                item = userItems[i];
+                bottom.append(item);
+                createDashedBox();
+
+                item.click(function() {
+                    self.moveItem(item);
+                })
+            }
+            console.log('top ' + top);
+            console.log('bottom ' + bottom);
+            learningPanel.append(top).append(bottom);
+        }
+
+        setPosition();
+        Object.freeze(that);
+        return that;
+    }
     return that;
 }
 
-var How_To = function(leftpos, toppos, learningPanel, model, group) {
-    var self = this;
-    var that = {};
-    var ANSWER = group.getItems();
-
-    var setPosition = function() {
-        learningPanel.css('width', '854px');
-        learningPanel.css('height', '480px');
-        learningPanel.css("left", leftpos + "px");
-        learningPanel.css("top", toppos + "px");
-    }
-
-    var createDashedBox = function() {
-
-    }
-
-    that.compareAnswer = function() {
-        if (ANSWER === getUserAnswer()) {
-            //yay
-        }
-        else {
-            //wrong
-        }
-    }
-
-    that.showExercise = function() {
-        //TODO: TEST THIS HARD
-        //IF THIS IS BROKEN, LIFE SUCKS
-        var userItems = $.extend([], ANSWER);
-        shuffle(userItems);
-        for (i in userItems) {
-            item = userItems[i];
-            bottom.append(item);
-            createDashedBox();
-
-            item.click(function() {
-                self.moveItem(item);
-            })
-        }
-        console.log('top ' + top);
-        console.log('bottom ' + bottom);
-        learningPanel.append(top).append(bottom);
-    }
-
-    setPosition();
-    Object.freeze(that);
-    return that;
-}
-How_To.prototype = new Draggable_Box();
+//How_To.prototype = new Draggable_Box();
 //How_To.prototype = Object.create(Draggable_Box.prototype);
 
 var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
@@ -550,7 +551,8 @@ $(document).ready(function(){
     var group = Group('eggs', [egg1])
 
     //create HowTo
-    var how_to = How_To(0, 0, learningPanel, model, group);
+    var draggable_box = Draggable_Box();
+    var how_to = draggable_box.How_To(0, 0, learningPanel, model, group);
     how_to.showExercise();
 
     //create Fill_In_The_Blank object
