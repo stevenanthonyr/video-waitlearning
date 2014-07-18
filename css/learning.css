@@ -124,6 +124,14 @@
     float: left;`
 }
 
+.clickable {
+	opacity: 1;
+}
+
+.not-clickable {
+	opacity: 0.3;
+}	
+
 
 /* Fill_in_the_blank items */
 
