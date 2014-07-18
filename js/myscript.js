@@ -23,6 +23,13 @@ function parseMap(map) {
     }
 }
 
+//+ Jonas Raoni Soares Silva
+//@ http://jsfromhell.com/array/shuffle [v1.0]
+function shuffle(o){ //v1.0
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+//    return o;
+};
+
 //MODELS
 
 //Objects of the Word class are stored in model to pull words
@@ -241,16 +248,13 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
     var compareAnswer = function(answer) {
         var submittedTranslation;
-        console.log('in compans')
+
         try {
             submittedTranslation = $('#fitb_translation_field').val().toLowerCase();
         }
 
         catch(err) {
             console.log('Your string was improperly formatted.');
-            console.log('value ' + $('#fitb_translation_field').val());
-            console.log('submittedTrans ' + submittedTranslation);
-//            submittedTranslation = 'asefjnefksjdfg';
         }
 
         if (submittedTranslation == answer) {
@@ -269,7 +273,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             setTimeout(function(){
                 $('#fitb_translation_field').attr('placeholder', 'try again');
                 $('.fitb_try_again::-webkit-input-placeholder').fadeIn(500);
-            }, 200);
+            }, 500);
             $('.revealButton.fill_in_the_blank').css('display', 'inline');
 
 
@@ -345,36 +349,6 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     return that;
 }
 
-var Draggable_Box = function() {
-    var that = {};
-    var items = [];
-    var top = $('<div>').attr('id', 'draggable-top');
-    var bottom = $('<div>').attr('id', 'draggable-bottom');
-    //learningPanel.append(top).append(bottom);
-
-    var allAtTop = function() {
-        if (bottom.contents().length == 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    //todo: do animations in here.
-    that.moveItem = function(item) {
-        if (item.getAtTop() == true) {
-            item.toggleAtTop();
-            bottom.append(item);
-        }
-        else {
-            item.toggleAtTop();
-            top.append(item);
-        }
-    }
-    return that;
-}
-
 //Class that creates objects to be used for larger, draggable problems.
 //helpText - text to accompany the image or, if no filename is provided, text used for the draggable item.
 //filename - optional argument, used to link to an existing image. if passed in, start with static/...
@@ -399,22 +373,106 @@ var Draggable_Item = function(helpText, filename) {
     return that;
 }
 
-var How_To = function(leftpos, toppos, learningPanel, model) {
+//A group is a collection of items, representing steps in a problem or in a sentence, that follow each other in order, with
+//the first step at the 0 index and the last step at the nth index, where n is len(items) - 1.
+var Group = function(name, items) {
     var that = {};
 
+    that.getName = function() {
+        return this.name;
+    }
+
+    that.getItems = function() {
+        return this.items;
+    }
+
+    return that;
+}
+
+var Draggable_Box = function() {
+    var that = {};
+    var top = $('<div>').attr('id', 'draggable-top');
+    var bottom = $('<div>').attr('id', 'draggable-bottom');
+    that.userAnswer = []
+
+    var allAtTop = function() {
+        if (bottom.contents().length == 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    var compareAnswer = function() {
+        //overridden in subclasses
+    }
+
+    that.getUserAnswer() = function() {
+        return userAnswer;
+    }
+
+    //todo: do animations in here.
+    that.moveItem = function(item) {
+        if (item.getAtTop() == true) {
+            var index = userAnswer.indexOf(item);
+            item.toggleAtTop();
+            userAnswer.splice(index, 1);
+            bottom.append(item);
+        }
+        else {
+            item.toggleAtTop();
+            userAnswer.append(item);
+            top.append(item);
+        }
+        if (allAtTop) {
+            compareAnswer();
+        }
+    }
+    return that;
+}
+
+var How_To = function(leftpos, toppos, learningPanel, model, group) {
+    var self = this;
+    var that = {};
+    var ANSWER = group.getItems();
+
     var setPosition = function() {
-        //854 x 480
         learningPanel.css('width', '854px');
         learningPanel.css('height', '480px');
         learningPanel.css("left", leftpos + "px");
         learningPanel.css("top", toppos + "px");
     }
 
-    that.showExercise = function(items) {
-        for (i in items) {
-            item = items[i];
-            bottom.append(item);
+    var createDashedBox = function() {
+
+    }
+
+    that.compareAnswer = function() {
+        if (ANSWER === getUserAnswer()) {
+            //yay
         }
+        else {
+            //wrong
+        }
+    }
+
+    that.showExercise = function() {
+        //TODO: TEST THIS HARD
+        //IF THIS IS BROKEN, LIFE SUCKS
+        var userItems = $.extend([], ANSWER);
+        shuffle(userItems);
+        for (i in userItems) {
+            item = userItems[i];
+            bottom.append(item);
+            createDashedBox();
+
+            item.click(function() {
+                self.moveItem(item);
+            })
+        }
+
+        learningPanel.append(top, bottom);
     }
 
     setPosition();
@@ -422,6 +480,7 @@ var How_To = function(leftpos, toppos, learningPanel, model) {
     return that;
 }
 How_To.prototype = new Draggable_Box();
+//How_To.prototype = Object.create(Draggable_Box.prototype);
 
 var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
     var that = {};
