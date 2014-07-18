@@ -378,6 +378,7 @@ var Item = function(helpText, path) {
         var helpText = $("<span>").text(helpText);
         var container = $("<div>").addClass('item_container');
         container.append(image).append(helpText);
+		console.log('container' + container);
         return container;
     }
 
@@ -394,11 +395,11 @@ var Group = function(name, items) {
     var that = {};
 
     that.getName = function() {
-        return this.name;
+        return name;
     }
 
     that.getItems = function() {
-        return this.items;
+        return items;
     }
 
     return that;
@@ -475,23 +476,29 @@ var Draggable_Box = function() {
         that.showExercise = function() {
             //TODO: TEST THIS HARD
             //IF THIS IS BROKEN, LIFE SUCKS
+			learningPanel.append(top).append(bottom);
             var userItems = $.extend([], ANSWER);
             shuffle(userItems);
+			console.log(userItems.length);
             for (i in userItems) {
+				console.log('here')
                 item = userItems[i];
-                bottom.append(item.generateHTML());
+                $('#draggable-bottom').append(item.generateHTML());
+					console.log('dragbottom' + $('#draggable-bottom').html())
+				console.log('bottom ' + bottom.html())
                 createDashedBox();
 
-                item.click(function() {
+                /*item.click(function() {
                     self.moveItem(item);
-                })
+                });*/
             }
-
-            learningPanel.append(top).append(bottom);
+			//console.log('dragbottom' + $('#draggable-bottom').html())
+			//	console.log('bottom ' + bottom.html())
+            
         }
 		console.log(top);
 		console.log(bottom);
-        learningPanel.append(Draggable_Box.top).append(Draggable_Box.bottom);
+        //learningPanel.append(Draggable_Box.top).append(Draggable_Box.bottom);
 
         setPosition();
         Object.freeze(that);
@@ -564,6 +571,7 @@ $(document).ready(function(){
     //flashcard.showExercise("people", "personas");
     var egg1 = Item('1.', 'static/stepimages/egg1.png')
     var group = Group('eggs', [egg1])
+	console.log('egg ' + egg1.generateHTML().html());
 
     //create HowTo
     var draggable_box = Draggable_Box();
