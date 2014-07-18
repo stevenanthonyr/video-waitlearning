@@ -194,3 +194,14 @@
     height: 50%;
     vertical-align: middle;
 }
+
+
+/*How_To items*/
+
+#draggable-top {
+	height: 50%;
+}
+
+#draggable-bottom {
+	height: 50%;
+}
