@@ -397,6 +397,8 @@ var Draggable_Box = function() {
     var that = {};
     var top = $('<div>').attr('id', 'draggable-top');
     var bottom = $('<div>').attr('id', 'draggable-bottom');
+	that.top = top;
+	that.bottom = bottom;
     var userAnswer = []
 
     var allAtTop = function() {
@@ -475,8 +477,9 @@ var How_To = function(leftpos, toppos, learningPanel, model, group) {
                 self.moveItem(item);
             })
         }
-
-        learningPanel.append(top, bottom);
+		console.log(top);
+		console.log(bottom);
+        learningPanel.append(Draggable_Box.top).append(Draggable_Box.bottom);
     }
 
     setPosition();
@@ -550,6 +553,7 @@ $(document).ready(function(){
 
     //create HowTo
     var how_to = How_To(0, 0, learningPanel, model, group);
+	how_to.showExercise();
 
     //create Fill_In_The_Blank object
     //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
