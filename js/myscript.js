@@ -16,7 +16,7 @@ function getRandomInt(min, max) {
 //                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
 function parseMap(map) {
     if (map['type'] == 'flashcard') {
-        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
     else if (map['type'] == 'fill_in_the_blank') {
         return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
@@ -48,30 +48,6 @@ var Word = function(englishWord, translationDict) {
     }
 
     // Object.freeze(that); don't think this should be done : adding words to dictionary in future?
-    return that;
-}
-
-//Class that creates objects to be used for larger, draggable problems.
-//helpText - text to accompany the image or, if no filename is provided, text used for the draggable item.
-//filename - optional argument, used to link to an existing image. if passed in, start with static/...
-var Draggable_Item = function(helpText, filename) {
-    //note: if filename not passed in, expect it to be 'undefined'
-    var that = {};
-    var self = this;
-    var atTop = false;
-
-    that.getInfo = function() {
-        return {'helpText': helpText, 'filename': filename};
-    }
-
-    that.getAtTop = function() {
-        return atTop;
-    }
-
-    that.toggleAtTop = function() {
-        atTop = !atTop;
-    }
-
     return that;
 }
 
@@ -146,7 +122,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     var left = $("<div>").addClass("flash-left");
     var left_top = $("<div>").addClass("subsection").attr('id', 'topPanel');
     var left_bottom = $("<div>").addClass("subsection").attr('id', 'bottomPanel');
-    var right = $("<div>").addClass("flash-right");
+    var right = $("<div>").addClass("flash-right").attr("id", "not-clickable");
     var right_top = $("<div>").addClass("subsection").text("Got it!")
                                                      .css({'font-size':'50%', 'font-style':'italic'});
     var right_bottom = $("<div>").addClass("subsection").text("Darn! Missed it.")
@@ -155,10 +131,9 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     var nativePanel = $("<div>").addClass("flash-langPanel");
     var revealButton = $("<button>").addClass("flash-reveal").text("reveal");
     var revealed = false;
-    //var knownButton = $("<button>").addClass("flash-knownbutton").text("Already knew");
-    var correct = $("<img>").addClass("check");
+    var correct = $("<img>").addClass("check")//.addClass("not-clickable");
     correct.attr('src', chrome.extension.getURL('static/right.png'));
-    var wrong = $("<img>").addClass("check");
+    var wrong = $("<img>").addClass("check")//.addClass("not-clickable");
     wrong.attr('src', chrome.extension.getURL('static/wrong.png'));
 
     var setPosition = function(){
@@ -197,6 +172,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
 
         revealButton.click(function() {
             revealed = true;
+            right.attr('id', 'clickable');
             if (nativePanel.is(':hidden')) {
                 left_bottom.find('p').remove(); //removes alert text if present
                 revealButton.hide();
@@ -209,26 +185,9 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
             }
         });
 
-        /*knownButton.click(function() {
-            //model.getExercise();
-            //learningPanel.empty();
-            //var newCard = Flashcard(leftpos, toppos, learningPanel, model);
-
-            //var map = model.getExerciseMap();
-            var map = model.getExerciseMap(model);
-            learningPanel.empty();
-            var newCard = parseMap(map);
-            newCard.showExercise(map['native'], map['foreign']);
-            var i = getRandomInt(0,vocab.length);
-            while (vocab[i].l1 == l1) {
-                i = getRandomInt(0,vocab.length);
-            }
-
-            //newCard.showExercise(vocab[i].l1, vocab[i].l2);
-        });*/
-
         $('.check').click(function() {
             if (revealed) {
+                right.attr('id', 'not-clickable');
                 var map = model.getExerciseMap(model);
                 learningPanel.empty();
                 var newCard = parseMap(map);
@@ -387,6 +346,7 @@ var Draggable_Box = function() {
     var items = [];
     var top = $('<div>').attr('id', 'draggable-top');
     var bottom = $('<div>').attr('id', 'draggable-bottom');
+    //learningPanel.append(top).append(bottom);
 
     var allAtTop = function() {
         if (bottom.contents().length == 0) {
@@ -407,9 +367,53 @@ var Draggable_Box = function() {
             top.append(item);
         }
     }
+    return that;
+}
+
+//Class that creates objects to be used for larger, draggable problems.
+//helpText - text to accompany the image or, if no filename is provided, text used for the draggable item.
+//filename - optional argument, used to link to an existing image. if passed in, start with static/...
+var Draggable_Item = function(helpText, filename) {
+    //note: if filename not passed in, expect it to be 'undefined'
+    var that = {};
+    var self = this;
+    var atTop = false;
+
+    that.getInfo = function() {
+        return {'helpText': helpText, 'filename': filename};
+    }
+
+    that.getAtTop = function() {
+        return atTop;
+    }
+
+    that.toggleAtTop = function() {
+        atTop = !atTop;
+    }
 
     return that;
 }
+
+var How_To = function(leftpos, toppos, learningPanel, model) {
+    var that = {};
+
+    var setPosition = function() {
+        learningPanel.css("left", leftpos + "px");
+        learningPanel.css("top", toppos + "px");
+    }
+
+    that.showExercise = function(items) {
+        for (i in items) {
+            item = items[i];
+            bottom.append(item);
+        }
+    }
+
+    setPosition();
+    Object.freeze(that);
+    return that;
+}
+How_To.prototype = new Draggable_Box();
 
 var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
     var that = {};
@@ -427,7 +431,7 @@ var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
     Object.freeze(that);
     return that;
 }
-Sentence_Order.prototype = new Draggable_Box;
+Sentence_Order.prototype = new Draggable_Box();
 
 //all vocab should be lowercase, no punctuation.
 //var people = Word('people', {'spanish': 'personas'})

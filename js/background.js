@@ -19,7 +19,7 @@ chrome.extension.onRequest.addListener(function(req, sender, sendResponse) {
         chrome.pageAction.show(tabId);
 
           chrome.tabs.executeScript(tabId, {file: "js/jquery-1.8.1.min.js"}, function(){
-			  chrome.tabs.executeScript(tabId, {file: "js/jquery-ui.min.js"}, function(){
+			  chrome.tabs.executeScript(tabId, {file: "js/jquery-ui.js"}, function(){
 				  chrome.tabs.executeScript(tabId, {file: "js/myscript.js"},function(){
 					 if (chrome.runtime.lastError) {
 						console.log("ERROR: " + chrome.runtime.lastError.message);
