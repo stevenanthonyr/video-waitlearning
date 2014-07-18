@@ -16,7 +16,7 @@ function getRandomInt(min, max) {
 //                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
 function parseMap(map) {
     if (map['type'] == 'flashcard') {
-        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
     else if (map['type'] == 'fill_in_the_blank') {
         return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
@@ -122,7 +122,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     var left = $("<div>").addClass("flash-left");
     var left_top = $("<div>").addClass("subsection").attr('id', 'topPanel');
     var left_bottom = $("<div>").addClass("subsection").attr('id', 'bottomPanel');
-    var right = $("<div>").addClass("flash-right");
+    var right = $("<div>").addClass("flash-right").attr("id", "not-clickable");
     var right_top = $("<div>").addClass("subsection").text("Got it!")
                                                      .css({'font-size':'50%', 'font-style':'italic'});
     var right_bottom = $("<div>").addClass("subsection").text("Darn! Missed it.")
@@ -131,10 +131,9 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     var nativePanel = $("<div>").addClass("flash-langPanel");
     var revealButton = $("<button>").addClass("flash-reveal").text("reveal");
     var revealed = false;
-    //var knownButton = $("<button>").addClass("flash-knownbutton").text("Already knew");
-    var correct = $("<img>").addClass("check").addClass("not-clickable");
+    var correct = $("<img>").addClass("check")//.addClass("not-clickable");
     correct.attr('src', chrome.extension.getURL('static/right.png'));
-    var wrong = $("<img>").addClass("check").addClass("not-clickable");
+    var wrong = $("<img>").addClass("check")//.addClass("not-clickable");
     wrong.attr('src', chrome.extension.getURL('static/wrong.png'));
 
     var setPosition = function(){
@@ -173,7 +172,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
 
         revealButton.click(function() {
             revealed = true;
-			$('.check').attr('class', 'clickable');
+			right.attr('id', 'clickable');
             if (nativePanel.is(':hidden')) {
 				left_bottom.find('p').remove(); //removes alert text if present
                 revealButton.hide();
@@ -188,7 +187,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
 
         $('.check').click(function() {
 			if (revealed) {
-				$('.check').attr('class', 'not-clickable');
+				right.attr('id', 'not-clickable');
 				var map = model.getExerciseMap(model);
 				learningPanel.empty();
 				var newCard = parseMap(map);

@@ -39,6 +39,7 @@
     width: 50%;
     height: 100%;
     float: left;
+	cursor: default;
 }
 
 .flash-right{
@@ -46,6 +47,7 @@
     width: 50%;
     height: 100%;
     float: right;
+	cursor: default;
 }
 
 
@@ -119,19 +121,22 @@
 }
 
 .check {
-    cursor: pointer;
     height: 90%;
     float: left;`
 }
 
-.clickable {
+#clickable {
 	opacity: 1;
 }
 
-.not-clickable {
-	opacity: 0.3;
-}	
+#clickable .check {
+	cursor: pointer;
+}
 
+#not-clickable {
+	opacity: 0.1;
+	cursor: default;
+}
 
 /* Fill_in_the_blank items */
 
