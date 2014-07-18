@@ -391,7 +391,6 @@ var Draggable_Box = function() {
 			top.append(item);
 		}
 	}
-
     return that;
 }
 
