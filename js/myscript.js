@@ -16,10 +16,10 @@ function getRandomInt(min, max) {
 //                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
 function parseMap(map) {
     if (map['type'] == 'flashcard') {
-        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+//        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
     else if (map['type'] == 'fill_in_the_blank') {
-        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+//        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
 }
 
@@ -352,7 +352,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 //Class that creates objects to be used for larger, draggable problems.
 //helpText - text to accompany the image or, if no filename is provided, text used for the draggable item.
 //filename - optional argument, used to link to an existing image. if passed in, start with static/...
-var Draggable_Item = function(helpText, filename) {
+var Item = function(helpText, filename) {
     //note: if filename not passed in, expect it to be 'undefined'
     var that = {};
     var self = this;
@@ -364,6 +364,10 @@ var Draggable_Item = function(helpText, filename) {
 
     that.getAtTop = function() {
         return atTop;
+    }
+
+    that.getFilename = function() {
+        return filename;
     }
 
     that.toggleAtTop = function() {
@@ -393,7 +397,7 @@ var Draggable_Box = function() {
     var that = {};
     var top = $('<div>').attr('id', 'draggable-top');
     var bottom = $('<div>').attr('id', 'draggable-bottom');
-    that.userAnswer = []
+    var userAnswer = []
 
     var allAtTop = function() {
         if (bottom.contents().length == 0) {
@@ -408,7 +412,7 @@ var Draggable_Box = function() {
         //overridden in subclasses
     }
 
-    that.getUserAnswer() = function() {
+    that.getUserAnswer = function() {
         return userAnswer;
     }
 
@@ -523,7 +527,6 @@ $(document).ready(function(){
     var controls = $(".html5-video-controls");
     var controls_leftpos = controls.position().left;
     var controls_toppos = controls.position().top;
-    console.log(controls_leftpos, controls_toppos)
 
     // create and attach learningPanel before controls
     var flashcard_leftpos = controls_leftpos;
@@ -536,12 +539,17 @@ $(document).ready(function(){
     var map = model.getExerciseMap(model);
     var newCard = parseMap(map);
     $('input[autocomplete]').removeAttr('autocomplete');
-
-    newCard.showExercise(map['native'], map['foreign']);
+    //UNCOMMENT ME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//    newCard.showExercise(map['native'], map['foreign']);
 
     // create Flashcard object, giving it the learningPanel element
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
     //flashcard.showExercise("people", "personas");
+    var egg1 = Item('1.', 'static/stepimages/egg1.png')
+    var group = Group('eggs', [egg1])
+
+    //create HowTo
+    var how_to = How_To(0, 0, learningPanel, model, group);
 
     //create Fill_In_The_Blank object
     //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
