@@ -180,7 +180,7 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         left_top.text(l2Code).append(foreignPanel);
         left_bottom.text(l1Code).append(nativePanel);
         right.append(right_top).append(right_bottom);
-		right_top.append(correct);
+        right_top.append(correct);
         right_bottom.append(wrong);
         learningPanel.append(left);
         learningPanel.append(right);
@@ -198,12 +198,12 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         revealButton.click(function() {
             revealed = true;
             if (nativePanel.is(':hidden')) {
-				left_bottom.find('p').remove(); //removes alert text if present
+                left_bottom.find('p').remove(); //removes alert text if present
                 revealButton.hide();
                 nativePanel.show();
             }
             else {
-				left_top.find('p').remove(); //removes alert text if present
+                left_top.find('p').remove(); //removes alert text if present
                 revealButton.hide();
                 foreignPanel.show();
             }
@@ -228,22 +228,22 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
         });*/
 
         $('.check').click(function() {
-			if (revealed) {
-				var map = model.getExerciseMap(model);
-				learningPanel.empty();
-				var newCard = parseMap(map);
-				setTimeout(function(){newCard.showExercise(map['native'], map['foreign'])}, 300);
-			}
-			else {
-				if (nativePanel.is(':hidden')) {
-					left_bottom.find('p').remove();
-					left_bottom.append($('<p>Reveal the word first!</p>'));	
-				}
-				else {
-					left_top.find('p').remove();
-					left_top.append($('<p>Reveal the word first!</p>'));
-				}
-			}
+            if (revealed) {
+                var map = model.getExerciseMap(model);
+                learningPanel.empty();
+                var newCard = parseMap(map);
+                setTimeout(function(){newCard.showExercise(map['native'], map['foreign'])}, 300);
+            }
+            else {
+                if (nativePanel.is(':hidden')) {
+                    left_bottom.find('p').remove();
+                    left_bottom.append($('<p>Reveal the word first!</p>'));
+                }
+                else {
+                    left_top.find('p').remove();
+                    left_top.append($('<p>Reveal the word first!</p>'));
+                }
+            }
         });
         return;
     };
@@ -277,20 +277,36 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     };
 
     var compareAnswer = function(answer) {
-        var submittedTranslation = $('#fitb_translation_field').val().toLowerCase();
+        var submittedTranslation;
+        console.log('in compans')
+        try {
+            submittedTranslation = $('#fitb_translation_field').val().toLowerCase();
+        }
+
+        catch(err) {
+            console.log('Your string was improperly formatted.');
+            console.log('value ' + $('#fitb_translation_field').val());
+            console.log('submittedTrans ' + submittedTranslation);
+//            submittedTranslation = 'asefjnefksjdfg';
+        }
+
         if (submittedTranslation == answer) {
             var url = chrome.extension.getURL("static/right.png");
             $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
             var newCard = parseMap(map);
             setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1250);
-
         }
+
         else {
-            //TODO: have a 'reveal answer' button appear.
             var url = chrome.extension.getURL("static/wrong.png");
             $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />');
-            $('#fitb_translation_field').attr('placeholder', 'try again').val('');
+            $('#fitb_translation_field').attr('placeholder', '').val('');
+            $('#fitb_translation_field').addClass('fitb_try_again');
+            setTimeout(function(){
+                $('#fitb_translation_field').attr('placeholder', 'try again');
+                $('.fitb_try_again::-webkit-input-placeholder').fadeIn(500);
+            }, 200);
             $('.revealButton.fill_in_the_blank').css('display', 'inline');
 
 
@@ -340,12 +356,12 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
         //CSS below used to align text in input field and text in div.
         if (nativeBlank) {
-            $('.foreignPanel.fill_in_the_blank').css('left', '4px');
-            $('.revealButton.fill_in_the_blank').css('top', '53%');
+            $('.foreignPanel.fill_in_the_blank').css('left', '4px').css('top', '14px');
+            $('.revealButton.fill_in_the_blank').css('top', '64%');
         }
         else {
-            $('.nativePanel.fill_in_the_blank').css('left', '4px');
-            $('.revealButton.fill_in_the_blank').css('top', '12%');
+            $('.nativePanel.fill_in_the_blank').css('left', '4px').css('top', '77px');
+            $('.revealButton.fill_in_the_blank').css('top', '23%');
         }
         $('#fitb_translation_field').attr('placeholder', 'translate to ' + lang);
         $('#fitb_translation_field').focus();
@@ -369,28 +385,28 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 var Draggable_Box = function() {
     var that = {};
     var items = [];
-	var top = $('<div>').attr('id', 'draggable-top');
-	var bottom = $('<div>').attr('id', 'draggable-bottom');
-	
-	var allAtTop = function() {
-		if (bottom.contents().length == 0) {
-			return true;
-		}
-		else {
-			return false;	
-		}
-	}
-	
-	that.moveItem = function(item) {
-		if (item.getAtTop() == true) {
-			item.toggleAtTop();
-			bottom.append(item);
-		} 
-		else {
-			item.toggleAtTop();
-			top.append(item);
-		}
-	}
+    var top = $('<div>').attr('id', 'draggable-top');
+    var bottom = $('<div>').attr('id', 'draggable-bottom');
+
+    var allAtTop = function() {
+        if (bottom.contents().length == 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    that.moveItem = function(item) {
+        if (item.getAtTop() == true) {
+            item.toggleAtTop();
+            bottom.append(item);
+        }
+        else {
+            item.toggleAtTop();
+            top.append(item);
+        }
+    }
 
     return that;
 }
@@ -404,7 +420,7 @@ var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
     }
 
     that.showExercise = function(l1, l2) {
-			
+
     }
 
     setPosition();
@@ -414,14 +430,15 @@ var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
 Sentence_Order.prototype = new Draggable_Box;
 
 //all vocab should be lowercase, no punctuation.
-var people = Word('people', {'spanish': 'personas'})
-var government = Word('government', {'spanish': 'gobierno'})
-var thing = Word('thing', {'spanish': 'cosa'})
+//var people = Word('people', {'spanish': 'personas'})
+//var government = Word('government', {'spanish': 'gobierno'})
+//var thing = Word('thing', {'spanish': 'cosa'})
 var cat = Word('cat', {'spanish': 'gato'})
-var war = Word('war', {'spanish': 'guerra'})
-var computer = Word('computer', {'spanish': 'computadora'})
-var sad = Word('sad', {'spanish': 'triste'})
-var vocab = [people, government, thing, cat, war, computer, sad];
+//var war = Word('war', {'spanish': 'guerra'})
+//var computer = Word('computer', {'spanish': 'computadora'})
+//var sad = Word('sad', {'spanish': 'triste'})
+//var vocab = [people, government, thing, cat, war, computer, sad];
+var vocab = [cat];
 console.log(vocab);
 
 //VIEW (kind of)

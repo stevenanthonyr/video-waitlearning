@@ -3,7 +3,7 @@
 #learningPanel{
     width: 400px;
     height: 125px;
-    position: absolute;
+    position: relative;
     font-size: 24px;
     z-index: 1000;
     background-color: #f1f1f1;
@@ -65,9 +65,9 @@
 }
 
 #topPanel > p {
-	position: absolute;
-	bottom: 15%;
-	left: 13%;
+    position: absolute;
+    bottom: 15%;
+    left: 13%;
 }
 
 #bottomPanel {
@@ -81,9 +81,9 @@
 }
 
 #bottomPanel > p {
-	position: absolute;
-	bottom: 15%;
-	left: 13%;
+    position: absolute;
+    bottom: 15%;
+    left: 13%;
 }
 
 .flash-langPanel {
@@ -134,11 +134,16 @@
 
 .fitb_translation {
     font-size: 24px;
+    position: relative;
+    top: 14px;
+
 }
 
-#fitb_translation_div {
 
+.fitb_try_again::-webkit-input-placeholder {
+  color: #cb2222;
 }
+
 
 .left.fill_in_the_blank {
     width: 47.5%;
