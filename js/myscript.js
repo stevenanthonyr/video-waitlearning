@@ -16,7 +16,7 @@ function getRandomInt(min, max) {
 //                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
 function parseMap(map) {
     if (map['type'] == 'flashcard') {
-        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
     else if (map['type'] == 'fill_in_the_blank') {
         return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
@@ -51,17 +51,37 @@ var Word = function(englishWord, translationDict) {
     return that;
 }
 
+//Class that creates objects to be used for larger, draggable problems.
+//helpText - text to accompany the image or, if no filename is provided, text used for the draggable item.
+//filename - optional argument, used to link to an existing image. if passed in, start with static/...
+var Draggable_Item = function(helpText, filename) {
+    //note: if filename not passed in, expect it to be 'undefined'
+    var that = {};
+    var self = this;
+    var atTop = false;
+
+    that.getInfo = function() {
+        return {'helpText': helpText, 'filename': filename};
+    }
+
+    that.getAtTop = function() {
+        return atTop;
+    }
+
+    that.toggleAtTop = function() {
+        atTop = !atTop;
+    }
+
+    return that;
+}
+
 //vocab - list of Word objects
 var Model = function(learningPanel, vocab, leftpos, toppos) {
     var that = {};
     var self = this;
     var foreignLang = 'spanish';
-	var nativeLang = 'english';
+    var nativeLang = 'english';
     var languageCodeDict = {'spanish': 'ESP', 'english': 'ENG', 'german': 'DEU', 'italian': 'ITA', 'portuguese': 'POR', 'elvish': 'elf'}
-	
-	//foreignLang and nativeLang attributes of Model
-	that.foreignLang = 'spanish';
-	that.nativeLang = 'english';
 
     //Gets a random Word object stored in vocab and returns it to the user.
     var getRandomWord = function() {
@@ -105,7 +125,6 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
                 selectNewCard = false;
             }
         }
-        console.log(vocab);
         return map;
     }
     return that;
@@ -125,21 +144,22 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     var that = {};
     var self = this;
     var left = $("<div>").addClass("flash-left");
-	var left_top = $("<div>").addClass("subsection").attr('id', 'topPanel');
-	var left_bottom = $("<div>").addClass("subsection").attr('id', 'bottomPanel');
+    var left_top = $("<div>").addClass("subsection").attr('id', 'topPanel');
+    var left_bottom = $("<div>").addClass("subsection").attr('id', 'bottomPanel');
     var right = $("<div>").addClass("flash-right");
-	var right_top = $("<div>").addClass("subsection").text("Got it!")
-													 .css({'font-size':'50%', 'font-style':'italic'});
-	var right_bottom = $("<div>").addClass("subsection").text("Darn! Missed it.")
-														.css({'font-size':'50%', 'font-style':'italic'});
+    var right_top = $("<div>").addClass("subsection").text("Got it!")
+                                                     .css({'font-size':'50%', 'font-style':'italic'});
+    var right_bottom = $("<div>").addClass("subsection").text("Darn! Missed it.")
+                                                        .css({'font-size':'50%', 'font-style':'italic'});
     var foreignPanel = $("<div>").addClass("flash-langPanel");
     var nativePanel = $("<div>").addClass("flash-langPanel");
     var revealButton = $("<button>").addClass("flash-reveal").text("reveal");
+    var revealed = false;
     //var knownButton = $("<button>").addClass("flash-knownbutton").text("Already knew");
-	var correct = $("<img>").addClass("check");
-	correct.attr('src', chrome.extension.getURL('static/right.png'));
-	var wrong = $("<img>").addClass("check");
-	wrong.attr('src', chrome.extension.getURL('static/wrong.png'));
+    var correct = $("<img>").addClass("check");
+    correct.attr('src', chrome.extension.getURL('static/right.png'));
+    var wrong = $("<img>").addClass("check");
+    wrong.attr('src', chrome.extension.getURL('static/wrong.png'));
 
     var setPosition = function(){
         learningPanel.css("left", leftpos + "px");
@@ -147,40 +167,43 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
     };
 
     //l1 and l2 are strings
-	//l1 = native, l2 = foreign
+    //l1 = native, l2 = foreign
     that.showExercise = function(l1, l2){
         foreignPanel.text(l2);
         nativePanel.text(l1);
-		
-		var langCodeDict = model.getLanguageCodeDict();
-		var l1Code = langCodeDict[model.nativeLang];
-		var l2Code = langCodeDict[model.foreignLang];
+
+        var langCodeDict = model.getLanguageCodeDict();
+        var l1Code = langCodeDict[model.getNativeLanguage()];
+        var l2Code = langCodeDict[model.getForeignLanguage()];
 
         left.append(left_top).append(left_bottom);
-		left_top.text(l2Code).append(foreignPanel);
-		left_bottom.text(l1Code).append(nativePanel);
+        left_top.text(l2Code).append(foreignPanel);
+        left_bottom.text(l1Code).append(nativePanel);
         right.append(right_top).append(right_bottom);
 		right_top.append(correct);
-		right_bottom.append(wrong);
+        right_bottom.append(wrong);
         learningPanel.append(left);
         learningPanel.append(right);
 
         //randomly choose which language is hidden
-		if (Math.random() >= .5) {
-			nativePanel.hide();
-			left_bottom.append(revealButton);
+        if (Math.random() >= .5) {
+            nativePanel.hide();
+            left_bottom.append(revealButton);
         }
         else {
             foreignPanel.hide();
-			left_top.append(revealButton);
+            left_top.append(revealButton);
         }
 
         revealButton.click(function() {
+            revealed = true;
             if (nativePanel.is(':hidden')) {
+				left_bottom.find('p').remove(); //removes alert text if present
                 revealButton.hide();
                 nativePanel.show();
             }
             else {
+				left_top.find('p').remove(); //removes alert text if present
                 revealButton.hide();
                 foreignPanel.show();
             }
@@ -203,14 +226,25 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
 
             //newCard.showExercise(vocab[i].l1, vocab[i].l2);
         });*/
-		
-		$('.check').click(function() {
-			console.log('click')
-			var map = model.getExerciseMap(model);
-            learningPanel.empty();
-            var newCard = parseMap(map);
-            newCard.showExercise(map['native'], map['foreign']);
-		});
+
+        $('.check').click(function() {
+			if (revealed) {
+				var map = model.getExerciseMap(model);
+				learningPanel.empty();
+				var newCard = parseMap(map);
+				setTimeout(function(){newCard.showExercise(map['native'], map['foreign'])}, 300);
+			}
+			else {
+				if (nativePanel.is(':hidden')) {
+					left_bottom.find('p').remove();
+					left_bottom.append($('<p>Reveal the word first!</p>'));	
+				}
+				else {
+					left_top.find('p').remove();
+					left_top.append($('<p>Reveal the word first!</p>'));
+				}
+			}
+        });
         return;
     };
 
@@ -230,10 +264,12 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
     var left = $("<div>").addClass("left fill_in_the_blank");
     var right = $("<div>").addClass("right fill_in_the_blank");
+    var lefttop = $("<div>").addClass("left_subsection fill_in_the_blank");
+    var leftbottom = $("<div>").addClass("left_subsection fill_in_the_blank");
     var foreignPanel = $("<div>").addClass("foreignPanel fill_in_the_blank");
     var nativePanel = $("<div>").addClass("nativePanel fill_in_the_blank");
     var answerStatus = $("<div>").addClass("answerStatus fill_in_the_blank");
-    var revealButton = $("<div>").addClass("revealButton fill_in_the_blank").text('').attr('display', 'none');
+    var revealButton = $("<button>").addClass("revealButton fill_in_the_blank").text('reveal').attr('type', 'button');
 
     var setPosition = function(){
         learningPanel.css("left", leftpos + "px");
@@ -243,12 +279,6 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var compareAnswer = function(answer) {
         var submittedTranslation = $('#fitb_translation_field').val().toLowerCase();
         if (submittedTranslation == answer) {
-            //success message
-            // $('.answerStatus.fill_in_the_blank').prepend('<img id="checkmark" src="static/checkmark.png" />')
-            learningPanel.empty();
-            //model.getExercise();
-            //var map = model.getExerciseMap();
-
             var url = chrome.extension.getURL("static/right.png");
             $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
@@ -260,35 +290,40 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             //TODO: have a 'reveal answer' button appear.
             var url = chrome.extension.getURL("static/wrong.png");
             $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />');
-            $('.answerStatus.fill_in_the_blank').css('align', 'right');
             $('#fitb_translation_field').attr('placeholder', 'try again').val('');
-            $('.revealButton.fill_in_the_blank').attr('display', inline);
+            $('.revealButton.fill_in_the_blank').css('display', 'inline');
 
 
             revealButton.click(function() {
-                $('#fitb_translation_field').val(answer);
+                var replacementDiv = $('<div>').addClass("fitb_translation").attr('id', 'fitb_translation_div').text(answer);
+                $('#fitb_translation_field').replaceWith(replacementDiv);
+                replacementDiv.css('position', 'absolute').css('left', '4px');
+                $('.revealButton.fill_in_the_blank').css('display', 'none');
                 $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />')
                 var map = model.getExerciseMap(model);
                 var newCard = parseMap(map);
-                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1250);
+                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1750);
             });
         }
     }
 
     //l1 and l2 are strings
-	//l1 = native, l2 = foreign
+    //l1 = native, l2 = foreign
     that.showExercise = function(l1, l2){
-        learningPanel.empty();
-        var langDict = model.getLanguageCodeDict();
         var lang;
-        var nativeBlank = true;
+        var topQuantity;
+        var nativeBlank;
+        var langDict = model.getLanguageCodeDict();
+        learningPanel.empty();
         foreignPanel.html(l2);
         nativePanel.html(l1);
-        var inputField = '<div id="fitb_translation_container"><input type="text" value="" autocomplete="off" id="fitb_translation_field"></div>';
+        var inputField = '<input type="text" value="" autocomplete="off" class="fitb_translation" id="fitb_translation_field">';
         if (rand > .5) {
             nativePanel.html(inputField);
             lang = model.getNativeLanguage();
             answer = l1;
+            nativeBlank = true;
+
         }
         else {
             foreignPanel.html(inputField);
@@ -297,12 +332,21 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             nativeBlank = false;
         }
 
-        left.append(foreignPanel).append(nativePanel);
+        lefttop.append(foreignPanel);
+        leftbottom.append(nativePanel);
+        left.append(lefttop).append(leftbottom);
         right.append(answerStatus).append(revealButton);
         learningPanel.append(left).append(right);
 
         //CSS below used to align text in input field and text in div.
-        (nativeBlank) ? $('.foreignPanel.fill_in_the_blank').css('left', '4px') : $('.nativePanel.fill_in_the_blank').css('left', '4px')
+        if (nativeBlank) {
+            $('.foreignPanel.fill_in_the_blank').css('left', '4px');
+            $('.revealButton.fill_in_the_blank').css('top', '53%');
+        }
+        else {
+            $('.nativePanel.fill_in_the_blank').css('left', '4px');
+            $('.revealButton.fill_in_the_blank').css('top', '12%');
+        }
         $('#fitb_translation_field').attr('placeholder', 'translate to ' + lang);
         $('#fitb_translation_field').focus();
 
@@ -322,20 +366,52 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     return that;
 }
 
-var Word_Order = function(leftpos, toppos, learningPanel, model) {
-	var that = {};
+var Draggable_Box = function() {
+    var that = {};
+    var items = [];
+	var top = $('<div>').attr('id', 'draggable-top');
+	var bottom = $('<div>').attr('id', 'draggable-bottom');
 	
-	var setPosition = function() {
-		learningPanel.css("left", leftpos + "px");
-        learningPanel.css("top", toppos + "px");
+	var allAtTop = function() {
+		if (bottom.contents().length == 0) {
+			return true;
+		}
+		else {
+			return false;	
+		}
 	}
 	
-	that.showExercise = function(l1, l2) {
-		
+	that.moveItem = function(item) {
+		if (item.getAtTop() == true) {
+			item.toggleAtTop();
+			bottom.append(item);
+		} 
+		else {
+			item.toggleAtTop();
+			top.append(item);
+		}
 	}
-	
-	return that;
+
+    return that;
 }
+
+var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
+    var that = {};
+
+    var setPosition = function() {
+        learningPanel.css("left", leftpos + "px");
+        learningPanel.css("top", toppos + "px");
+    }
+
+    that.showExercise = function(l1, l2) {
+			
+    }
+
+    setPosition();
+    Object.freeze(that);
+    return that;
+}
+Sentence_Order.prototype = new Draggable_Box;
 
 //all vocab should be lowercase, no punctuation.
 var people = Word('people', {'spanish': 'personas'})
@@ -359,10 +435,11 @@ $(document).ready(function(){
     var controls = $(".html5-video-controls");
     var controls_leftpos = controls.position().left;
     var controls_toppos = controls.position().top;
+    console.log(controls_leftpos, controls_toppos)
 
     // create and attach learningPanel before controls
     var flashcard_leftpos = controls_leftpos;
-    var flashcard_toppos = controls_toppos - 120;
+    var flashcard_toppos = controls_toppos - 131;
     var learningPanel = $("<div>").attr("id", "learningPanel").addClass("learningPanel");
     learningPanel.insertBefore(controls);
 
@@ -372,7 +449,7 @@ $(document).ready(function(){
     var newCard = parseMap(map);
     $('input[autocomplete]').removeAttr('autocomplete');
 
-    //newCard.showExercise(map['native'], map['foreign']);
+    newCard.showExercise(map['native'], map['foreign']);
 
     // create Flashcard object, giving it the learningPanel element
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
@@ -383,12 +460,6 @@ $(document).ready(function(){
     //fitb.showExercise("people", "personas");
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel, model);
     //flashcard.showExercise("people", "personas");
-
-    //create Fill_In_The_Blank object
-    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
-    fitb.showExercise("people", "personas");
-//    var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel, model)
-//    fitb.showExercise("people", "personas");
 
     // ------ other useful methods (currently these don't do anything) --------
     var videoElement = document.getElementsByClassName('video-stream')[0];
