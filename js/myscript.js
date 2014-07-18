@@ -475,8 +475,9 @@ var How_To = function(leftpos, toppos, learningPanel, model, group) {
                 self.moveItem(item);
             })
         }
-
-        learningPanel.append(top, bottom);
+        console.log('top ' + top);
+        console.log('bottom ' + bottom);
+        learningPanel.append(top).append(bottom);
     }
 
     setPosition();
@@ -550,6 +551,7 @@ $(document).ready(function(){
 
     //create HowTo
     var how_to = How_To(0, 0, learningPanel, model, group);
+    how_to.showExercise();
 
     //create Fill_In_The_Blank object
     //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
