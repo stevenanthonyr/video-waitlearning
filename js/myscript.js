@@ -420,6 +420,9 @@ var Group = function(name, items) {
     return that;
 }
 
+//never run methods from this class on this class itself!
+//run the methods on instances of the subclasses (don't run moveItems
+//on this class, run it on a How_To so compareAnswer from that class is run)
 var Ordered_Box = function(items) {
     var that = {};
     var top = $('<div>').attr('id','ordered-top');
@@ -510,7 +513,9 @@ var Ordered_Box = function(items) {
             //IF THIS IS BROKEN, LIFE SUCKS
             learningPanel.append(top).append(bottom);
             var userItems = $.extend([], ANSWER);
-            shuffle(userItems);
+            do {
+                shuffle(userItems);
+            } while (userItems == ANSWER);
 
             for (var i in userItems) {
                 var item = userItems[i];
@@ -528,9 +533,6 @@ var Ordered_Box = function(items) {
                 attachClickHandler(item);
             }
         }
-        //console.log(top);
-        //console.log(bottom);
-        //learningPanel.append(Draggable_Box.top).append(Draggable_Box.bottom);
 
         setPosition();
         Object.freeze(that);
@@ -538,9 +540,6 @@ var Ordered_Box = function(items) {
     }
     return that;
 }
-
-//How_To.prototype = new Draggable_Box();
-//How_To.prototype = Object.create(Draggable_Box.prototype);
 
 var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
     var that = {};
