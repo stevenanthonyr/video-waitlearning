@@ -198,11 +198,27 @@
 
 /*How_To items*/
 
-.draggable-subsection {
+#ordered-top {
 	height: 50%;
+}
+
+#ordered-bottom {
+	height: 50%;
+}
+
+.ordered-subsection {
+	height: 100%;
+	width: 25%;
+	float: left;
 }
 
 .item_image {
 	height: 100px;
+	
+}
+
+.item_container {
+	height: 100px;
 	float: left;
+	margin: 15px;
 }

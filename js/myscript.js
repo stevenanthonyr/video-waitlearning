@@ -357,6 +357,7 @@ var Item = function(helpText, path) {
     var that = {};
     var self = this;
     var atTop = false;
+	var container = $("<div>").addClass('item_container');
 
     that.getInfo = function() {
         return {'helpText': helpText, 'path': path};
@@ -369,6 +370,17 @@ var Item = function(helpText, path) {
     that.getPath = function() {
         return path;
     }
+	
+	that.onClick = function(handler) {
+		console.log('container ' + container.html())
+		container.click(function() {
+			handler();	
+		});
+	}
+	
+	that.getContainer = function() {
+		return container;	
+	}
 
 //    var wrong = $("<img>").addClass("check")//.addClass("not-clickable");
 //    wrong.attr('src', chrome.extension.getURL('static/wrong.png'));
@@ -376,7 +388,7 @@ var Item = function(helpText, path) {
         var image = $("<img>").addClass("item_image");
         image.attr('src', chrome.extension.getURL(path));
         var helpText = $("<span>").text(helpText);
-        var container = $("<div>").addClass('item_container');
+        //var container = $("<div>").addClass('item_container');
         container.append(image).append(helpText);
 		console.log('container' + container);
         return container;
@@ -401,15 +413,24 @@ var Group = function(name, items) {
     that.getItems = function() {
         return items;
     }
+	
+	that.length = items.length;
 
     return that;
 }
 
-var Draggable_Box = function() {
+var Ordered_Box = function(group) {
     var that = {};
-    var top = $('<div>').addClass('draggable-subsection').attr('id', 'draggable-top');
-    var bottom = $('<div>').addClass('draggable-subsection').attr('id', 'draggable-bottom');
-    var userAnswer = []
+    var top = $('<div>').attr('id','ordered-top');
+    var bottom = $('<div>').attr('id', 'ordered-bottom');
+    var userAnswer = [];
+	
+	/*for (var i in group) {
+		var subdiv = $('<div>').addClass('ordered-subsection');
+		var clone = $('<div>').addClass('ordered-subsection');
+		bottom.append(subdiv);
+		top.append(clone);
+	}*/	
 
     var allAtTop = function() {
         if (bottom.contents().length == 0) {
@@ -431,23 +452,33 @@ var Draggable_Box = function() {
     //todo: do animations in here.
     var moveItem = function(item) {
 		console.log('move');
+		var container = item.getContainer();
+		console.log(container.html());
         if (item.getAtTop() == true) {
             var index = userAnswer.indexOf(item);
             item.toggleAtTop();
             userAnswer.splice(index, 1);
-            bottom.append(item);
+			container.toggle('puff', {percent:110}, function() {
+            	bottom.append(container);
+			});
+			container.toggle('puff', {percent:110});
         }
         else {
+			console.log('bottom')
             item.toggleAtTop();
-            userAnswer.append(item);
-            top.append(item);
+            userAnswer.push(item);
+			container.toggle('puff', {percent:110}, function() {
+            	top.append(container);
+			});
+			container.toggle('puff', {percent:110});
+			console.log(top.html())
         }
-        if (allAtTop) {
+        /*if (allAtTop) {
             compareAnswer();
-        }
+        }*/
     }
 
-    that.How_To = function(leftpos, toppos, learningPanel, model, group) {
+    that.How_To = function(leftpos, toppos, learningPanel) {
         var self = this;
         var that = {};
         var ANSWER = group.getItems();
@@ -479,14 +510,20 @@ var Draggable_Box = function() {
             var userItems = $.extend([], ANSWER);
             shuffle(userItems);
             
-			for (i in userItems) {
-                item = userItems[i];
-                $('#draggable-bottom').append(item.generateHTML());
+			for (var i in userItems) {
+                var item = userItems[i];
+                $('#ordered-bottom').append(item.generateHTML());
                 createDashedBox();
-
-                /*item.click(function() {
+				console.log('on show exercise: ' + item.getContainer().html())
+                function attachClickHandler(item) {
+					item.onClick(function() {
+					console.log('this: ' + 	this)
+					console.log('img click')
+					console.log('on click: ' + item.getContainer().html())
                     moveItem(item);
-                });*/
+                	});
+				}
+				attachClickHandler(item);
             }  
         }
 		//console.log(top);
@@ -519,7 +556,7 @@ var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
     Object.freeze(that);
     return that;
 }
-Sentence_Order.prototype = new Draggable_Box();
+Sentence_Order.prototype = new Ordered_Box();
 
 //all vocab should be lowercase, no punctuation.
 var people = Word('people', {'spanish': 'personas'})
@@ -570,8 +607,8 @@ $(document).ready(function(){
 	//console.log('egg ' + egg1.generateHTML().html());
 
     //create HowTo
-    var draggable_box = Draggable_Box();
-    var how_to = draggable_box.How_To(0, 0, learningPanel, model, group);
+    var ordered_box = Ordered_Box(group);
+    var how_to = ordered_box.How_To(0, 0, learningPanel);
     how_to.showExercise();
 
     //create Fill_In_The_Blank object
