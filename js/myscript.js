@@ -357,7 +357,7 @@ var Item = function(helpText, path) {
     var that = {};
     var self = this;
     var atTop = false;
-	var container = $("<div>").addClass('item_container');
+    var container = $("<div>").addClass('item_container');
 
     that.getInfo = function() {
         return {'helpText': helpText, 'path': path};
@@ -370,17 +370,17 @@ var Item = function(helpText, path) {
     that.getPath = function() {
         return path;
     }
-	
-	that.onClick = function(handler) {
-		console.log('container ' + container.html())
-		container.click(function() {
-			handler();	
-		});
-	}
-	
-	that.getContainer = function() {
-		return container;	
-	}
+
+    that.onClick = function(handler) {
+        console.log('container ' + container.html())
+        container.click(function() {
+            handler();
+        });
+    }
+
+    that.getContainer = function() {
+        return container;
+    }
 
 //    var wrong = $("<img>").addClass("check")//.addClass("not-clickable");
 //    wrong.attr('src', chrome.extension.getURL('static/wrong.png'));
@@ -388,9 +388,11 @@ var Item = function(helpText, path) {
         var image = $("<img>").addClass("item_image");
         image.attr('src', chrome.extension.getURL(path));
         var helpText = $("<span>").addClass("item_helptext").text(helpText);
+        var helpTextSpan = $("<span>").addClass("item_helpText");
         //var container = $("<div>").addClass('item_container');
         container.append(image).append(helpText);
-		console.log('container' + container);
+        helpTextSpan.text(helpText)
+        console.log('container' + container);
         return container;
     }
 
@@ -413,8 +415,8 @@ var Group = function(name, items) {
     that.getItems = function() {
         return items;
     }
-	
-	that.length = items.length;
+
+    that.length = items.length;
 
     return that;
 }
@@ -452,27 +454,27 @@ var Ordered_Box = function(items) {
 
     //todo: do animations in here.
     var moveItem = function(item) {
-		console.log('move');
-		var container = item.getContainer();
-		console.log(container.html());
+        console.log('move');
+        var container = item.getContainer();
+        console.log(container.html());
         if (item.getAtTop() == true) {
             var index = userAnswer.indexOf(item);
             item.toggleAtTop();
             userAnswer.splice(index, 1);
-			container.toggle('puff', {percent:110}, function() {
-            	bottom.append(container);
-			});
-			container.toggle('puff', {percent:110});
+            container.toggle('puff', {percent:110}, function() {
+                bottom.append(container);
+            });
+            container.toggle('puff', {percent:110});
         }
         else {
-			console.log('bottom')
+            console.log('bottom')
             item.toggleAtTop();
             userAnswer.push(item);
-			container.toggle('puff', {percent:110}, function() {
-            	top.append(container);
-			});
-			container.toggle('puff', {percent:110});
-			console.log(top.html())
+            container.toggle('puff', {percent:110}, function() {
+                top.append(container);
+            });
+            container.toggle('puff', {percent:110});
+            console.log(top.html())
         }
         /*if (allAtTop) {
             compareAnswer();
@@ -483,7 +485,7 @@ var Ordered_Box = function(items) {
         var self = this;
         var that = {};
         var ANSWER = items;
-		console.log('ans ' + ANSWER)
+        console.log('ans ' + ANSWER)
         var setPosition = function() {
             learningPanel.css('width', '854px');
             learningPanel.css('height', '475px');
@@ -507,28 +509,28 @@ var Ordered_Box = function(items) {
         that.showExercise = function() {
             //TODO: TEST THIS HARD
             //IF THIS IS BROKEN, LIFE SUCKS
-			learningPanel.append(top).append(bottom);
+            learningPanel.append(top).append(bottom);
             var userItems = $.extend([], ANSWER);
             shuffle(userItems);
-            
-			for (var i in userItems) {
+
+            for (var i in userItems) {
                 var item = userItems[i];
                 bottom.append(item.generateHTML());
                 createDashedBox();
-				console.log('on show exercise: ' + item.getContainer().html())
+                console.log('on show exercise: ' + item.getContainer().html())
                 function attachClickHandler(item) {
-					item.onClick(function() {
-					console.log('this: ' + 	this)
-					console.log('img click')
-					console.log('on click: ' + item.getContainer().html())
+                    item.onClick(function() {
+                    console.log('this: ' +     this)
+                    console.log('img click')
+                    console.log('on click: ' + item.getContainer().html())
                     moveItem(item);
-                	});
-				}
-				attachClickHandler(item);
-            }  
+                    });
+                }
+                attachClickHandler(item);
+            }
         }
-		//console.log(top);
-		//console.log(bottom);
+        //console.log(top);
+        //console.log(bottom);
         //learningPanel.append(Draggable_Box.top).append(Draggable_Box.bottom);
 
         setPosition();
@@ -601,11 +603,11 @@ $(document).ready(function(){
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
     //flashcard.showExercise("people", "personas");
     var egg1 = Item('1.', 'static/stepimages/egg1.png');
-	var egg2 = Item('2.', 'static/stepimages/egg2.png');
-	var egg3 = Item('3.', 'static/stepimages/egg3.png');
-	var egg4 = Item('4.', 'static/stepimages/egg4.png');
+    var egg2 = Item('2.', 'static/stepimages/egg2.png');
+    var egg3 = Item('3.', 'static/stepimages/egg3.png');
+    var egg4 = Item('4.', 'static/stepimages/egg4.png');
     var group = Group('eggs', [egg1, egg2, egg3, egg4])
-	//console.log('egg ' + egg1.generateHTML().html());
+    //console.log('egg ' + egg1.generateHTML().html());
 
     //create HowTo
     var ordered_box = Ordered_Box(group.getItems());
