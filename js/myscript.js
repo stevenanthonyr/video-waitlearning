@@ -419,18 +419,19 @@ var Group = function(name, items) {
     return that;
 }
 
-var Ordered_Box = function(group) {
+var Ordered_Box = function(items) {
     var that = {};
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = [];
 	
-	/*for (var i in group) {
+	/*for (var i in items) {
+		console.log('count' + i);
 		var subdiv = $('<div>').addClass('ordered-subsection');
 		var clone = $('<div>').addClass('ordered-subsection');
 		bottom.append(subdiv);
 		top.append(clone);
-	}*/	
+	}*/
 
     var allAtTop = function() {
         if (bottom.contents().length == 0) {
@@ -481,8 +482,8 @@ var Ordered_Box = function(group) {
     that.How_To = function(leftpos, toppos, learningPanel) {
         var self = this;
         var that = {};
-        var ANSWER = group.getItems();
-
+        var ANSWER = items;
+		console.log('ans ' + ANSWER)
         var setPosition = function() {
             learningPanel.css('width', '854px');
             learningPanel.css('height', '475px');
@@ -607,7 +608,7 @@ $(document).ready(function(){
 	//console.log('egg ' + egg1.generateHTML().html());
 
     //create HowTo
-    var ordered_box = Ordered_Box(group);
+    var ordered_box = Ordered_Box(group.getItems());
     var how_to = ordered_box.How_To(0, 0, learningPanel);
     how_to.showExercise();
 

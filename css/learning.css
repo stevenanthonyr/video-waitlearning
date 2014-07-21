@@ -214,7 +214,7 @@
 
 .item_image {
 	height: 100px;
-	
+	cursor: pointer;
 }
 
 .item_container {
