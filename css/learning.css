@@ -195,6 +195,15 @@
     vertical-align: middle;
 }
 
+.loading {
+    position: absolute;
+    width: 30px;
+    height: 15px;
+    top: 109px;
+    left: 369px;
+    color: black;
+}
+
 
 /*How_To items*/
 
