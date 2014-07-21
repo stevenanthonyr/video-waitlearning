@@ -387,11 +387,10 @@ var Item = function(helpText, path) {
     that.generateHTML = function() {
         var image = $("<img>").addClass("item_image");
         image.attr('src', chrome.extension.getURL(path));
-        var helpText = $("<span>").addClass("item_helptext").text(helpText);
         var helpTextSpan = $("<span>").addClass("item_helpText");
         //var container = $("<div>").addClass('item_container');
-        container.append(image).append(helpText);
-        helpTextSpan.text(helpText)
+        container.append(image).append(helpTextSpan);
+        helpTextSpan.text(helpText);
         console.log('container' + container);
         return container;
     }
@@ -429,14 +428,14 @@ var Ordered_Box = function(items) {
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = [];
-	
-	/*for (var i in items) {
-		console.log('count' + i);
-		var subdiv = $('<div>').addClass('ordered-subsection');
-		//var clone = $('<div>').addClass('ordered-subsection');
-		top.append(subdiv);
-		//bottom.append(clone);
-	}*/
+
+    /*for (var i in items) {
+        console.log('count' + i);
+        var subdiv = $('<div>').addClass('ordered-subsection');
+        //var clone = $('<div>').addClass('ordered-subsection');
+        top.append(subdiv);
+        //bottom.append(clone);
+    }*/
 
     var allAtTop = function() {
         if (bottom.contents().length == 0) {
@@ -496,10 +495,6 @@ var Ordered_Box = function(items) {
             learningPanel.css("top", toppos + "px");
         }
 
-        var createDashedBox = function() {
-
-        }
-
         that.compareAnswer = function() {
             if (ANSWER === getUserAnswer()) {
                 //yay
@@ -521,7 +516,6 @@ var Ordered_Box = function(items) {
             for (var i in userItems) {
                 var item = userItems[i];
                 bottom.append(item.generateHTML());
-                createDashedBox();
                 console.log('on show exercise: ' + item.getContainer().html())
                 function attachClickHandler(item) {
                     item.onClick(function() {
@@ -542,23 +536,23 @@ var Ordered_Box = function(items) {
     return that;
 }
 
-var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
-    var that = {};
-
-    var setPosition = function() {
-        learningPanel.css("left", leftpos + "px");
-        learningPanel.css("top", toppos + "px");
-    }
-
-    that.showExercise = function(l1, l2) {
-
-    }
-
-    setPosition();
-    Object.freeze(that);
-    return that;
-}
-Sentence_Order.prototype = new Ordered_Box();
+//var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
+//    var that = {};
+//
+//    var setPosition = function() {
+//        learningPanel.css("left", leftpos + "px");
+//        learningPanel.css("top", toppos + "px");
+//    }
+//
+//    that.showExercise = function(l1, l2) {
+//
+//    }
+//
+//    setPosition();
+//    Object.freeze(that);
+//    return that;
+//}
+//Sentence_Order.prototype = new Ordered_Box();
 
 //all vocab should be lowercase, no punctuation.
 var people = Word('people', {'spanish': 'personas'})
@@ -601,10 +595,10 @@ $(document).ready(function(){
     // create Flashcard object, giving it the learningPanel element
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
     //flashcard.showExercise("people", "personas");
-    var egg1 = Item('1.', 'static/stepimages/egg1.png');
-    var egg2 = Item('2.', 'static/stepimages/egg2.png');
-    var egg3 = Item('3.', 'static/stepimages/egg3.png');
-    var egg4 = Item('4.', 'static/stepimages/egg4.png');
+    var egg1 = Item('Prep the pan.', 'static/stepimages/egg1.png');
+    var egg2 = Item('Prep the egg.', 'static/stepimages/egg2.png');
+    var egg3 = Item('Put the egg on the pan.', 'static/stepimages/egg3.png');
+    var egg4 = Item('Cook egg.', 'static/stepimages/egg4.png');
     var group = Group('eggs', [egg1, egg2, egg3, egg4])
     //console.log('egg ' + egg1.generateHTML().html());
 

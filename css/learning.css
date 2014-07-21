@@ -39,7 +39,7 @@
     width: 50%;
     height: 100%;
     float: left;
-	cursor: default;
+    cursor: default;
 }
 
 .flash-right{
@@ -47,7 +47,7 @@
     width: 50%;
     height: 100%;
     float: right;
-	cursor: default;
+    cursor: default;
 }
 
 
@@ -126,16 +126,16 @@
 }
 
 #clickable {
-	opacity: 1;
+    opacity: 1;
 }
 
 #clickable .check {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 #not-clickable {
-	opacity: 0.1;
-	cursor: default;
+    opacity: 0.1;
+    cursor: default;
 }
 
 /* Fill_in_the_blank items */
@@ -199,28 +199,37 @@
 /*How_To items*/
 
 #ordered-top {
-	height: 50%;
+    height: 50%;
 }
 
 #ordered-bottom {
-	height: 50%;
+    height: 50%;
 }
 
 .ordered-subsection {
-	height: 100%;
-	width: 20%;
-	float: left;
-	margin:
+    height: 100%;
+    width: 20%;
+    float: left;
+    margin:
 }
 
 .item_image {
-	height: 100px;
-	cursor: pointer;
-	border: 1px dashed gray;
+    height: 100px;
+    cursor: pointer;
+    border: 1px dashed gray;
+    display: block;
+}
+
+.item_helpText {
+    float: left;
+    text-align: center;
+    font-size: 8pt;
+    display: block;
+    width: 100%;
 }
 
 .item_container {
-	height: 100px;
-	float: left;
-	margin: 15px;
+    height: 100px;
+    float: left;
+    margin: 15px;
 }
