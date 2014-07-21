@@ -19,7 +19,10 @@
     "css/learning.css",
     "static/right.png",
     "static/wrong.png",
-	"static/stepimages/egg1.png"
+	"static/stepimages/egg1.png",
+	"static/stepimages/egg2.png",
+	"static/stepimages/egg3.png",
+	"static/stepimages/egg4.png"
   ],
   "manifest_version": 2
 }

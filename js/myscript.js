@@ -407,10 +407,8 @@ var Group = function(name, items) {
 
 var Draggable_Box = function() {
     var that = {};
-    var top = $('<div>').attr('id', 'draggable-top');
-    var bottom = $('<div>').attr('id', 'draggable-bottom');
-	that.top = top;
-	that.bottom = bottom;
+    var top = $('<div>').addClass('draggable-subsection').attr('id', 'draggable-top');
+    var bottom = $('<div>').addClass('draggable-subsection').attr('id', 'draggable-bottom');
     var userAnswer = []
 
     var allAtTop = function() {
@@ -431,7 +429,8 @@ var Draggable_Box = function() {
     }
 
     //todo: do animations in here.
-    that.moveItem = function(item) {
+    var moveItem = function(item) {
+		console.log('move');
         if (item.getAtTop() == true) {
             var index = userAnswer.indexOf(item);
             item.toggleAtTop();
@@ -479,25 +478,19 @@ var Draggable_Box = function() {
 			learningPanel.append(top).append(bottom);
             var userItems = $.extend([], ANSWER);
             shuffle(userItems);
-			console.log(userItems.length);
-            for (i in userItems) {
-				console.log('here')
+            
+			for (i in userItems) {
                 item = userItems[i];
                 $('#draggable-bottom').append(item.generateHTML());
-					console.log('dragbottom' + $('#draggable-bottom').html())
-				console.log('bottom ' + bottom.html())
                 createDashedBox();
 
                 /*item.click(function() {
-                    self.moveItem(item);
+                    moveItem(item);
                 });*/
-            }
-			//console.log('dragbottom' + $('#draggable-bottom').html())
-			//	console.log('bottom ' + bottom.html())
-            
+            }  
         }
-		console.log(top);
-		console.log(bottom);
+		//console.log(top);
+		//console.log(bottom);
         //learningPanel.append(Draggable_Box.top).append(Draggable_Box.bottom);
 
         setPosition();
@@ -569,9 +562,12 @@ $(document).ready(function(){
     // create Flashcard object, giving it the learningPanel element
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
     //flashcard.showExercise("people", "personas");
-    var egg1 = Item('1.', 'static/stepimages/egg1.png')
-    var group = Group('eggs', [egg1])
-	console.log('egg ' + egg1.generateHTML().html());
+    var egg1 = Item('1.', 'static/stepimages/egg1.png');
+	var egg2 = Item('2.', 'static/stepimages/egg2.png');
+	var egg3 = Item('3.', 'static/stepimages/egg3.png');
+	var egg4 = Item('4.', 'static/stepimages/egg4.png');
+    var group = Group('eggs', [egg1, egg2, egg3, egg4])
+	//console.log('egg ' + egg1.generateHTML().html());
 
     //create HowTo
     var draggable_box = Draggable_Box();

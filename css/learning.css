@@ -198,10 +198,11 @@
 
 /*How_To items*/
 
-#draggable-top {
+.draggable-subsection {
 	height: 50%;
 }
 
-#draggable-bottom {
-	height: 50%;
+.item_image {
+	height: 100px;
+	float: left;
 }
