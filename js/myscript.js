@@ -28,7 +28,7 @@ function parseMap(map) {
 function shuffle(o){ //v1.0
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
 //    return o;
-};
+}
 
 //MODELS
 
@@ -387,7 +387,7 @@ var Item = function(helpText, path) {
     that.generateHTML = function() {
         var image = $("<img>").addClass("item_image");
         image.attr('src', chrome.extension.getURL(path));
-        var helpText = $("<span>").text(helpText);
+        var helpText = $("<span>").addClass("item_helptext").text(helpText);
         //var container = $("<div>").addClass('item_container');
         container.append(image).append(helpText);
 		console.log('container' + container);
@@ -428,9 +428,9 @@ var Ordered_Box = function(items) {
 	/*for (var i in items) {
 		console.log('count' + i);
 		var subdiv = $('<div>').addClass('ordered-subsection');
-		var clone = $('<div>').addClass('ordered-subsection');
-		bottom.append(subdiv);
-		top.append(clone);
+		//var clone = $('<div>').addClass('ordered-subsection');
+		top.append(subdiv);
+		//bottom.append(clone);
 	}*/
 
     var allAtTop = function() {
@@ -513,7 +513,7 @@ var Ordered_Box = function(items) {
             
 			for (var i in userItems) {
                 var item = userItems[i];
-                $('#ordered-bottom').append(item.generateHTML());
+                bottom.append(item.generateHTML());
                 createDashedBox();
 				console.log('on show exercise: ' + item.getContainer().html())
                 function attachClickHandler(item) {
