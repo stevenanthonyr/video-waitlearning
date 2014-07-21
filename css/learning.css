@@ -208,13 +208,15 @@
 
 .ordered-subsection {
 	height: 100%;
-	width: 25%;
+	width: 20%;
 	float: left;
+	margin:
 }
 
 .item_image {
 	height: 100px;
 	cursor: pointer;
+	border: 1px dashed gray;
 }
 
 .item_container {
