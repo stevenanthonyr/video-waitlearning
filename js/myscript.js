@@ -265,14 +265,15 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
             var newCard = parseMap(map);
-            //WARNING: CODE BELOW BREAKS SHIT HARD.
-//            while (dots.length < 3) {
-//                setTimeout(function() {
-//                    dots += '.';
-//                    loadingDiv.text(dots)
-//                }, timeToNext/3);
-//            }
-            newCard.showExercise(map['native'], map['foreign']);
+            function next() {
+                dots += '.';
+                loadingDiv.text(dots);
+                if (dots < 3) {
+                    setTimeout(next, timeToNext/3);
+                }
+            }
+            setTimeout(next, timeToNext/3);
+//            newCard.showExercise(map['native'], map['foreign']);
             setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, timeToNext);
         }
 
