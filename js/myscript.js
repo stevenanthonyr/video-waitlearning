@@ -451,8 +451,10 @@ var Ordered_Box = function(items) {
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = [];
+    var ANSWER = items;
 
     for (var i in items) {
+        console.log('count' + i);
         var dashed_subdiv = $('<div>').addClass('dashed-subsection');
         var solid_subdiv = $('<div>').addClass('solid-subsection');
         top.append(dashed_subdiv);
@@ -460,38 +462,42 @@ var Ordered_Box = function(items) {
     }
 
     var allAtTop = function() {
-        console.log(bottom.contents().length);
-        if (bottom.contents().length == 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        var allAtTop = true
+        $('#ordered-top > .dashed-subsection').each(function() {
+            if ($(this).is(':empty')) {
+                allAtTop = false;
+            }
+        });
+        return allAtTop;
     }
 
     var compareAnswer = function() {
-        //overridden in subclasses
+        if (userAnswer == ANSWER) {
+            console.log('yay');
+        }
+        else {
+            console.log('nope');
+        }
     }
 
     that.getUserAnswer = function() {
         return userAnswer;
     }
 
-    //todo: do animations in here.
     var moveItem = function(item) {
         var container = item.getContainer();
 
         if (item.getAtTop() == true) {
             var index = userAnswer.indexOf(item);
             userAnswer.splice(index, 1);
-            item.toggleAtTop();
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var newLoc = $(this);
                 if (newLoc.is(':empty')) {
-                    container.toggle('puff', {percent:110}, function() {
+                    item.toggleAtTop();
+                    container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
                     });
-                    container.toggle('puff', {percent:110});
+                    container.toggle('puff', {percent:110}, 500);
                     return false
                 }
             });
@@ -500,22 +506,20 @@ var Ordered_Box = function(items) {
             $('#ordered-top > .dashed-subsection').each(function() {
                 var newLoc = $(this);
                 userAnswer.push(item);
-                var test = 0;
                 if (newLoc.is(':empty')) {
-                    test++;
                     item.toggleAtTop();
-                    tryagain = false;
-                    container.toggle('puff', {percent:110}, function() {
-                        //top.append(container);
+                    container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
                     });
-                    container.toggle('puff', {percent:110});
+                    container.toggle('puff', {percent:110}, 500);
                     return false;
                 }
             });
         }
 
-        if (allAtTop()) {
+        var done = allAtTop();
+        if (done) {
+            console.log('top full');
             compareAnswer();
         }
     }
@@ -620,7 +624,7 @@ var computer = Word('computer', {'spanish': 'computadora'})
 var sad = Word('sad', {'spanish': 'triste'})
 var vocab = [people, government, thing, cat, war, computer, sad];
 //var vocab = [cat];
-console.log(vocab);
+//   console.log(vocab);
 
 //VIEW (kind of)
 
@@ -628,6 +632,9 @@ console.log(vocab);
 //design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
     attach_css();
+    $(document).dblclick(function(e) {
+        e.preventDefault();
+    });
 
     // get controls and position
     var controls = $(".html5-video-controls");
