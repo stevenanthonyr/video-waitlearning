@@ -260,7 +260,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
         if (submittedTranslation == answer) {
             var dots = '';
-            var timeToNext = 1250; //in milliseconds
+            var timeToNext = 1750; //in milliseconds
             var url = chrome.extension.getURL("static/right.png");
             $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
@@ -290,6 +290,9 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
 
             revealButton.click(function() {
+                var dots = '';
+                var timeToNext = 1750;
+
                 var replacementDiv = $('<div>').addClass("fitb_translation").attr('id', 'fitb_translation_div').text(answer);
                 $('#fitb_translation_field').replaceWith(replacementDiv);
                 replacementDiv.css('position', 'absolute').css('left', '4px');
@@ -297,7 +300,17 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
                 $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />')
                 var map = model.getExerciseMap(model);
                 var newCard = parseMap(map);
-                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1750);
+
+                function next() {
+                    dots += '.';
+                    loadingDiv.text(dots);
+                    if (dots.length < 3) {
+                        setTimeout(next, timeToNext/4);
+                    }
+                }
+                setTimeout(next, timeToNext/4);
+
+                setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, timeToNext);
             });
         }
     }
@@ -384,7 +397,6 @@ var Item = function(helpText, path) {
     }
 
     that.onClick = function(handler) {
-        console.log('container ' + container.html())
         container.click(function() {
             handler();
         });
@@ -403,7 +415,6 @@ var Item = function(helpText, path) {
         //var container = $("<div>").addClass('item_container');
         container.append(image).append(helpTextSpan);
         helpTextSpan.text(helpText);
-        console.log('container' + container);
         return container;
     }
 
@@ -440,16 +451,16 @@ var Ordered_Box = function(items) {
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = [];
-	
-	for (var i in items) {
-		console.log('count' + i);
-		var dashed_subdiv = $('<div>').addClass('dashed-subsection');
-		var solid_subdiv = $('<div>').addClass('solid-subsection');
-		top.append(dashed_subdiv);
-		bottom.append(solid_subdiv);
-	}
+
+    for (var i in items) {
+        var dashed_subdiv = $('<div>').addClass('dashed-subsection');
+        var solid_subdiv = $('<div>').addClass('solid-subsection');
+        top.append(dashed_subdiv);
+        bottom.append(solid_subdiv);
+    }
 
     var allAtTop = function() {
+        console.log(bottom.contents().length);
         if (bottom.contents().length == 0) {
             return true;
         }
@@ -468,57 +479,56 @@ var Ordered_Box = function(items) {
 
     //todo: do animations in here.
     var moveItem = function(item) {
-        console.log('move');
         var container = item.getContainer();
-        console.log(container.html());
-		
+
         if (item.getAtTop() == true) {
             var index = userAnswer.indexOf(item);
             userAnswer.splice(index, 1);
-			item.toggleAtTop();
-			$('#ordered-bottom > .solid-subsection').each(function() {
-				var newLoc = $(this);
-				if (newLoc.is(':empty')) {
-					container.toggle('puff', {percent:110}, function() {
-						newLoc.append(container);
-					});
-					container.toggle('puff', {percent:110});
-					return false
-				}
-			});
+            item.toggleAtTop();
+            $('#ordered-bottom > .solid-subsection').each(function() {
+                var newLoc = $(this);
+                if (newLoc.is(':empty')) {
+                    container.toggle('puff', {percent:110}, function() {
+                        newLoc.append(container);
+                    });
+                    container.toggle('puff', {percent:110});
+                    return false
+                }
+            });
         }
         else {
-			$('#ordered-top > .dashed-subsection').each(function() {
-				var newLoc = $(this);
-				userAnswer.push(item);
-				var test = 0;
-				if (newLoc.is(':empty')) {
-					test++;
-					console.log('test: ' + test)
-					item.toggleAtTop();
-					console.log('empty')
-					tryagain = false;
-					container.toggle('puff', {percent:110}, function() {
-						console.log('this: ' + newLoc)
-						//top.append(container);
-						newLoc.append(container);
-					});
-					container.toggle('puff', {percent:110});
-					return false;
-				}
-        	});
-		}
-												   
-        /*if (allAtTop) {
+            $('#ordered-top > .dashed-subsection').each(function() {
+                var newLoc = $(this);
+                userAnswer.push(item);
+                var test = 0;
+                if (newLoc.is(':empty')) {
+                    test++;
+                    item.toggleAtTop();
+                    tryagain = false;
+                    container.toggle('puff', {percent:110}, function() {
+                        //top.append(container);
+                        newLoc.append(container);
+                    });
+                    container.toggle('puff', {percent:110});
+                    return false;
+                }
+            });
+        }
+
+        if (allAtTop()) {
             compareAnswer();
-        }*/
+        }
     }
 
     that.How_To = function(leftpos, toppos, learningPanel) {
         var self = this;
         var that = {};
         var ANSWER = items;
-        console.log('ans ' + ANSWER)
+        var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
+        var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
+        var bigRight = $('<img>').addClass('big_right').addClass('how_to');
+        bigRight.attr('src', chrome.extension.getURL("static/bigright.png"));
+
         var setPosition = function() {
             learningPanel.css('width', '854px');
             learningPanel.css('height', '475px');
@@ -528,7 +538,11 @@ var Ordered_Box = function(items) {
 
         that.compareAnswer = function() {
             if (ANSWER === getUserAnswer()) {
-                //yay
+                bigRight.css('display', 'inline');
+                nextButton.css('display', 'inline');
+                nextButton.click(function() {
+
+                });
             }
             else {
                 //wrong
@@ -538,29 +552,37 @@ var Ordered_Box = function(items) {
         that.showExercise = function() {
             //TODO: TEST THIS HARD
             //IF THIS IS BROKEN, LIFE SUCKS
+            bottom.append(resetAllButton).append(nextButton).append(bigRight);
             learningPanel.append(top).append(bottom);
+
             var userItems = $.extend([], ANSWER);
-			var i = 0;
-			
-			do {
+            var i = 0;
+
+            do {
                 shuffle(userItems);
             } while (userItems == ANSWER);
-			
-			$('#ordered-bottom > .solid-subsection').each(function() {
-				var item = userItems[i];
-				$(this).append(item.generateHTML());
-				
+
+            resetAllButton.click(function() {
+                for (i in userItems) {
+                    var item = userItems[i];
+                    if (item.getAtTop() == true) {
+                        moveItem(item);
+                    }
+                }
+            });
+
+            $('#ordered-bottom > .solid-subsection').each(function() {
+                var item = userItems[i];
+                $(this).append(item.generateHTML());
+
                 function attachClickHandler(item) {
                     item.onClick(function() {
-                    console.log('this: ' +     this)
-                    console.log('img click')
-                    console.log('on click: ' + item.getContainer().html())
-                    moveItem(item);
+                        moveItem(item);
                     });
                 }
                 attachClickHandler(item);
-				i++;
-			});
+                i++;
+            });
         }
 
         setPosition();
@@ -637,9 +659,9 @@ $(document).ready(function(){
     //console.log('egg ' + egg1.generateHTML().html());
 
     //create HowTo
-  var ordered_box = Ordered_Box(group.getItems());
-  var how_to = ordered_box.How_To(0, 0, learningPanel);
-   how_to.showExercise();
+    var ordered_box = Ordered_Box(group.getItems());
+    var how_to = ordered_box.How_To(0, 0, learningPanel);
+    how_to.showExercise();
 
     //create Fill_In_The_Blank object
     //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
