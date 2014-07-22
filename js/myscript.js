@@ -440,14 +440,14 @@ var Ordered_Box = function(items) {
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = [];
-
-    /*for (var i in items) {
-        console.log('count' + i);
-        var subdiv = $('<div>').addClass('ordered-subsection');
-        //var clone = $('<div>').addClass('ordered-subsection');
-        top.append(subdiv);
-        //bottom.append(clone);
-    }*/
+	
+	for (var i in items) {
+		console.log('count' + i);
+		var dashed_subdiv = $('<div>').addClass('dashed-subsection');
+		var solid_subdiv = $('<div>').addClass('solid-subsection');
+		top.append(dashed_subdiv);
+		bottom.append(solid_subdiv);
+	}
 
     var allAtTop = function() {
         if (bottom.contents().length == 0) {
@@ -471,25 +471,44 @@ var Ordered_Box = function(items) {
         console.log('move');
         var container = item.getContainer();
         console.log(container.html());
+		
         if (item.getAtTop() == true) {
             var index = userAnswer.indexOf(item);
-            item.toggleAtTop();
             userAnswer.splice(index, 1);
-            container.toggle('puff', {percent:110}, function() {
-                bottom.append(container);
-            });
-            container.toggle('puff', {percent:110});
+			item.toggleAtTop();
+			$('#ordered-bottom > .solid-subsection').each(function() {
+				var newLoc = $(this);
+				if (newLoc.is(':empty')) {
+					container.toggle('puff', {percent:110}, function() {
+						newLoc.append(container);
+					});
+					container.toggle('puff', {percent:110});
+					return false
+				}
+			});
         }
         else {
-            console.log('bottom')
-            item.toggleAtTop();
-            userAnswer.push(item);
-            container.toggle('puff', {percent:110}, function() {
-                top.append(container);
-            });
-            container.toggle('puff', {percent:110});
-            console.log(top.html())
-        }
+			$('#ordered-top > .dashed-subsection').each(function() {
+				var newLoc = $(this);
+				userAnswer.push(item);
+				var test = 0;
+				if (newLoc.is(':empty')) {
+					test++;
+					console.log('test: ' + test)
+					item.toggleAtTop();
+					console.log('empty')
+					tryagain = false;
+					container.toggle('puff', {percent:110}, function() {
+						console.log('this: ' + newLoc)
+						//top.append(container);
+						newLoc.append(container);
+					});
+					container.toggle('puff', {percent:110});
+					return false;
+				}
+        	});
+		}
+												   
         /*if (allAtTop) {
             compareAnswer();
         }*/
@@ -521,14 +540,16 @@ var Ordered_Box = function(items) {
             //IF THIS IS BROKEN, LIFE SUCKS
             learningPanel.append(top).append(bottom);
             var userItems = $.extend([], ANSWER);
-            do {
+			var i = 0;
+			
+			do {
                 shuffle(userItems);
             } while (userItems == ANSWER);
-
-            for (var i in userItems) {
-                var item = userItems[i];
-                bottom.append(item.generateHTML());
-                console.log('on show exercise: ' + item.getContainer().html())
+			
+			$('#ordered-bottom > .solid-subsection').each(function() {
+				var item = userItems[i];
+				$(this).append(item.generateHTML());
+				
                 function attachClickHandler(item) {
                     item.onClick(function() {
                     console.log('this: ' +     this)
@@ -538,7 +559,8 @@ var Ordered_Box = function(items) {
                     });
                 }
                 attachClickHandler(item);
-            }
+				i++;
+			});
         }
 
         setPosition();
@@ -602,7 +624,7 @@ $(document).ready(function(){
     var newCard = parseMap(map);
     $('input[autocomplete]').removeAttr('autocomplete');
     //UNCOMMENT ME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    newCard.showExercise(map['native'], map['foreign']);
+    //newCard.showExercise(map['native'], map['foreign']);
 
     // create Flashcard object, giving it the learningPanel element
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
@@ -615,9 +637,9 @@ $(document).ready(function(){
     //console.log('egg ' + egg1.generateHTML().html());
 
     //create HowTo
-//    var ordered_box = Ordered_Box(group.getItems());
-//    var how_to = ordered_box.How_To(0, 0, learningPanel);
-//    how_to.showExercise();
+  var ordered_box = Ordered_Box(group.getItems());
+  var how_to = ordered_box.How_To(0, 0, learningPanel);
+   how_to.showExercise();
 
     //create Fill_In_The_Blank object
     //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)

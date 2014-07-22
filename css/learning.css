@@ -215,17 +215,31 @@
     height: 50%;
 }
 
-.ordered-subsection {
-    height: 100%;
-    width: 20%;
-    float: left;
-    margin:
+.dashed-subsection {
+	height: 100px;
+	width: 180px;
+	float: left;
+	margin: 15px;
+	border: 1px dashed gray;
+}
+
+.solid-subsection {
+	height: 100px;
+	width: 180px;
+	float: left;
+	margin: 15px;
+	border: 1px solid gray;
+}
+
+.item_image {
+	height: 100px;
+	width: 180px;
+	cursor: pointer;
 }
 
 .item_image {
     height: 100px;
     cursor: pointer;
-    border: 1px dashed gray;
     display: block;
 }
 
@@ -236,9 +250,10 @@
     display: block;
     width: 100%;
 }
+ 
 
 .item_container {
-    height: 100px;
-    float: left;
-    margin: 15px;
+	cursor: pointer;
+	height: 100px;
+	float: left;
 }
