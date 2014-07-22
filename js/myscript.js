@@ -440,6 +440,7 @@ var Ordered_Box = function(items) {
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = [];
+	var ANSWER = items;
 	
 	for (var i in items) {
 		console.log('count' + i);
@@ -450,35 +451,38 @@ var Ordered_Box = function(items) {
 	}
 
     var allAtTop = function() {
-        if (bottom.contents().length == 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
+		var allAtTop = true
+        $('#ordered-top > .dashed-subsection').each(function() {
+			if ($(this).is(':empty')) {
+				allAtTop = false;	
+			}
+		});
+		return allAtTop;
     }
 
     var compareAnswer = function() {
-        //overridden in subclasses
+        if (userAnswer == ANSWER) {
+			console.log('yay');	
+		}
+		else {
+			console.log('nope');	
+		}
     }
 
     that.getUserAnswer = function() {
         return userAnswer;
     }
 
-    //todo: do animations in here.
     var moveItem = function(item) {
-        console.log('move');
         var container = item.getContainer();
-        console.log(container.html());
-		
+
         if (item.getAtTop() == true) {
             var index = userAnswer.indexOf(item);
             userAnswer.splice(index, 1);
-			item.toggleAtTop();
 			$('#ordered-bottom > .solid-subsection').each(function() {
 				var newLoc = $(this);
 				if (newLoc.is(':empty')) {
+					item.toggleAtTop();
 					container.toggle('puff', {percent:110}, function() {
 						newLoc.append(container);
 					});
@@ -491,16 +495,9 @@ var Ordered_Box = function(items) {
 			$('#ordered-top > .dashed-subsection').each(function() {
 				var newLoc = $(this);
 				userAnswer.push(item);
-				var test = 0;
 				if (newLoc.is(':empty')) {
-					test++;
-					console.log('test: ' + test)
 					item.toggleAtTop();
-					console.log('empty')
-					tryagain = false;
 					container.toggle('puff', {percent:110}, function() {
-						console.log('this: ' + newLoc)
-						//top.append(container);
 						newLoc.append(container);
 					});
 					container.toggle('puff', {percent:110});
@@ -508,17 +505,18 @@ var Ordered_Box = function(items) {
 				}
         	});
 		}
-												   
-        /*if (allAtTop) {
+		
+		var done = allAtTop();										   
+        if (done) {
+			console.log('compare ans');
             compareAnswer();
-        }*/
+        }
     }
 
     that.How_To = function(leftpos, toppos, learningPanel) {
         var self = this;
         var that = {};
-        var ANSWER = items;
-        console.log('ans ' + ANSWER)
+		
         var setPosition = function() {
             learningPanel.css('width', '854px');
             learningPanel.css('height', '475px');
@@ -526,14 +524,6 @@ var Ordered_Box = function(items) {
             learningPanel.css("top", toppos + "px");
         }
 
-        that.compareAnswer = function() {
-            if (ANSWER === getUserAnswer()) {
-                //yay
-            }
-            else {
-                //wrong
-            }
-        }
 
         that.showExercise = function() {
             //TODO: TEST THIS HARD
@@ -552,10 +542,7 @@ var Ordered_Box = function(items) {
 				
                 function attachClickHandler(item) {
                     item.onClick(function() {
-                    console.log('this: ' +     this)
-                    console.log('img click')
-                    console.log('on click: ' + item.getContainer().html())
-                    moveItem(item);
+						moveItem(item);
                     });
                 }
                 attachClickHandler(item);
@@ -598,7 +585,7 @@ var computer = Word('computer', {'spanish': 'computadora'})
 var sad = Word('sad', {'spanish': 'triste'})
 var vocab = [people, government, thing, cat, war, computer, sad];
 //var vocab = [cat];
-console.log(vocab);
+//console.log(vocab);
 
 //VIEW (kind of)
 

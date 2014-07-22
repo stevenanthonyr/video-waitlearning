@@ -209,6 +209,8 @@
 
 #ordered-top {
     height: 50%;
+	border-bottom: 1px solid black;
+	
 }
 
 #ordered-bottom {
@@ -221,6 +223,7 @@
 	float: left;
 	margin: 15px;
 	border: 1px dashed gray;
+	margin-top: 7%;
 }
 
 .solid-subsection {
@@ -237,14 +240,7 @@
 	cursor: pointer;
 }
 
-.item_image {
-    height: 100px;
-    cursor: pointer;
-    display: block;
-}
-
 .item_helpText {
-    float: left;
     text-align: center;
     font-size: 8pt;
     display: block;
