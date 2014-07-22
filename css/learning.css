@@ -206,21 +206,31 @@
 	height: 50%;
 }
 
-.ordered-subsection {
-	height: 100%;
-	width: 20%;
+.dashed-subsection {
+	height: 100px;
+	width: 180px;
 	float: left;
-	margin:
+	margin: 15px;
+	border: 1px dashed gray;
+}
+
+.solid-subsection {
+	height: 100px;
+	width: 180px;
+	float: left;
+	margin: 15px;
+	border: 1px solid gray;
 }
 
 .item_image {
 	height: 100px;
+	width: 180px;
 	cursor: pointer;
-	border: 1px dashed gray;
 }
+ 
 
 .item_container {
+	cursor: pointer;
 	height: 100px;
 	float: left;
-	margin: 15px;
 }

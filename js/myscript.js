@@ -427,13 +427,13 @@ var Ordered_Box = function(items) {
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = [];
 	
-	/*for (var i in items) {
+	for (var i in items) {
 		console.log('count' + i);
-		var subdiv = $('<div>').addClass('ordered-subsection');
-		//var clone = $('<div>').addClass('ordered-subsection');
-		top.append(subdiv);
-		//bottom.append(clone);
-	}*/
+		var dashed_subdiv = $('<div>').addClass('dashed-subsection');
+		var solid_subdiv = $('<div>').addClass('solid-subsection');
+		top.append(dashed_subdiv);
+		bottom.append(solid_subdiv);
+	}
 
     var allAtTop = function() {
         if (bottom.contents().length == 0) {
@@ -457,25 +457,44 @@ var Ordered_Box = function(items) {
         console.log('move');
         var container = item.getContainer();
         console.log(container.html());
+		
         if (item.getAtTop() == true) {
             var index = userAnswer.indexOf(item);
-            item.toggleAtTop();
             userAnswer.splice(index, 1);
-            container.toggle('puff', {percent:110}, function() {
-                bottom.append(container);
-            });
-            container.toggle('puff', {percent:110});
+			item.toggleAtTop();
+			$('#ordered-bottom > .solid-subsection').each(function() {
+				var newLoc = $(this);
+				if (newLoc.is(':empty')) {
+					container.toggle('puff', {percent:110}, function() {
+						newLoc.append(container);
+					});
+					container.toggle('puff', {percent:110});
+					return false
+				}
+			});
         }
         else {
-            console.log('bottom')
-            item.toggleAtTop();
-            userAnswer.push(item);
-            container.toggle('puff', {percent:110}, function() {
-                top.append(container);
-            });
-            container.toggle('puff', {percent:110});
-            console.log(top.html())
-        }
+			$('#ordered-top > .dashed-subsection').each(function() {
+				var newLoc = $(this);
+				userAnswer.push(item);
+				var test = 0;
+				if (newLoc.is(':empty')) {
+					test++;
+					console.log('test: ' + test)
+					item.toggleAtTop();
+					console.log('empty')
+					tryagain = false;
+					container.toggle('puff', {percent:110}, function() {
+						console.log('this: ' + newLoc)
+						//top.append(container);
+						newLoc.append(container);
+					});
+					container.toggle('puff', {percent:110});
+					return false;
+				}
+        	});
+		}
+												   
         /*if (allAtTop) {
             compareAnswer();
         }*/
@@ -512,13 +531,13 @@ var Ordered_Box = function(items) {
             learningPanel.append(top).append(bottom);
             var userItems = $.extend([], ANSWER);
             shuffle(userItems);
-
-            for (var i in userItems) {
-                var item = userItems[i];
-                bottom.append(item.generateHTML());
-                createDashedBox();
-                console.log('on show exercise: ' + item.getContainer().html())
-                function attachClickHandler(item) {
+			var i = 0;
+			
+			$('#ordered-bottom > .solid-subsection').each(function() {
+				var item = userItems[i];
+				$(this).append(item.generateHTML());
+				
+				function attachClickHandler(item) {
                     item.onClick(function() {
                     console.log('this: ' +     this)
                     console.log('img click')
@@ -527,7 +546,8 @@ var Ordered_Box = function(items) {
                     });
                 }
                 attachClickHandler(item);
-            }
+				i++;
+			});
         }
         //console.log(top);
         //console.log(bottom);
