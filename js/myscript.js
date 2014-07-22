@@ -268,11 +268,11 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             function next() {
                 dots += '.';
                 loadingDiv.text(dots);
-                if (dots < 3) {
-                    setTimeout(next, timeToNext/3);
+                if (dots.length < 3) {
+                    setTimeout(next, timeToNext/4);
                 }
             }
-            setTimeout(next, timeToNext/3);
+            setTimeout(next, timeToNext/4);
 //            newCard.showExercise(map['native'], map['foreign']);
             setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, timeToNext);
         }
