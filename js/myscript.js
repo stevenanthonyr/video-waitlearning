@@ -273,7 +273,6 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
                 }
             }
             setTimeout(next, timeToNext/4);
-//            newCard.showExercise(map['native'], map['foreign']);
             setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, timeToNext);
         }
 
@@ -284,8 +283,9 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             $('#fitb_translation_field').addClass('fitb_try_again');
             setTimeout(function(){
                 $('#fitb_translation_field').attr('placeholder', 'try again');
-                $('.fitb_try_again::-webkit-input-placeholder').fadeIn(500);
-            }, 500);
+                $('.fitb_try_again::-webkit-input-placeholder').fadeIn(1000);
+            }, 1000);
+            $('#wrong').fadeOut(1250);
             $('.revealButton.fill_in_the_blank').css('display', 'inline');
 
 
@@ -406,6 +406,13 @@ var Item = function(helpText, path) {
         return container;
     }
 
+    that.itemEquals = function(item2) {
+        if (helpText === item2.getInfo()['helpText'] && path === item2.getInfo()['path']) {
+            return true;
+        }
+        return false;
+    }
+
 //    var wrong = $("<img>").addClass("check")//.addClass("not-clickable");
 //    wrong.attr('src', chrome.extension.getURL('static/wrong.png'));
     that.generateHTML = function() {
@@ -452,6 +459,10 @@ var Ordered_Box = function(items) {
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = [];
     var ANSWER = items;
+    var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
+    var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
+    var bigRight = $('<img>').addClass('big_right').addClass('how_to');
+    bigRight.attr('src', chrome.extension.getURL("static/bigright.png"));
 
     for (var i in items) {
         console.log('count' + i);
@@ -471,12 +482,18 @@ var Ordered_Box = function(items) {
         return allAtTop;
     }
 
-    var compareAnswer = function() {
-        if (userAnswer == ANSWER) {
-            console.log('yay');
+    that.compareAnswer = function() {
+        console.log(userAnswer);
+        if (ANSWER === userAnswer) {
+            console.log('naxx is out, fuck work');
+            bigRight.css('display', 'inline');
+            nextButton.css('display', 'inline');
+            nextButton.click(function() {
+
+            });
         }
         else {
-            console.log('nope');
+            console.log('nuh uh');
         }
     }
 
@@ -517,40 +534,24 @@ var Ordered_Box = function(items) {
             });
         }
 
-        var done = allAtTop();
-        if (done) {
-            console.log('top full');
-            compareAnswer();
-        }
+        setTimeout(function() {
+            if (allAtTop()) {
+                console.log('top full');
+                compareAnswer();
+            }
+        }, 100);
     }
 
     that.How_To = function(leftpos, toppos, learningPanel) {
         var self = this;
         var that = {};
         var ANSWER = items;
-        var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
-        var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
-        var bigRight = $('<img>').addClass('big_right').addClass('how_to');
-        bigRight.attr('src', chrome.extension.getURL("static/bigright.png"));
 
         var setPosition = function() {
             learningPanel.css('width', '854px');
             learningPanel.css('height', '475px');
             learningPanel.css("left", leftpos + "px");
             learningPanel.css("top", toppos + "px");
-        }
-
-        that.compareAnswer = function() {
-            if (ANSWER === getUserAnswer()) {
-                bigRight.css('display', 'inline');
-                nextButton.css('display', 'inline');
-                nextButton.click(function() {
-
-                });
-            }
-            else {
-                //wrong
-            }
         }
 
         that.showExercise = function() {
@@ -561,10 +562,25 @@ var Ordered_Box = function(items) {
 
             var userItems = $.extend([], ANSWER);
             var i = 0;
+            var trueArray = []; //if all elts in it are true, need to shuffle again.
+            var rerun;
 
             do {
                 shuffle(userItems);
             } while (userItems == ANSWER);
+
+//            do {
+//                shuffle(userItems);
+//                for (i in userItems) {
+//                    console.log("ui: " + userItems);
+//                    console.log("ans: " + ANSWER);
+//                    var result = userItems[i].itemEquals(ANSWER[i]);
+//                    trueArray.push(result);
+//                }
+//                ($.inArray(false, trueArray)) ? rerun = false : rerun = true;
+//                console.log('tryyyyyuuuuuuu :' + trueArray);
+//                trueArray = [];
+//            } while (rerun);
 
             resetAllButton.click(function() {
                 for (i in userItems) {
@@ -577,6 +593,7 @@ var Ordered_Box = function(items) {
 
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var item = userItems[i];
+                console.log('one of these will fail ' + item); //that is, fail in the commented out do while.
                 $(this).append(item.generateHTML());
 
                 function attachClickHandler(item) {
