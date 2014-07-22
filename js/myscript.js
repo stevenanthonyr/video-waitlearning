@@ -483,10 +483,10 @@ var Ordered_Box = function(items) {
 				var newLoc = $(this);
 				if (newLoc.is(':empty')) {
 					item.toggleAtTop();
-					container.toggle('puff', {percent:110}, function() {
+					container.toggle('puff', {percent:110}, 100, function() {
 						newLoc.append(container);
 					});
-					container.toggle('puff', {percent:110});
+					container.toggle('puff', {percent:110}, 500);
 					return false
 				}
 			});
@@ -497,10 +497,10 @@ var Ordered_Box = function(items) {
 				userAnswer.push(item);
 				if (newLoc.is(':empty')) {
 					item.toggleAtTop();
-					container.toggle('puff', {percent:110}, function() {
+					container.toggle('puff', {percent:110}, 100, function() {
 						newLoc.append(container);
 					});
-					container.toggle('puff', {percent:110});
+					container.toggle('puff', {percent:110}, 500);
 					return false;
 				}
         	});
@@ -508,7 +508,7 @@ var Ordered_Box = function(items) {
 		
 		var done = allAtTop();										   
         if (done) {
-			console.log('compare ans');
+			console.log('top full');
             compareAnswer();
         }
     }
@@ -585,7 +585,7 @@ var computer = Word('computer', {'spanish': 'computadora'})
 var sad = Word('sad', {'spanish': 'triste'})
 var vocab = [people, government, thing, cat, war, computer, sad];
 //var vocab = [cat];
-//console.log(vocab);
+//   console.log(vocab);
 
 //VIEW (kind of)
 
@@ -593,6 +593,9 @@ var vocab = [people, government, thing, cat, war, computer, sad];
 //design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
     attach_css();
+	$(document).dblclick(function(e) {
+		e.preventDefault();
+	});
 
     // get controls and position
     var controls = $(".html5-video-controls");
