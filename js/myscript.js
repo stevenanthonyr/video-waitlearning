@@ -16,10 +16,10 @@ function getRandomInt(min, max) {
 //                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
 function parseMap(map) {
     if (map['type'] == 'flashcard') {
-//        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
     else if (map['type'] == 'fill_in_the_blank') {
-//        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
 }
 
@@ -238,6 +238,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var nativePanel = $("<div>").addClass("nativePanel fill_in_the_blank");
     var answerStatus = $("<div>").addClass("answerStatus fill_in_the_blank");
     var revealButton = $("<button>").addClass("revealButton fill_in_the_blank").text('reveal').attr('type', 'button');
+    var loadingDiv = $('<div>').addClass("loading").text('');
 
     var setPosition = function(){
         learningPanel.css("width", "400px");
@@ -258,11 +259,22 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         }
 
         if (submittedTranslation == answer) {
+            var dots = '';
+            var timeToNext = 1250; //in milliseconds
             var url = chrome.extension.getURL("static/right.png");
             $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
             var newCard = parseMap(map);
-            setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, 1250);
+            function next() {
+                dots += '.';
+                loadingDiv.text(dots);
+                if (dots < 3) {
+                    setTimeout(next, timeToNext/3);
+                }
+            }
+            setTimeout(next, timeToNext/3);
+//            newCard.showExercise(map['native'], map['foreign']);
+            setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, timeToNext);
         }
 
         else {
@@ -318,7 +330,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         lefttop.append(foreignPanel);
         leftbottom.append(nativePanel);
         left.append(lefttop).append(leftbottom);
-        right.append(answerStatus).append(revealButton);
+        right.append(answerStatus).append(revealButton).append(loadingDiv);
         learningPanel.append(left).append(right);
 
         //CSS below used to align text in input field and text in div.
@@ -387,11 +399,10 @@ var Item = function(helpText, path) {
     that.generateHTML = function() {
         var image = $("<img>").addClass("item_image");
         image.attr('src', chrome.extension.getURL(path));
-        var helpText = $("<span>").addClass("item_helptext").text(helpText);
         var helpTextSpan = $("<span>").addClass("item_helpText");
         //var container = $("<div>").addClass('item_container');
-        container.append(image).append(helpText);
-        helpTextSpan.text(helpText)
+        container.append(image).append(helpTextSpan);
+        helpTextSpan.text(helpText);
         console.log('container' + container);
         return container;
     }
@@ -421,6 +432,9 @@ var Group = function(name, items) {
     return that;
 }
 
+//never run methods from this class on this class itself!
+//run the methods on instances of the subclasses (don't run moveItems
+//on this class, run it on a How_To so compareAnswer from that class is run)
 var Ordered_Box = function(items) {
     var that = {};
     var top = $('<div>').attr('id','ordered-top');
@@ -512,10 +526,6 @@ var Ordered_Box = function(items) {
             learningPanel.css("top", toppos + "px");
         }
 
-        var createDashedBox = function() {
-
-        }
-
         that.compareAnswer = function() {
             if (ANSWER === getUserAnswer()) {
                 //yay
@@ -530,14 +540,17 @@ var Ordered_Box = function(items) {
             //IF THIS IS BROKEN, LIFE SUCKS
             learningPanel.append(top).append(bottom);
             var userItems = $.extend([], ANSWER);
-            shuffle(userItems);
 			var i = 0;
+			
+			do {
+                shuffle(userItems);
+            } while (userItems == ANSWER);
 			
 			$('#ordered-bottom > .solid-subsection').each(function() {
 				var item = userItems[i];
 				$(this).append(item.generateHTML());
 				
-				function attachClickHandler(item) {
+                function attachClickHandler(item) {
                     item.onClick(function() {
                     console.log('this: ' +     this)
                     console.log('img click')
@@ -549,9 +562,6 @@ var Ordered_Box = function(items) {
 				i++;
 			});
         }
-        //console.log(top);
-        //console.log(bottom);
-        //learningPanel.append(Draggable_Box.top).append(Draggable_Box.bottom);
 
         setPosition();
         Object.freeze(that);
@@ -560,26 +570,23 @@ var Ordered_Box = function(items) {
     return that;
 }
 
-//How_To.prototype = new Draggable_Box();
-//How_To.prototype = Object.create(Draggable_Box.prototype);
-
-var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
-    var that = {};
-
-    var setPosition = function() {
-        learningPanel.css("left", leftpos + "px");
-        learningPanel.css("top", toppos + "px");
-    }
-
-    that.showExercise = function(l1, l2) {
-
-    }
-
-    setPosition();
-    Object.freeze(that);
-    return that;
-}
-Sentence_Order.prototype = new Ordered_Box();
+//var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
+//    var that = {};
+//
+//    var setPosition = function() {
+//        learningPanel.css("left", leftpos + "px");
+//        learningPanel.css("top", toppos + "px");
+//    }
+//
+//    that.showExercise = function(l1, l2) {
+//
+//    }
+//
+//    setPosition();
+//    Object.freeze(that);
+//    return that;
+//}
+//Sentence_Order.prototype = new Ordered_Box();
 
 //all vocab should be lowercase, no punctuation.
 var people = Word('people', {'spanish': 'personas'})
@@ -617,22 +624,22 @@ $(document).ready(function(){
     var newCard = parseMap(map);
     $('input[autocomplete]').removeAttr('autocomplete');
     //UNCOMMENT ME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//    newCard.showExercise(map['native'], map['foreign']);
+    //newCard.showExercise(map['native'], map['foreign']);
 
     // create Flashcard object, giving it the learningPanel element
     //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
     //flashcard.showExercise("people", "personas");
-    var egg1 = Item('1.', 'static/stepimages/egg1.png');
-    var egg2 = Item('2.', 'static/stepimages/egg2.png');
-    var egg3 = Item('3.', 'static/stepimages/egg3.png');
-    var egg4 = Item('4.', 'static/stepimages/egg4.png');
+    var egg1 = Item('Prep the pan.', 'static/stepimages/egg1.png');
+    var egg2 = Item('Prep the egg.', 'static/stepimages/egg2.png');
+    var egg3 = Item('Put the egg on the pan.', 'static/stepimages/egg3.png');
+    var egg4 = Item('Cook egg.', 'static/stepimages/egg4.png');
     var group = Group('eggs', [egg1, egg2, egg3, egg4])
     //console.log('egg ' + egg1.generateHTML().html());
 
     //create HowTo
-    var ordered_box = Ordered_Box(group.getItems());
-    var how_to = ordered_box.How_To(0, 0, learningPanel);
-    how_to.showExercise();
+  var ordered_box = Ordered_Box(group.getItems());
+  var how_to = ordered_box.How_To(0, 0, learningPanel);
+   how_to.showExercise();
 
     //create Fill_In_The_Blank object
     //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
