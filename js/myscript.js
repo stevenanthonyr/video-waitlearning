@@ -635,19 +635,24 @@ var Ordered_Box = function(items) {
 //                console.log('tryyyyyuuuuuuu :' + trueArray);
 //                trueArray = [];
 //            } while (rerun);
+
             for (i in userItems) {
                 //shuffledItems is an object, declared in Ordered_Box, while userItems is the shuffled version
                 //of ANSWER list.
                 console.log('user items: ' + userItems);
+                console.log('this is i: ' + i);
                 shuffledItems[i] = userItems[i];
                 console.log('shuffled items: ' + shuffledItems);
 
             }
 
             resetAllButton.click(function() {
-                for (i in userItems) {
-                    var item = userItems[i];
-                    if (item.getAtTop() == true) {
+                for (i in shuffledItems) {
+                    var item = shuffledItems[i];
+                    if (item === null) {
+                        continue;
+                    }
+                    else if (item.getAtTop() == true) {
                         moveItem(item);
                     }
                 }
