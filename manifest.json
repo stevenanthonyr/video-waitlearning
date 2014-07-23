@@ -18,6 +18,7 @@
   "web_accessible_resources":[
     "css/learning.css",
     "static/bigright.png",
+    "static/bigwrong.png",
     "static/right.png",
     "static/wrong.png",
     "static/stepimages/egg1.png",

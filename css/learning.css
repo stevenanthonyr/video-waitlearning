@@ -221,8 +221,8 @@
     height: 100px;
     width: 180px;
     float: left;
-    margin: 15px;
-    border: 1px dashed gray;
+    margin: 14px;
+    border: 2px dashed gray;
     margin-top: 7%;
 }
 
@@ -288,4 +288,12 @@
     top: 362px;
     left: 393px;
     position: absolute;
+}
+
+.big_wrong.how_to {
+    display: none;
+    position: absolute;
+    top: 345px;
+    left: 352px;
+    height: 30%;
 }

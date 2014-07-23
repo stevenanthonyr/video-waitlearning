@@ -30,6 +30,15 @@ function shuffle(o){ //v1.0
 //    return o;
 }
 
+function getKeyFromValue(value) {
+    for (var prop in this) {
+        if (this.hasOwnProperty(prop)) {
+             if (this[prop] === value)
+                 return prop;
+        }
+    }
+}
+
 //MODELS
 
 //Objects of the Word class are stored in model to pull words
@@ -380,7 +389,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 var Item = function(helpText, path) {
     //note: if path not passed in, expect it to be 'undefined'
     var that = {};
-    var self = this;
+    $(this).addClass('item');
     var atTop = false;
     var container = $("<div>").addClass('item_container');
 
@@ -465,12 +474,16 @@ var Ordered_Box = function(items) {
     var that = {};
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
-    var userAnswer = [];
+    var userAnswer = {0: null, 1: null, 2: null, 3: null};
+    var shuffledItems = {0: null, 1: null, 2: null, 3: null};
+
     var ANSWER = items;
     var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
     var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
     var bigRight = $('<img>').addClass('big_right').addClass('how_to');
+    var bigWrong = $('<img>').addClass('big_wrong').addClass('how_to');
     bigRight.attr('src', chrome.extension.getURL("static/bigright.png"));
+    bigWrong.attr('src', chrome.extension.getURL("static/bigwrong.png"));
 
     for (var i in items) {
         console.log('count' + i);
@@ -481,6 +494,7 @@ var Ordered_Box = function(items) {
     }
 
 
+    //could change this implementation to read userAnswer, but it's nbd.
     var allAtTop = function() {
         var allAtTop = true
         $('#ordered-top > .dashed-subsection').each(function() {
@@ -491,10 +505,33 @@ var Ordered_Box = function(items) {
         return allAtTop;
     }
 
-    that.compareAnswer = function() {
-        console.log(userAnswer);
-        if (ANSWER === userAnswer) {
-            console.log('naxx is out, fuck work');
+    var compareAnswer = function() {
+        var equal = true;
+        //console.log('here');
+
+        bigRight.css('display', 'none');
+        bigWrong.css('display', 'none');
+        nextButton.css('display', 'none');
+
+        for (i in ANSWER) {
+            console.log('ANSWER[i] = ' + ANSWER[i]);
+            console.log('userAnswer[i] = ' + userAnswer[i]);
+            if (ANSWER[i].getPath() != userAnswer[i].getPath()) {
+                setTimeout(function() { //wait for animation to finish
+                    $('.item_container').effect('shake');
+                    $('#ordered-top > .dashed-subsection').css('border-color', 'red');
+                }, 600);
+                equal = false;
+                break;
+            }
+        }
+
+        if (equal) { //user is correct
+            bigWrong.css('display', 'none');
+            console.log('yay');
+            setTimeout(function() { //wait for animation to finish
+                $('#ordered-top > .dashed-subsection').css('border-color', 'green');
+            }, 600);
             bigRight.css('display', 'inline');
             nextButton.css('display', 'inline');
             nextButton.click(function() {
@@ -502,13 +539,14 @@ var Ordered_Box = function(items) {
             });
         }
         else {
-            console.log('nuh uh');
+            bigWrong.css('display', 'inline');
         }
     }
 
-    that.getUserAnswer = function() {
+    /*that.getUserAnswer = function() {
         return userAnswer;
-    }
+    }*/
+
 
     var moveItemViaDrag = function(item,targetelem){
         var container = item.getContainer();
@@ -538,44 +576,57 @@ var Ordered_Box = function(items) {
 
     var moveItem = function(item) {
         var container = item.getContainer();
+        var counter = 0;
 
         if (item.getAtTop() == true) {
-            var index = userAnswer.indexOf(item);
-            userAnswer.splice(index, 1);
+            var index = getKeyFromValue(item); //return 0 through len(items) - 1, key from dict indicating position at top.
+            //console.log('before splice: ' + userAnswer);
+            //userAnswer.splice(index, 1);
+            //console.log('after splice: ' + userAnswer);
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var newLoc = $(this);
                 if (newLoc.is(':empty')) {
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
+                        shuffledItems[counter] = item;
                     });
                     container.toggle('puff', {percent:110}, 500);
                     return false
                 }
+                counter++;
             });
         }
         else {
             $('#ordered-top > .dashed-subsection').each(function() {
                 var newLoc = $(this);
-                userAnswer.push(item);
                 if (newLoc.is(':empty')) {
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
+                        userAnswer[counter] = item;
                     });
                     container.toggle('puff', {percent:110}, 500);
                     return false;
                 }
+                counter++;
             });
         }
 
-        setTimeout(function() {
+        /*for (i in ANSWER) {
+            console.log('ANSWER' + i + '= ' + ANSWER[i][0]);
+        }
+        for (i in userAnswer) {
+            console.log('userAnswer' + i + '= ' + userAnswer[i][0]);
+        }*/
+
+        setTimeout(function() { //wait for animation to finish
             if (allAtTop()) {
-                console.log('top full');
                 compareAnswer();
             }
-        }, 100);
+        }, 200);
     }
+
 
     that.How_To = function(leftpos, toppos, learningPanel) {
         var self = this;
@@ -592,7 +643,7 @@ var Ordered_Box = function(items) {
         that.showExercise = function() {
             //TODO: TEST THIS HARD
             //IF THIS IS BROKEN, LIFE SUCKS
-            bottom.append(resetAllButton).append(nextButton).append(bigRight);
+            bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong);
             learningPanel.append(top).append(bottom);
 
             var userItems = $.extend([], ANSWER);
@@ -617,17 +668,31 @@ var Ordered_Box = function(items) {
 //                trueArray = [];
 //            } while (rerun);
 
+            for (var i in userItems) {
+                //shuffledItems is an object, declared in Ordered_Box, while userItems is the shuffled version
+                //of ANSWER list.
+                console.log('i = ' + i);
+                //console.log('user items: ' + userItems);
+                shuffledItems[i] = userItems[i];
+                console.log('shuffled items[i]: ' + shuffledItems[i]);
+
+            }
+
             resetAllButton.click(function() {
-                for (i in userItems) {
-                    var item = userItems[i];
-                    if (item.getAtTop() == true) {
+                for (i in shuffledItems) {
+                    var item = shuffledItems[i];
+                    if (item === null) {
+                        continue;
+                    }
+                    else if (item.getAtTop() == true) {
                         moveItem(item);
                     }
                 }
             });
 
+            var initpos = 0;
             $('#ordered-bottom > .solid-subsection').each(function() {
-                var item = userItems[i];
+                var item = shuffledItems[initpos];
                 console.log('one of these will fail ' + item); //that is, fail in the commented out do while.
                 $(this).append(item.generateHTML());
                 item.makedraggable();
@@ -637,7 +702,7 @@ var Ordered_Box = function(items) {
                     });
                 }
                 attachClickHandler(item);
-                i++;
+                initpos++;
             });
 
             makedroppable();
@@ -709,9 +774,6 @@ var vocab = [people, government, thing, cat, war, computer, sad];
 //design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
     attach_css();
-    $(document).dblclick(function(e) {
-        e.preventDefault();
-    });
 
     // get controls and position
     var controls = $(".html5-video-controls");
@@ -763,7 +825,7 @@ $(document).ready(function(){
 
 
     videoElement.addEventListener("play",function(){
-        console.log("started playing!");
+        //console.log("started playing!");
     });
 
     //----------------------------------------------------
