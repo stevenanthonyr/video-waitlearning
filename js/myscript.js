@@ -476,10 +476,11 @@ var Ordered_Box = function(items) {
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = {0: null, 1: null, 2: null, 3: null};
     var shuffledItems = {0: null, 1: null, 2: null, 3: null};
-	var done = false;
+    var done = false;
     var ANSWER = items;
     var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
     var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
+    var revealButton = $('<button>').addClass('reveal_button').addClass('how_to').text('reveal').attr('type', 'button');
     var bigRight = $('<img>').addClass('big_right').addClass('how_to');
     var bigWrong = $('<img>').addClass('big_wrong').addClass('how_to');
     bigRight.attr('src', chrome.extension.getURL("static/bigright.png"));
@@ -507,7 +508,7 @@ var Ordered_Box = function(items) {
 
     var compareAnswer = function() {
         var equal = true;
-		done = true;
+        done = true;
         //console.log('here');
 
         bigRight.css('display', 'none');
@@ -541,6 +542,13 @@ var Ordered_Box = function(items) {
 
             });
         }
+        else {
+            bigWrong.css('display', 'inline');
+            revealButton.css('display', 'inline');
+            revealButton.click(function() {
+
+            });
+        }
     }
 
     /*that.getUserAnswer = function() {
@@ -551,7 +559,7 @@ var Ordered_Box = function(items) {
     var moveItemViaDrag = function(item,targetelem){
         var container = item.getContainer();
         if(item.getAtTop() == true){
-            var index = getKeyFromValue(item); 
+            var index = getKeyFromValue(item);
             container.css("left", "auto");
             container.css("top","auto");
             targetelem.append(container);
@@ -578,14 +586,14 @@ var Ordered_Box = function(items) {
     var moveItem = function(item) {
         var container = item.getContainer();
         var counter = 0;
-		
-		if (done) {
-			bigRight.css('display', 'none');
-			bigWrong.css('display', 'none');
-			nextButton.css('display', 'none');
-			$('#ordered-top > .dashed-subsection').css('border-color', 'gray');
-			done = false;
-		}
+
+        if (done) {
+            bigRight.css('display', 'none');
+            bigWrong.css('display', 'none');
+            nextButton.css('display', 'none');
+            $('#ordered-top > .dashed-subsection').css('border-color', 'gray');
+            done = false;
+        }
 
         if (item.getAtTop() == true) {
             var index = getKeyFromValue(item); //return 0 through len(items) - 1, key from dict indicating position at top.
@@ -650,50 +658,48 @@ var Ordered_Box = function(items) {
         }
 
         that.showExercise = function() {
-			learningPanel.empty();
-            bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong);
+            learningPanel.empty();
+            bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
             learningPanel.append(top).append(bottom);
 
             var userItems = $.extend([], ANSWER);
             var i = 0;
-            //var trueArray = []; //if all elts in it are true, need to shuffle again.
-            var rerun;
-
-            do {
-                shuffle(userItems);
-            } while (userItems == ANSWER);
+            var trueArray = []; //if all elts in it are true, need to shuffle again.
 
 //            do {
 //                shuffle(userItems);
-//                for (i in userItems) {
-//                    console.log("ui: " + userItems);
-//                    console.log("ans: " + ANSWER);
-//                    var result = userItems[i].itemEquals(ANSWER[i]);
-//                    trueArray.push(result);
-//                }
-//                ($.inArray(false, trueArray)) ? rerun = false : rerun = true;
-//                console.log('tryyyyyuuuuuuu :' + trueArray);
-//                trueArray = [];
-//            } while (rerun);
+//            } while (userItems == ANSWER);
+
+            do {
+                shuffle(userItems);
+                for (i in userItems) {
+                    var result = userItems[i].itemEquals(ANSWER[i]);
+                    trueArray.push(result);
+                }
+                console.log('tryyyyyuuuuuuu :' + trueArray);
+                if ($.inArray(false, trueArray, 0) > -1) {
+                    break;
+                }
+                trueArray = [];
+            } while (true);
 
             for (var i in userItems) {
                 //shuffledItems is an object, declared in Ordered_Box, while userItems is the shuffled version
                 //of ANSWER list.
-                console.log('i = ' + i);
                 //console.log('user items: ' + userItems);
                 shuffledItems[i] = userItems[i];
-                console.log('shuffled items[i]: ' + shuffledItems[i]);
-
             }
 
             resetAllButton.click(function() {
                 /*for (i in shuffledItems) {
+                var takenDivs = [];
+                for (i in shuffledItems) {
                     var item = shuffledItems[i];
                     if (item === null) {
                         continue;
                     }
                     else if (item.getAtTop() == true) {
-                        moveItem(item);
+                        setTimeout(moveItem(item), 100);
                     }
                 }*/
             });
@@ -701,7 +707,6 @@ var Ordered_Box = function(items) {
             var initpos = 0;
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var item = shuffledItems[initpos];
-                console.log('one of these will fail ' + item); //that is, fail in the commented out do while.
                 $(this).append(item.generateHTML());
                 item.makedraggable();
                 function attachClickHandler(item) {
@@ -737,7 +742,6 @@ var Ordered_Box = function(items) {
                 console.log("target: " + target.html());
             }
         }
-    
 
         setPosition();
         Object.freeze(that);
@@ -809,11 +813,16 @@ $(document).ready(function(){
     var egg2 = Item('Prep the egg.', 'static/stepimages/egg2.png');
     var egg3 = Item('Put the egg on the pan.', 'static/stepimages/egg3.png');
     var egg4 = Item('Cook egg.', 'static/stepimages/egg4.png');
-    var group = Group('eggs', [egg1, egg2, egg3, egg4])
+    var abs1 = Item('Eat food.', 'static/stepimages/abs1.png');
+    var abs2 = Item('Buy ab-hancer.', 'static/stepimages/abs2.png');
+    var abs3 = Item('???', 'static/stepimages/abs3.png');
+    var abs4 = Item('Profit.', 'static/stepimages/abs4.png');
+    var group = Group('eggs', [egg1, egg2, egg3, egg4]);
+    var group2 = Group('abs', [abs1, abs2, abs3, abs4]);
     //console.log('egg ' + egg1.generateHTML().html());
 
     //create HowTo
-    var ordered_box = Ordered_Box(group.getItems());
+    var ordered_box = Ordered_Box(group2.getItems());
     var how_to = ordered_box.How_To(0, 0, learningPanel);
     how_to.showExercise();
 

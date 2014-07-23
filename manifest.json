@@ -24,7 +24,11 @@
     "static/stepimages/egg1.png",
     "static/stepimages/egg2.png",
     "static/stepimages/egg3.png",
-    "static/stepimages/egg4.png"
+    "static/stepimages/egg4.png",
+    "static/stepimages/abs1.png",
+    "static/stepimages/abs2.png",
+    "static/stepimages/abs3.png",
+    "static/stepimages/abs4.png"
   ],
   "manifest_version": 2
 }

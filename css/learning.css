@@ -276,6 +276,22 @@
     height: 20px;
 }
 
+.reveal_button.how_to{
+/*    display: none;*/
+    font-style: italic;
+    border: 1px solid gray;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 95%;
+    left: 93%;
+    width: 55px;
+    height: 20px;
+}
+
+
 .item_container {
     cursor: pointer;
     height: 100px;
