@@ -551,14 +551,14 @@ var Ordered_Box = function(items) {
     var moveItemViaDrag = function(item,targetelem){
         var container = item.getContainer();
         if(item.getAtTop() == true){
-            var index = userAnswer.indexOf(item);
-            userAnswer.splice(index,1);
+            var index = getKeyFromValue(item); 
             container.css("left", "auto");
             container.css("top","auto");
             targetelem.append(container);
 
         }else{
-            userAnswer.push(item);
+            var index = $(".dashed-subsection").index(targetelem);
+            userAnswer[index] = item;
             item.toggleAtTop();
             targetelem.append(container);
             container.css("left", "auto");
@@ -568,9 +568,9 @@ var Ordered_Box = function(items) {
         setTimeout(function() {
             if (allAtTop()) {
                 console.log('top full');
-                that.compareAnswer();
+                compareAnswer();
             }
-        }, 100);
+        }, 0);
     }
 
 
