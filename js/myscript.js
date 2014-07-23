@@ -476,7 +476,7 @@ var Ordered_Box = function(items) {
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = {0: null, 1: null, 2: null, 3: null};
     var shuffledItems = {0: null, 1: null, 2: null, 3: null};
-
+    var done = false;
     var ANSWER = items;
     var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
     var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
@@ -508,6 +508,7 @@ var Ordered_Box = function(items) {
 
     var compareAnswer = function() {
         var equal = true;
+        done = true;
         //console.log('here');
 
         bigRight.css('display', 'none');
@@ -583,6 +584,14 @@ var Ordered_Box = function(items) {
         var container = item.getContainer();
         var counter = 0;
 
+        if (done) {
+            bigRight.css('display', 'none');
+            bigWrong.css('display', 'none');
+            nextButton.css('display', 'none');
+            $('#ordered-top > .dashed-subsection').css('border-color', 'gray');
+            done = false;
+        }
+
         if (item.getAtTop() == true) {
             var index = getKeyFromValue(item); //return 0 through len(items) - 1, key from dict indicating position at top.
             //console.log('before splice: ' + userAnswer);
@@ -646,8 +655,7 @@ var Ordered_Box = function(items) {
         }
 
         that.showExercise = function() {
-            //TODO: TEST THIS HARD
-            //IF THIS IS BROKEN, LIFE SUCKS
+            learningPanel.empty();
             bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
             learningPanel.append(top).append(bottom);
 
