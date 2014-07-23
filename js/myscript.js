@@ -30,6 +30,15 @@ function shuffle(o){ //v1.0
 //    return o;
 }
 
+function getKeyFromValue(value) {
+    for (var prop in this) {
+        if (this.hasOwnProperty(prop)) {
+             if (this[prop] === value)
+                 return prop;
+        }
+    }
+}
+
 //MODELS
 
 //Objects of the Word class are stored in model to pull words
@@ -457,7 +466,8 @@ var Ordered_Box = function(items) {
     var that = {};
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
-    var userAnswer = [];
+    var userAnswer = {0: null, 1: null, 2: null, 3: null};
+    var shuffledItems = {0: null, 1: null, 2: null, 3: null};
 
     var ANSWER = items;
     var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
@@ -475,6 +485,7 @@ var Ordered_Box = function(items) {
         bottom.append(solid_subdiv);
     }
 
+    //could change this implementation to read userAnswer, but it's nbd.
     var allAtTop = function() {
         var allAtTop = true
         $('#ordered-top > .dashed-subsection').each(function() {
@@ -533,9 +544,10 @@ var Ordered_Box = function(items) {
 
     var moveItem = function(item) {
         var container = item.getContainer();
+        var counter = 0;
 
         if (item.getAtTop() == true) {
-            var index = userAnswer.indexOf(item);
+            var index = getKeyFromValue(item); //return 0 through len(items) - 1, key from dict indicating position at top.
             //console.log('before splice: ' + userAnswer);
             //userAnswer.splice(index, 1);
             //console.log('after splice: ' + userAnswer);
@@ -545,24 +557,27 @@ var Ordered_Box = function(items) {
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
+                        shuffledItems[counter] = item;
                     });
                     container.toggle('puff', {percent:110}, 500);
                     return false
                 }
+                counter++;
             });
         }
         else {
-            //userAnswer.push(item);
             $('#ordered-top > .dashed-subsection').each(function() {
                 var newLoc = $(this);
                 if (newLoc.is(':empty')) {
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
+                        userAnswer[counter] = item;
                     });
                     container.toggle('puff', {percent:110}, 500);
                     return false;
                 }
+                counter++;
             });
         }
 
@@ -620,6 +635,14 @@ var Ordered_Box = function(items) {
 //                console.log('tryyyyyuuuuuuu :' + trueArray);
 //                trueArray = [];
 //            } while (rerun);
+            for (i in userItems) {
+                //shuffledItems is an object, declared in Ordered_Box, while userItems is the shuffled version
+                //of ANSWER list.
+                console.log('user items: ' + userItems);
+                shuffledItems[i] = userItems[i];
+                console.log('shuffled items: ' + shuffledItems);
+
+            }
 
             resetAllButton.click(function() {
                 for (i in userItems) {
@@ -631,7 +654,7 @@ var Ordered_Box = function(items) {
             });
 
             $('#ordered-bottom > .solid-subsection').each(function() {
-                var item = userItems[i];
+                var item = shuffledItems[i];
                 console.log('one of these will fail ' + item); //that is, fail in the commented out do while.
                 $(this).append(item.generateHTML());
 
