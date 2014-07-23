@@ -485,7 +485,6 @@ var Ordered_Box = function(items) {
     that.compareAnswer = function() {
         console.log(userAnswer);
         if (ANSWER === userAnswer) {
-            console.log('naxx is out, fuck work');
             bigRight.css('display', 'inline');
             nextButton.css('display', 'inline');
             nextButton.click(function() {
