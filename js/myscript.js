@@ -500,6 +500,10 @@ var Ordered_Box = function(items) {
         var equal = true;
         //console.log('here');
 
+        bigRight.css('display', 'none');
+        bigWrong.css('display', 'none');
+        nextButton.css('display', 'none');
+
         for (i in ANSWER) {
             console.log('ANSWER[i] = ' + ANSWER[i]);
             console.log('userAnswer[i] = ' + userAnswer[i]);
@@ -514,6 +518,7 @@ var Ordered_Box = function(items) {
         }
 
         if (equal) { //user is correct
+            bigWrong.css('display', 'none');
             console.log('yay');
             setTimeout(function() { //wait for animation to finish
                 $('#ordered-top > .dashed-subsection').css('border-color', 'green');
@@ -525,7 +530,6 @@ var Ordered_Box = function(items) {
             });
         }
         else {
-            console.log('noooo');
             bigWrong.css('display', 'inline');
         }
     }
