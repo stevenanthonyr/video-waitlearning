@@ -497,14 +497,14 @@ var Ordered_Box = function(items) {
 		for (i in ANSWER) { 
 			console.log('ANSWER[i] = ' + ANSWER[i]);
 			console.log('userAnswer[i] = ' + userAnswer[i]);
-			if (ANSWER[i].getPath() != userAnswer[i].getPath()) { 
+			//if (ANSWER[i].getPath() != userAnswer[i].getPath()) { 
 				setTimeout(function() { //wait for animation to finish
 					$('.item_container').effect('shake');
-					$('#ordered-top > .dashed-subsection').css('border-color', 'red');
-				}, 600);
+					$('#ordered-top > .dashed-subsection').css('border-color','red');
+				}, 600)
 				equal = false;
 				break;
-			}
+			//}
 		}
 		
 		if (equal) { //user is correct
@@ -614,7 +614,7 @@ var Ordered_Box = function(items) {
                 for (i in userItems) {
                     var item = userItems[i];
                     if (item.getAtTop() == true) {
-                        moveItem(item);
+							moveItem(item);
                     }
                 }
             });
