@@ -522,6 +522,7 @@ var Ordered_Box = function(items) {
                     $('.item_container').effect('shake');
                     $('#ordered-top > .dashed-subsection').css('border-color', 'red');
                 }, 600);
+				bigWrong.css('display', 'inline');
                 equal = false;
                 break;
             }
@@ -532,15 +533,13 @@ var Ordered_Box = function(items) {
             console.log('yay');
             setTimeout(function() { //wait for animation to finish
                 $('#ordered-top > .dashed-subsection').css('border-color', 'green');
+				bigRight.css('display', 'inline');
+            	nextButton.css('display', 'inline');
             }, 600);
-            bigRight.css('display', 'inline');
-            nextButton.css('display', 'inline');
+			
             nextButton.click(function() {
 
             });
-        }
-        else {
-            bigWrong.css('display', 'inline');
         }
     }
 
@@ -556,6 +555,7 @@ var Ordered_Box = function(items) {
             container.css("left", "auto");
             container.css("top","auto");
             targetelem.append(container);
+			item.toggleAtTop();
 
         }else{
             var index = $(".dashed-subsection").index(targetelem);
@@ -687,7 +687,7 @@ var Ordered_Box = function(items) {
             }
 
             resetAllButton.click(function() {
-                for (i in shuffledItems) {
+                /*for (i in shuffledItems) {
                     var item = shuffledItems[i];
                     if (item === null) {
                         continue;
@@ -695,7 +695,7 @@ var Ordered_Box = function(items) {
                     else if (item.getAtTop() == true) {
                         moveItem(item);
                     }
-                }
+                }*/
             });
 
             var initpos = 0;
@@ -781,7 +781,7 @@ var vocab = [people, government, thing, cat, war, computer, sad];
 //$('.videoAdUiAttribution') contains ad time left information, and returns null if no ad is playing.
 //design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
-    attach_css();
+	attach_css();
 
     // get controls and position
     var controls = $(".html5-video-controls");
@@ -837,5 +837,4 @@ $(document).ready(function(){
     });
 
     //----------------------------------------------------
-
 });
