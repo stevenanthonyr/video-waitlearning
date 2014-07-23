@@ -17,12 +17,13 @@
   ],
   "web_accessible_resources":[
     "css/learning.css",
+    "static/bigright.png",
     "static/right.png",
     "static/wrong.png",
-	"static/stepimages/egg1.png",
-	"static/stepimages/egg2.png",
-	"static/stepimages/egg3.png",
-	"static/stepimages/egg4.png"
+    "static/stepimages/egg1.png",
+    "static/stepimages/egg2.png",
+    "static/stepimages/egg3.png",
+    "static/stepimages/egg4.png"
   ],
   "manifest_version": 2
 }

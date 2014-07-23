@@ -209,8 +209,8 @@
 
 #ordered-top {
     height: 50%;
-	border-bottom: 1px solid black;
-	
+    border-bottom: 1px solid black;
+
 }
 
 #ordered-bottom {
@@ -227,17 +227,17 @@
 }
 
 .solid-subsection {
-	height: 100px;
-	width: 180px;
-	float: left;
-	margin: 14px;
-	border: 1px solid gray;
+    height: 100px;
+    width: 180px;
+    float: left;
+    margin: 15px;
+    border: 1px solid gray;
 }
 
 .item_image {
-	height: 100px;
-	width: 180px;
-	cursor: pointer;
+    height: 100px;
+    width: 180px;
+    cursor: pointer;
 }
 
 .item_helpText {
@@ -246,10 +246,46 @@
     display: block;
     width: 100%;
 }
- 
+
+.reset_all_button.how_to {
+    font-style: italic;
+    border: 1px solid gray;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 95%;
+    left: 0%;
+    width: 55px;
+    height: 20px;
+}
+
+.next_button.how_to{
+    display: none;
+    font-style: italic;
+    border: 1px solid gray;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 95%;
+    left: 93%;
+    width: 55px;
+    height: 20px;
+}
 
 .item_container {
-	cursor: pointer;
-	height: 100px;
-	float: left;
+    cursor: pointer;
+    height: 100px;
+    float: left;
+}
+
+.big_right.how_to {
+    display: none;
+    height: 23%;
+    top: 362px;
+    left: 393px;
+    position: absolute;
 }
