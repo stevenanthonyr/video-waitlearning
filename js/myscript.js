@@ -422,7 +422,15 @@ var Item = function(helpText, path) {
         //var container = $("<div>").addClass('item_container');
         container.append(image).append(helpTextSpan);
         helpTextSpan.text(helpText);
+        container.get(0).itemobj = that;
         return container;
+    }
+
+    that.makedraggable = function(){
+        container.draggable({
+            cursor: 'move',
+            snap: '.dashed-subsection,.solid-subsection'
+        });
     }
 
     that.toggleAtTop = function() {
@@ -472,6 +480,7 @@ var Ordered_Box = function(items) {
         bottom.append(solid_subdiv);
     }
 
+
     var allAtTop = function() {
         var allAtTop = true
         $('#ordered-top > .dashed-subsection').each(function() {
@@ -500,6 +509,32 @@ var Ordered_Box = function(items) {
     that.getUserAnswer = function() {
         return userAnswer;
     }
+
+    var moveItemViaDrag = function(item,targetelem){
+        var container = item.getContainer();
+        if(item.getAtTop() == true){
+            var index = userAnswer.indexOf(item);
+            userAnswer.splice(index,1);
+            container.css("left", "auto");
+            container.css("top","auto");
+            targetelem.append(container);
+
+        }else{
+            userAnswer.push(item);
+            item.toggleAtTop();
+            targetelem.append(container);
+            container.css("left", "auto");
+            container.css("top","auto");
+        }
+
+        setTimeout(function() {
+            if (allAtTop()) {
+                console.log('top full');
+                that.compareAnswer();
+            }
+        }, 100);
+    }
+
 
     var moveItem = function(item) {
         var container = item.getContainer();
@@ -595,7 +630,7 @@ var Ordered_Box = function(items) {
                 var item = userItems[i];
                 console.log('one of these will fail ' + item); //that is, fail in the commented out do while.
                 $(this).append(item.generateHTML());
-
+                item.makedraggable();
                 function attachClickHandler(item) {
                     item.onClick(function() {
                         moveItem(item);
@@ -604,7 +639,32 @@ var Ordered_Box = function(items) {
                 attachClickHandler(item);
                 i++;
             });
+
+            makedroppable();
         }
+
+
+        var makedroppable = function(){
+            console.log("makedroppable");
+            $(".dashed-subsection").droppable({
+                drop: function(event, ui){
+                    moveItemViaDrag(ui.draggable.get(0).itemobj, $(this));
+                }
+            });
+            $(".solid-subsection").droppable({
+                drop: function(event, ui){
+                    moveItemViaDrag(ui.draggable.get(0).itemobj, $(this));
+                }
+            });
+
+            function handleDropEvent(event,ui){
+                console.log("item dropped: " + ui.draggable.html());
+                 console.log("target: " + ui.item);
+                moveItemViaDrag(ui.draggable.get(0).itemobj, target);
+                console.log("target: " + target.html());
+            }
+        }
+    
 
         setPosition();
         Object.freeze(that);
