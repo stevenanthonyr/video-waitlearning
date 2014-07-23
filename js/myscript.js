@@ -380,7 +380,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 var Item = function(helpText, path) {
     //note: if path not passed in, expect it to be 'undefined'
     var that = {};
-    var self = this;
+    $(this).addClass('item');
     var atTop = false;
     var container = $("<div>").addClass('item_container');
 
@@ -458,6 +458,7 @@ var Ordered_Box = function(items) {
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     var userAnswer = [];
+
     var ANSWER = items;
     var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
     var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
@@ -482,30 +483,56 @@ var Ordered_Box = function(items) {
         return allAtTop;
     }
 
-    that.compareAnswer = function() {
-        console.log(userAnswer);
-        if (ANSWER === userAnswer) {
+    var compareAnswer = function() {
+        var equal = true;
+        //console.log('here');
+
+        $('.dashed-subsection > .item').each(function() {
+            //console.log('children ' + $(this).children());
+            console.log('here')
+            console.log('this = ' + $(this));
+            userAnswer.push($(this));
+        });
+
+        for (i in ANSWER) {
+            console.log('ANSWER[i] = ' + ANSWER[i]);
+            console.log('userAnswer[i] = ' + userAnswer[i]);
+            if (ANSWER[i].getPath() != userAnswer[i].getPath()) {
+                setTimeout(function() { //wait for animation to finish
+                    $('.item_container').effect('shake');
+                    $('#ordered-top > .dashed-subsection').css('border-color', 'red');
+                }, 600);
+                equal = false;
+                break;
+            }
+        }
+
+        if (equal) { //user is correct
+            console.log('yay');
+            setTimeout(function() { //wait for animation to finish
+                $('#ordered-top > .dashed-subsection').css('border-color', 'green');
+            }, 600);
             bigRight.css('display', 'inline');
             nextButton.css('display', 'inline');
             nextButton.click(function() {
 
             });
         }
-        else {
-            console.log('nuh uh');
-        }
     }
 
-    that.getUserAnswer = function() {
+    /*that.getUserAnswer = function() {
         return userAnswer;
-    }
+    }*/
+
 
     var moveItem = function(item) {
         var container = item.getContainer();
 
         if (item.getAtTop() == true) {
             var index = userAnswer.indexOf(item);
-            userAnswer.splice(index, 1);
+            //console.log('before splice: ' + userAnswer);
+            //userAnswer.splice(index, 1);
+            //console.log('after splice: ' + userAnswer);
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var newLoc = $(this);
                 if (newLoc.is(':empty')) {
@@ -519,9 +546,9 @@ var Ordered_Box = function(items) {
             });
         }
         else {
+            //userAnswer.push(item);
             $('#ordered-top > .dashed-subsection').each(function() {
                 var newLoc = $(this);
-                userAnswer.push(item);
                 if (newLoc.is(':empty')) {
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
@@ -533,13 +560,20 @@ var Ordered_Box = function(items) {
             });
         }
 
-        setTimeout(function() {
+        /*for (i in ANSWER) {
+            console.log('ANSWER' + i + '= ' + ANSWER[i][0]);
+        }
+        for (i in userAnswer) {
+            console.log('userAnswer' + i + '= ' + userAnswer[i][0]);
+        }*/
+
+        setTimeout(function() { //wait for animation to finish
             if (allAtTop()) {
-                console.log('top full');
                 compareAnswer();
             }
-        }, 100);
+        }, 200);
     }
+
 
     that.How_To = function(leftpos, toppos, learningPanel) {
         var self = this;
@@ -648,9 +682,6 @@ var vocab = [people, government, thing, cat, war, computer, sad];
 //design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
     attach_css();
-    $(document).dblclick(function(e) {
-        e.preventDefault();
-    });
 
     // get controls and position
     var controls = $(".html5-video-controls");
@@ -702,7 +733,7 @@ $(document).ready(function(){
 
 
     videoElement.addEventListener("play",function(){
-        console.log("started playing!");
+        //console.log("started playing!");
     });
 
     //----------------------------------------------------
