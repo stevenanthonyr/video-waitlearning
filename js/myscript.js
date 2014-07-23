@@ -463,7 +463,9 @@ var Ordered_Box = function(items) {
     var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
     var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
     var bigRight = $('<img>').addClass('big_right').addClass('how_to');
+    var bigWrong = $('<img>').addClass('big_wrong').addClass('how_to');
     bigRight.attr('src', chrome.extension.getURL("static/bigright.png"));
+    bigWrong.attr('src', chrome.extension.getURL("static/bigwrong.png"));
 
     for (var i in items) {
         console.log('count' + i);
@@ -517,6 +519,10 @@ var Ordered_Box = function(items) {
             nextButton.click(function() {
 
             });
+        }
+        else {
+            console.log('noooo');
+            bigWrong.css('display', 'inline');
         }
     }
 
@@ -590,7 +596,7 @@ var Ordered_Box = function(items) {
         that.showExercise = function() {
             //TODO: TEST THIS HARD
             //IF THIS IS BROKEN, LIFE SUCKS
-            bottom.append(resetAllButton).append(nextButton).append(bigRight);
+            bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong);
             learningPanel.append(top).append(bottom);
 
             var userItems = $.extend([], ANSWER);
