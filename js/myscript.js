@@ -389,7 +389,6 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 var Item = function(helpText, path) {
     //note: if path not passed in, expect it to be 'undefined'
     var that = {};
-    $(this).addClass('item');
     var atTop = false;
     var container = $("<div>").addClass('item_container');
 
@@ -474,8 +473,10 @@ var Ordered_Box = function(items) {
     var that = {};
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
-    var userAnswer = {0: null, 1: null, 2: null, 3: null};
-    var shuffledItems = {0: null, 1: null, 2: null, 3: null};
+    //var userAnswer = {0: null, 1: null, 2: null, 3: null};
+    //var shuffledItems = {0: null, 1: null, 2: null, 3: null};
+	var userAnswer = {};
+    var shuffledItems = {};
     var done = false;
     var ANSWER = items;
     var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
@@ -584,6 +585,7 @@ var Ordered_Box = function(items) {
 
 
     var moveItem = function(item) {
+		//console.log('class = ' + item.attr('class'))
         var container = item.getContainer();
         var counter = 0;
 
@@ -691,6 +693,15 @@ var Ordered_Box = function(items) {
             }
 
             resetAllButton.click(function() {
+				console.log('reset click');
+				for (var i in userAnswer) {
+					if (userAnswer[i] != null) {
+						setTimeout(function() {
+							moveItem(userAnswer[i]);
+						}, 101);
+					}
+				}
+			});
                 /*for (i in shuffledItems) {
                 var takenDivs = [];
                 for (i in shuffledItems) {
@@ -702,9 +713,10 @@ var Ordered_Box = function(items) {
                         setTimeout(moveItem(item), 100);
                     }
                 }*/
-            });
+            //});
 
-            var initpos = 0;
+            //initial appending of items
+			var initpos = 0;
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var item = shuffledItems[initpos];
                 $(this).append(item.generateHTML());
