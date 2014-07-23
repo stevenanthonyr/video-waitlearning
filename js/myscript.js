@@ -500,13 +500,6 @@ var Ordered_Box = function(items) {
         var equal = true;
         //console.log('here');
 
-        $('.dashed-subsection > .item').each(function() {
-            //console.log('children ' + $(this).children());
-            console.log('here')
-            console.log('this = ' + $(this));
-            userAnswer.push($(this));
-        });
-
         for (i in ANSWER) {
             console.log('ANSWER[i] = ' + ANSWER[i]);
             console.log('userAnswer[i] = ' + userAnswer[i]);
@@ -636,13 +629,13 @@ var Ordered_Box = function(items) {
 //                trueArray = [];
 //            } while (rerun);
 
-            for (i in userItems) {
+            for (var i in userItems) {
                 //shuffledItems is an object, declared in Ordered_Box, while userItems is the shuffled version
                 //of ANSWER list.
-                console.log('user items: ' + userItems);
-                console.log('this is i: ' + i);
+                console.log('i = ' + i);
+                //console.log('user items: ' + userItems);
                 shuffledItems[i] = userItems[i];
-                console.log('shuffled items: ' + shuffledItems);
+                console.log('shuffled items[i]: ' + shuffledItems[i]);
 
             }
 
@@ -658,8 +651,9 @@ var Ordered_Box = function(items) {
                 }
             });
 
+            var initpos = 0;
             $('#ordered-bottom > .solid-subsection').each(function() {
-                var item = shuffledItems[i];
+                var item = shuffledItems[initpos];
                 console.log('one of these will fail ' + item); //that is, fail in the commented out do while.
                 $(this).append(item.generateHTML());
 
@@ -669,7 +663,7 @@ var Ordered_Box = function(items) {
                     });
                 }
                 attachClickHandler(item);
-                i++;
+                initpos++;
             });
         }
 
