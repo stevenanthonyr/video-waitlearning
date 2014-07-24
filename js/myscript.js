@@ -390,12 +390,23 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 var Item = function(helpText, path) {
     //note: if path not passed in, expect it to be 'undefined'
     var that = {};
-    $(this).addClass('item');
     var atTop = false;
     var container = $("<div>").addClass('item_container');
 
     that.getInfo = function() {
         return {'helpText': helpText, 'path': path};
+    }
+	
+	that.toTop = function() {
+		atTop = true;	
+	}
+	
+	that.toBottom = function() {
+		atTop = false;	
+	}
+	
+	that.toggleAtTop = function() {
+        atTop = !atTop;
     }
 
     that.getAtTop = function() {
@@ -410,11 +421,7 @@ var Item = function(helpText, path) {
         container.click(function() {
             handler();
         });
-    }
-
-    that.toggleAtTop = function() {
-        atTop = !atTop;
-    }
+	}
 
     that.reset = function() {
         container.empty();
@@ -480,8 +487,10 @@ var Ordered_Box = function(items) {
     var that = {};
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
-    var userAnswer = {0: null, 1: null, 2: null, 3: null};
-    var shuffledItems = {0: null, 1: null, 2: null, 3: null};
+    //var userAnswer = {0: null, 1: null, 2: null, 3: null};
+    //var shuffledItems = {0: null, 1: null, 2: null, 3: null};
+	var userAnswer = {};
+    var shuffledItems = {};
     var done = false;
     var ANSWER = items;
     var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
@@ -529,6 +538,7 @@ var Ordered_Box = function(items) {
                     $('.item_container').effect('shake');
                     $('#ordered-top > .dashed-subsection').css('border-color', 'red');
                 }, 600);
+				bigWrong.css('display', 'inline');
                 equal = false;
                 break;
             }
@@ -536,14 +546,16 @@ var Ordered_Box = function(items) {
 
         if (equal) { //user is correct
             bigWrong.css('display', 'none');
+			revealButton.css('display', 'none');
             console.log('yay');
             setTimeout(function() { //wait for animation to finish
                 $('#ordered-top > .dashed-subsection').css('border-color', 'green');
+				bigRight.css('display', 'inline');
+            	nextButton.css('display', 'inline');
             }, 600);
-            bigRight.css('display', 'inline');
-            nextButton.css('display', 'inline');
+			
             nextButton.click(function() {
-
+				
             });
         }
         else {
@@ -567,6 +579,7 @@ var Ordered_Box = function(items) {
             container.css("left", "auto");
             container.css("top","auto");
             targetelem.append(container);
+			item.toggleAtTop();
 
         }else{
             var index = $(".dashed-subsection").index(targetelem);
@@ -587,6 +600,7 @@ var Ordered_Box = function(items) {
 
 
     var moveItem = function(item) {
+		//console.log('class = ' + item.attr('class'))
         var container = item.getContainer();
         var counter = 0;
 
@@ -594,6 +608,7 @@ var Ordered_Box = function(items) {
             bigRight.css('display', 'none');
             bigWrong.css('display', 'none');
             nextButton.css('display', 'none');
+			revealButton.css('display', 'inline');
             $('#ordered-top > .dashed-subsection').css('border-color', 'gray');
             done = false;
         }
@@ -653,7 +668,7 @@ var Ordered_Box = function(items) {
 
         that.showExercise = function() {
             learningPanel.empty();
-            bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
+            			bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
             learningPanel.append(top).append(bottom);
 
             var userItems = $.extend([], ANSWER);
@@ -678,6 +693,7 @@ var Ordered_Box = function(items) {
                 shuffledItems[i] = userItems[i];
             }
 
+            //initial appending of items
             var initpos = 0;
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var item = shuffledItems[initpos];
@@ -693,6 +709,13 @@ var Ordered_Box = function(items) {
             });
 
             resetAllButton.click(function() {
+				revealButton.css('display', 'inline');
+				bigRight.css('display', 'none');
+				bigWrong.css('display', 'none');
+				nextButton.css('display', 'none');
+				$('#ordered-top > .dashed-subsection').css('border-color', 'gray');
+				done = false;
+				
                 for (i in userItems) {
                     userItems[i].reset();
                 }
@@ -717,6 +740,36 @@ var Ordered_Box = function(items) {
 //                $('#ordered-bottom > .solid-subsection img:last-of-type').each(function() { $(this).remove(); });
 //                $('#ordered-bottom > .solid-subsection span:last-of-type').each(function() { $(this).remove(); });
             });
+			
+			nextButton.click(function() {
+				
+			});
+			
+			revealButton.click(function() {
+				$('#ordered-top > .dashed-subsection').each(function() { $(this).empty(); });
+                $('#ordered-bottom > .solid-subsection').each(function() { $(this).empty(); });
+				done = true;
+				
+				for (i in userItems) { userItems[i].reset(); }
+				
+				for (i in userItems) { userItems[i].toTop(); }
+				
+				var index = 0;
+                $('#ordered-top > .dashed-subsection').each(function() {
+                    var item = ANSWER[index];
+                    $(this).append(item.generateHTML());
+                    item.makedraggable();
+					for (var i in ANSWER) { userAnswer[i] = ANSWER[i]; };
+					compareAnswer();
+                    function attachClickHandler(item) {
+                        item.onClick(function() {
+                            moveItem(item);
+                        });
+                    }
+                    attachClickHandler(item);
+                    index++;
+                });
+			});
 
             makedroppable();
         }
@@ -785,7 +838,7 @@ var vocab = [people, government, thing, cat, war, computer, sad];
 //$('.videoAdUiAttribution') contains ad time left information, and returns null if no ad is playing.
 //design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
-    attach_css();
+	attach_css();
 
     // get controls and position
     var controls = $(".html5-video-controls");
@@ -842,5 +895,4 @@ $(document).ready(function(){
     });
 
     //----------------------------------------------------
-
 });
