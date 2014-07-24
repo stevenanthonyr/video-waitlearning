@@ -543,7 +543,7 @@ var Ordered_Box = function(group) {
 
         if (equal) { //user is correct
             bigWrong.css('display', 'none');
-			revealButton.css('display', 'none');
+            revealButton.css('display', 'none');
             setTimeout(function() { //wait for animation to finish
                 $('#ordered-top > .dashed-subsection').css('border-color', 'green');
                 bigRight.css('display', 'inline');
@@ -571,16 +571,16 @@ var Ordered_Box = function(group) {
             container.css("left", "auto");
             container.css("top","auto");
         }
-		
-		if (targetelem.attr('class') == 'solid-subsection ui-droppable') {
-			item.toBottom();	
-		} else if (targetelem.attr('class') == 'dashed-subsection ui-droppable') {
-			item.toTop();	
-		}
 
-		if (allAtTop()) {
-			compareAnswer();
-		}
+        if (targetelem.attr('class') == 'solid-subsection ui-droppable') {
+            item.toBottom();
+        } else if (targetelem.attr('class') == 'dashed-subsection ui-droppable') {
+            item.toTop();
+        }
+
+        if (allAtTop()) {
+            compareAnswer();
+        }
     }
 
 
@@ -743,16 +743,17 @@ var Ordered_Box = function(group) {
             revealButton.click(function() {
                 $('#ordered-top > .dashed-subsection').each(function() { $(this).empty(); });
                 $('#ordered-bottom > .solid-subsection').each(function() { $(this).empty(); });
-				$('#ordered-top > .dashed-subsection').css('border-color', 'gray');
-				done = true;
-				
-				for (i in userItems) { userItems[i].reset(); }
-				for (i in userItems) { userItems[i].toTop(); }
-				
-				var index = 0;
+                $('#ordered-top > .dashed-subsection').css('border-color', 'gray');
+                done = true;
+
+                for (i in userItems) { userItems[i].reset(); }
+                for (i in userItems) { userItems[i].toTop(); }
+
+                var index = 0;
                 $('#ordered-top > .dashed-subsection').each(function() {
                     var item = ANSWER[index];
                     $(this).append(item.generateHTML());
+
 					
                     //item.makedraggable();
                     for (var i in ANSWER) { userAnswer[i] = ANSWER[i]; };
@@ -851,6 +852,7 @@ $(document).ready(function(){
     var flashcard_toppos = controls_toppos - 131;
     var learningPanel = $("<div>").attr("id", "learningPanel").addClass("learningPanel");
     learningPanel.insertBefore(controls);
+
 
     if (typeOfProblem == 'flashcard' || typeOfProblem == 'fill_in_the_blank') {
         //create the model object
