@@ -396,16 +396,16 @@ var Item = function(helpText, path) {
     that.getInfo = function() {
         return {'helpText': helpText, 'path': path};
     }
-	
-	that.toTop = function() {
-		atTop = true;	
-	}
-	
-	that.toBottom = function() {
-		atTop = false;	
-	}
-	
-	that.toggleAtTop = function() {
+
+    that.toTop = function() {
+        atTop = true;
+    }
+
+    that.toBottom = function() {
+        atTop = false;
+    }
+
+    that.toggleAtTop = function() {
         atTop = !atTop;
     }
 
@@ -421,7 +421,7 @@ var Item = function(helpText, path) {
         container.click(function() {
             handler();
         });
-	}
+    }
 
     that.reset = function() {
         container.empty();
@@ -483,13 +483,14 @@ var Group = function(name, items) {
 //never run methods from this class on this class itself!
 //run the methods on instances of the subclasses (don't run moveItems
 //on this class, run it on a How_To so compareAnswer from that class is run)
-var Ordered_Box = function(items) {
+var Ordered_Box = function(group) {
+    var items = group.getItems();
     var that = {};
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     //var userAnswer = {0: null, 1: null, 2: null, 3: null};
     //var shuffledItems = {0: null, 1: null, 2: null, 3: null};
-	var userAnswer = {};
+    var userAnswer = {};
     var shuffledItems = {};
     var done = false;
     var ANSWER = items;
@@ -538,7 +539,7 @@ var Ordered_Box = function(items) {
                     $('.item_container').effect('shake');
                     $('#ordered-top > .dashed-subsection').css('border-color', 'red');
                 }, 600);
-				bigWrong.css('display', 'inline');
+                bigWrong.css('display', 'inline');
                 equal = false;
                 break;
             }
@@ -546,16 +547,16 @@ var Ordered_Box = function(items) {
 
         if (equal) { //user is correct
             bigWrong.css('display', 'none');
-			revealButton.css('display', 'none');
+            revealButton.css('display', 'none');
             console.log('yay');
             setTimeout(function() { //wait for animation to finish
                 $('#ordered-top > .dashed-subsection').css('border-color', 'green');
-				bigRight.css('display', 'inline');
-            	nextButton.css('display', 'inline');
+                bigRight.css('display', 'inline');
+                nextButton.css('display', 'inline');
             }, 600);
-			
+
             nextButton.click(function() {
-				
+
             });
         }
         else {
@@ -567,11 +568,6 @@ var Ordered_Box = function(items) {
         }
     }
 
-    /*that.getUserAnswer = function() {
-        return userAnswer;
-    }*/
-
-
     var moveItemViaDrag = function(item,targetelem){
         var container = item.getContainer();
         if(item.getAtTop() == true){
@@ -579,7 +575,7 @@ var Ordered_Box = function(items) {
             container.css("left", "auto");
             container.css("top","auto");
             targetelem.append(container);
-			item.toggleAtTop();
+            item.toggleAtTop();
 
         }else{
             var index = $(".dashed-subsection").index(targetelem);
@@ -600,7 +596,7 @@ var Ordered_Box = function(items) {
 
 
     var moveItem = function(item) {
-		//console.log('class = ' + item.attr('class'))
+        //console.log('class = ' + item.attr('class'))
         var container = item.getContainer();
         var counter = 0;
 
@@ -608,7 +604,7 @@ var Ordered_Box = function(items) {
             bigRight.css('display', 'none');
             bigWrong.css('display', 'none');
             nextButton.css('display', 'none');
-			revealButton.css('display', 'inline');
+            revealButton.css('display', 'inline');
             $('#ordered-top > .dashed-subsection').css('border-color', 'gray');
             done = false;
         }
@@ -668,7 +664,7 @@ var Ordered_Box = function(items) {
 
         that.showExercise = function() {
             learningPanel.empty();
-            			bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
+                        bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
             learningPanel.append(top).append(bottom);
 
             var userItems = $.extend([], ANSWER);
@@ -709,13 +705,13 @@ var Ordered_Box = function(items) {
             });
 
             resetAllButton.click(function() {
-				revealButton.css('display', 'inline');
-				bigRight.css('display', 'none');
-				bigWrong.css('display', 'none');
-				nextButton.css('display', 'none');
-				$('#ordered-top > .dashed-subsection').css('border-color', 'gray');
-				done = false;
-				
+                revealButton.css('display', 'inline');
+                bigRight.css('display', 'none');
+                bigWrong.css('display', 'none');
+                nextButton.css('display', 'none');
+                $('#ordered-top > .dashed-subsection').css('border-color', 'gray');
+                done = false;
+
                 for (i in userItems) {
                     userItems[i].reset();
                 }
@@ -740,27 +736,27 @@ var Ordered_Box = function(items) {
 //                $('#ordered-bottom > .solid-subsection img:last-of-type').each(function() { $(this).remove(); });
 //                $('#ordered-bottom > .solid-subsection span:last-of-type').each(function() { $(this).remove(); });
             });
-			
-			nextButton.click(function() {
-				
-			});
-			
-			revealButton.click(function() {
-				$('#ordered-top > .dashed-subsection').each(function() { $(this).empty(); });
+
+            nextButton.click(function() {
+
+            });
+
+            revealButton.click(function() {
+                $('#ordered-top > .dashed-subsection').each(function() { $(this).empty(); });
                 $('#ordered-bottom > .solid-subsection').each(function() { $(this).empty(); });
-				done = true;
-				
-				for (i in userItems) { userItems[i].reset(); }
-				
-				for (i in userItems) { userItems[i].toTop(); }
-				
-				var index = 0;
+                done = true;
+
+                for (i in userItems) { userItems[i].reset(); }
+
+                for (i in userItems) { userItems[i].toTop(); }
+
+                var index = 0;
                 $('#ordered-top > .dashed-subsection').each(function() {
                     var item = ANSWER[index];
                     $(this).append(item.generateHTML());
                     item.makedraggable();
-					for (var i in ANSWER) { userAnswer[i] = ANSWER[i]; };
-					compareAnswer();
+                    for (var i in ANSWER) { userAnswer[i] = ANSWER[i]; };
+                    compareAnswer();
                     function attachClickHandler(item) {
                         item.onClick(function() {
                             moveItem(item);
@@ -769,7 +765,7 @@ var Ordered_Box = function(items) {
                     attachClickHandler(item);
                     index++;
                 });
-			});
+            });
 
             makedroppable();
         }
@@ -833,12 +829,23 @@ var vocab = [people, government, thing, cat, war, computer, sad];
 //var vocab = [cat];
 //   console.log(vocab);
 
+var egg1 = Item('Prep the pan.', 'static/stepimages/egg1.png');
+var egg2 = Item('Prep the egg.', 'static/stepimages/egg2.png');
+var egg3 = Item('Put the egg on the pan.', 'static/stepimages/egg3.png');
+var egg4 = Item('Cook egg.', 'static/stepimages/egg4.png');
+var abs1 = Item('Eat food.', 'static/stepimages/abs1.png');
+var abs2 = Item('Buy ab-hancer.', 'static/stepimages/abs2.png');
+var abs3 = Item('???', 'static/stepimages/abs3.png');
+var abs4 = Item('Profit.', 'static/stepimages/abs4.png');
+var eggGroup = Group('eggs', [egg1, egg2, egg3, egg4]);
+var absGroup = Group('abs', [abs1, abs2, abs3, abs4]);
+
 //VIEW (kind of)
 
 //$('.videoAdUiAttribution') contains ad time left information, and returns null if no ad is playing.
 //design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
-	attach_css();
+    attach_css();
 
     // get controls and position
     var controls = $(".html5-video-controls");
@@ -861,22 +868,8 @@ $(document).ready(function(){
         newCard.showExercise(map['native'], map['foreign']);
     }
     else if (typeOfProblem == 'how_to') {
-        // create Flashcard object, giving it the learningPanel element
-        //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
-        //flashcard.showExercise("people", "personas");
-        var egg1 = Item('Prep the pan.', 'static/stepimages/egg1.png');
-        var egg2 = Item('Prep the egg.', 'static/stepimages/egg2.png');
-        var egg3 = Item('Put the egg on the pan.', 'static/stepimages/egg3.png');
-        var egg4 = Item('Cook egg.', 'static/stepimages/egg4.png');
-        var abs1 = Item('Eat food.', 'static/stepimages/abs1.png');
-        var abs2 = Item('Buy ab-hancer.', 'static/stepimages/abs2.png');
-        var abs3 = Item('???', 'static/stepimages/abs3.png');
-        var abs4 = Item('Profit.', 'static/stepimages/abs4.png');
-        var group = Group('eggs', [egg1, egg2, egg3, egg4]);
-        var group2 = Group('abs', [abs1, abs2, abs3, abs4]);
-
         //create HowTo
-        var ordered_box = Ordered_Box(group2.getItems());
+        var ordered_box = Ordered_Box(eggGroup);
         var how_to = ordered_box.How_To(0, 0, learningPanel);
         how_to.showExercise();
     }
