@@ -794,8 +794,6 @@ var Ordered_Box = function(items) {
                     attachClickHandler(item);
                     initposi++;
                 });
-//                $('#ordered-bottom > .solid-subsection img:last-of-type').each(function() { $(this).remove(); });
-//                $('#ordered-bottom > .solid-subsection span:last-of-type').each(function() { $(this).remove(); });
             });
 			
 			nextButton.click(function() {
