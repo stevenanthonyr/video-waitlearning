@@ -497,6 +497,19 @@ var Ordered_Box = function(group) {
     var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('start over').attr('type', 'button');
     var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
     var revealButton = $('<button>').addClass('reveal_button').addClass('how_to').text('give up').attr('type', 'button');
+	var one = $('<div>').addClass('ordered_box_num').text('1').attr('id', 'one');
+	var two = $('<div>').addClass('ordered_box_num').text('2').attr('id', 'two');
+	var three = $('<div>').addClass('ordered_box_num').text('3').attr('id', 'three');
+	var four = $('<div>').addClass('ordered_box_num').text('4').attr('id', 'four');
+	var nums = [one,two,three,four];
+	
+	/*//dummy spans for vertical centering of numbers
+	var dummySpan1 = $('<span>').addClass('dummy_span');
+	var dummySpan2 = $('<span>').addClass('dummy_span');
+	var dummySpan3 = $('<span>').addClass('dummy_span');
+	var dummySpan4 = $('<span>').addClass('dummy_span');
+	var dummySpans = [dummySpan1, dummySpan2, dummySpan3, dummySpan4];*/
+	
     var bigRight = $('<img>').addClass('big_right').addClass('how_to');
     var bigWrong = $('<img>').addClass('big_wrong').addClass('how_to');
     bigRight.attr('src', chrome.extension.getURL("static/bigright.png"));
@@ -602,7 +615,7 @@ var Ordered_Box = function(group) {
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var newLoc = $(this);
                 if (newLoc.is(':empty')) {
- //                    var movingFrom = $.inArray(item, userAnswer);
+					nums[counter].css('display', 'none');
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
@@ -619,6 +632,7 @@ var Ordered_Box = function(group) {
             $('#ordered-top > .dashed-subsection').each(function() {
                 var newLoc = $(this);
                 if (newLoc.is(':empty')) {
+					nums[counter].css('display', 'none')
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
@@ -652,7 +666,7 @@ var Ordered_Box = function(group) {
 
         that.showExercise = function() {
             learningPanel.empty();
-            bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
+           bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
             learningPanel.append(top).append(bottom);
 
             var userItems = $.extend([], ANSWER);
@@ -690,6 +704,17 @@ var Ordered_Box = function(group) {
                 attachClickHandler(item);
                 initpos++;
             });
+			
+			//number dashed boxes
+			for (var i in nums) { learningPanel.append(nums[i]); }
+			
+			/*//number dashed boxes
+			var numsindex = 0
+			$('#ordered-top > .dashed-subsection').each(function() { 
+				$(this).append(dummySpans[numsindex]);
+				$(this).append(nums[numsindex]);
+				numsindex++;
+			});*/
 
             resetAllButton.click(function() {
                 revealButton.css('display', 'inline');
