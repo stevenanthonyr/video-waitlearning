@@ -239,7 +239,8 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     //variables below used for showExercise method.
     var answer; //this is set as l1 or l2 in showExercise.
     var rand = Math.random();
-
+    var maxAttempts = 3;
+    var attempts = 0;
     var left = $("<div>").addClass("left fill_in_the_blank");
     var right = $("<div>").addClass("right fill_in_the_blank");
     var lefttop = $("<div>").addClass("left_subsection fill_in_the_blank");
@@ -249,6 +250,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var answerStatus = $("<div>").addClass("answerStatus fill_in_the_blank");
     var revealButton = $("<button>").addClass("revealButton fill_in_the_blank").text('reveal').attr('type', 'button');
     var loadingDiv = $('<div>').addClass("loading").text('');
+    var remainingAttemptsDiv = $('<div>').addClass("remaining_attempts").text('Remaining attempts: ' + (maxAttempts - attempts));
 
     var setPosition = function(){
         learningPanel.css("width", "400px");
@@ -259,7 +261,6 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
 
     var compareAnswer = function(answer) {
         var submittedTranslation;
-
         try {
             submittedTranslation = $('#fitb_translation_field').val().toLowerCase();
         }
@@ -275,6 +276,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             $('.answerStatus.fill_in_the_blank').html('<img id="right" src=' + url + ' />')
             var map = model.getExerciseMap(model);
             var newCard = parseMap(map);
+            remainingAttemptsDiv.fadeOut(timeToNext/3);
             function next() {
                 dots += '.';
                 loadingDiv.text(dots);
@@ -284,9 +286,12 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             }
             setTimeout(next, timeToNext/4);
             setTimeout(function(){ newCard.showExercise(map['native'], map['foreign']); }, timeToNext);
+
         }
 
         else {
+            attempts++;
+            remainingAttemptsDiv.text('Remaining attempts: ' + (maxAttempts - attempts));
             var url = chrome.extension.getURL("static/wrong.png");
             $('.answerStatus.fill_in_the_blank').html('<img id="wrong" src=' + url + ' />');
             $('#fitb_translation_field').attr('placeholder', '').val('');
@@ -297,6 +302,10 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
             }, 1000);
             $('#wrong').fadeOut(1250);
             $('.revealButton.fill_in_the_blank').css('display', 'inline');
+            if (attempts >= maxAttempts) {
+                remainingAttemptsDiv.empty();
+                revealButton.click();
+            }
 
 
             revealButton.click(function() {
@@ -353,7 +362,7 @@ var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
         lefttop.append(foreignPanel);
         leftbottom.append(nativePanel);
         left.append(lefttop).append(leftbottom);
-        right.append(answerStatus).append(revealButton).append(loadingDiv);
+        right.append(answerStatus).append(revealButton).append(loadingDiv).append(remainingAttemptsDiv);
         learningPanel.append(left).append(right);
 
         //CSS below used to align text in input field and text in div.
@@ -484,8 +493,8 @@ var Group = function(name, items) {
 //run the methods on instances of the subclasses (don't run moveItems
 //on this class, run it on a How_To so compareAnswer from that class is run)
 var Ordered_Box = function(group) {
-    var items = group.getItems();
     var that = {};
+    var items = group.getItems();
     var top = $('<div>').attr('id','ordered-top');
     var bottom = $('<div>').attr('id', 'ordered-bottom');
     //var userAnswer = {0: null, 1: null, 2: null, 3: null};
@@ -790,6 +799,9 @@ var Ordered_Box = function(group) {
                     attachClickHandler(item);
                     index++;
                 });
+                //601 because the setTimeout for visibility of bigRight in compareAnswer has duration 600.
+//                setTimeout(function() {bigRight.css('display', 'none');}, 601);
+                bigWrong.css('display', 'inline');
             });
 
            // makedroppable();
