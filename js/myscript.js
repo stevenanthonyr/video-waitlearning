@@ -728,7 +728,6 @@ var Ordered_Box = function(group) {
                 $('#ordered-bottom > .solid-subsection').each(function() { $(this).empty(); });
                 for (i in userItems) { userItems[i].reset(); }
                 if (currentGroupName == 'eggs') {
-                    console.log('in eggs');
                     var ob = Ordered_Box(absGroup);
                     var ht = ob.How_To(0, 0, learningPanel);
                     ht.showExercise();
@@ -754,7 +753,7 @@ var Ordered_Box = function(group) {
                     var item = ANSWER[index];
                     $(this).append(item.generateHTML());
 
-					
+
                     //item.makedraggable();
                     for (var i in ANSWER) { userAnswer[i] = ANSWER[i]; };
                     compareAnswer();

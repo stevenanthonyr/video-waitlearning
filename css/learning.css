@@ -255,10 +255,10 @@
     font-weight: bold;
     cursor: pointer;
     position: absolute;
-    top: 90%;
-    left: 2%;
-    width: 100px;
-    height: 40px;
+    top: 94%;
+    left: 1%;
+    width: 77px;
+    height: 21px;
 }
 
 .next_button.how_to{
@@ -270,10 +270,10 @@
     font-weight: bold;
     cursor: pointer;
     position: absolute;
-    top: 90%;
-    left: 85%;
-    width: 100px;
-    height: 40px;
+    top: 94%;
+    left: 90%;
+    width: 77px;
+    height: 21px;
 }
 
 .next_button:focus {
@@ -297,10 +297,10 @@
     font-weight: bold;
     cursor: pointer;
     position: absolute;
-    top: 90%;
-    left: 85%;
-    width: 100px;
-    height: 40px;
+    top: 94%;
+    left: 90%;
+    width: 77px;
+    height: 21px;
 }
 
 
