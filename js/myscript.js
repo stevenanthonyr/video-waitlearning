@@ -502,7 +502,6 @@ var Ordered_Box = function(items) {
     bigWrong.attr('src', chrome.extension.getURL("static/bigwrong.png"));
 
     for (var i in items) {
-        console.log('count' + i);
         var dashed_subdiv = $('<div>').addClass('dashed-subsection');
         var solid_subdiv = $('<div>').addClass('solid-subsection');
         top.append(dashed_subdiv);
@@ -524,15 +523,12 @@ var Ordered_Box = function(items) {
     var compareAnswer = function() {
         var equal = true;
         done = true;
-        //console.log('here');
 
         bigRight.css('display', 'none');
         bigWrong.css('display', 'none');
         nextButton.css('display', 'none');
 
         for (i in ANSWER) {
-            console.log('ANSWER[i] = ' + ANSWER[i]);
-            console.log('userAnswer[i] = ' + userAnswer[i]);
             if (ANSWER[i].getPath() != userAnswer[i].getPath()) {
                 setTimeout(function() { //wait for animation to finish
                     $('.item_container').effect('shake');
@@ -547,7 +543,6 @@ var Ordered_Box = function(items) {
         if (equal) { //user is correct
             bigWrong.css('display', 'none');
 			revealButton.css('display', 'none');
-            console.log('yay');
             setTimeout(function() { //wait for animation to finish
                 $('#ordered-top > .dashed-subsection').css('border-color', 'green');
 				bigRight.css('display', 'inline');
@@ -579,7 +574,6 @@ var Ordered_Box = function(items) {
             container.css("left", "auto");
             container.css("top","auto");
             targetelem.append(container);
-			item.toggleAtTop();
 
         }else{
             var index = $(".dashed-subsection").index(targetelem);
@@ -589,18 +583,20 @@ var Ordered_Box = function(items) {
             container.css("left", "auto");
             container.css("top","auto");
         }
+		
+		if (targetelem.attr('class') == 'solid-subsection ui-droppable') {
+			item.toBottom();	
+		} else if (targetelem.attr('class') == 'dashed-subsection ui-droppable') {
+			item.toTop();	
+		}
 
-        setTimeout(function() {
-            if (allAtTop()) {
-                console.log('top full');
-                compareAnswer();
-            }
-        }, 0);
+		if (allAtTop()) {
+			compareAnswer();
+		}
     }
 
 
     var moveItem = function(item) {
-		//console.log('class = ' + item.attr('class'))
         var container = item.getContainer();
         var counter = 0;
 
@@ -689,7 +685,6 @@ var Ordered_Box = function(items) {
             for (var i in userItems) {
                 //shuffledItems is an object, declared in Ordered_Box, while userItems is the shuffled version
                 //of ANSWER list.
-                //console.log('user items: ' + userItems);
                 shuffledItems[i] = userItems[i];
             }
 
@@ -746,6 +741,7 @@ var Ordered_Box = function(items) {
 			revealButton.click(function() {
 				$('#ordered-top > .dashed-subsection').each(function() { $(this).empty(); });
                 $('#ordered-bottom > .solid-subsection').each(function() { $(this).empty(); });
+				$('#ordered-top > .dashed-subsection').css('border-color', 'gray');
 				done = true;
 				
 				for (i in userItems) { userItems[i].reset(); }
@@ -756,6 +752,7 @@ var Ordered_Box = function(items) {
                 $('#ordered-top > .dashed-subsection').each(function() {
                     var item = ANSWER[index];
                     $(this).append(item.generateHTML());
+					
                     item.makedraggable();
 					for (var i in ANSWER) { userAnswer[i] = ANSWER[i]; };
 					compareAnswer();
@@ -774,7 +771,6 @@ var Ordered_Box = function(items) {
 
 
         var makedroppable = function(){
-            console.log("makedroppable");
             $(".dashed-subsection").droppable({
                 drop: function(event, ui){
                     moveItemViaDrag(ui.draggable.get(0).itemobj, $(this));
@@ -787,10 +783,7 @@ var Ordered_Box = function(items) {
             });
 
             function handleDropEvent(event,ui){
-                console.log("item dropped: " + ui.draggable.html());
-                 console.log("target: " + ui.item);
                 moveItemViaDrag(ui.draggable.get(0).itemobj, target);
-                console.log("target: " + target.html());
             }
         }
 
@@ -828,8 +821,6 @@ var war = Word('war', {'spanish': 'guerra'})
 var computer = Word('computer', {'spanish': 'computadora'})
 var sad = Word('sad', {'spanish': 'triste'})
 var vocab = [people, government, thing, cat, war, computer, sad];
-//var vocab = [cat];
-//   console.log(vocab);
 
 //VIEW (kind of)
 
