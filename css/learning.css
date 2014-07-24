@@ -142,8 +142,8 @@
 
 .answerStatus.fill_in_the_blank img{
     float: right;
-    height: 56px;
-    width: 56px;
+    height: 40px;
+    width: 40px;
 }
 
 .fitb_translation {
@@ -197,11 +197,19 @@
 
 .loading {
     position: absolute;
-    width: 30px;
-    height: 15px;
-    top: 102px;
-    left: 370px;
+    font-size: 36px;
+    width: 33px;
+    height: 30px;
+    top: 92px;
+    left: 364px;
     color: black;
+}
+
+.remaining_attempts {
+    position: absolute;
+    font-size: 12px;
+    left: 273px;
+    top: 112px;
 }
 
 
