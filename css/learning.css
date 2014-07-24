@@ -255,10 +255,10 @@
     font-weight: bold;
     cursor: pointer;
     position: absolute;
-    top: 95%;
-    left: 0%;
-    width: 55px;
-    height: 20px;
+    top: 90%;
+    left: 2%;
+    width: 100px;
+    height: 40px;
 }
 
 .next_button.how_to{
@@ -270,10 +270,22 @@
     font-weight: bold;
     cursor: pointer;
     position: absolute;
-    top: 95%;
-    left: 93%;
-    width: 55px;
-    height: 20px;
+    top: 90%;
+    left: 85%;
+    width: 100px;
+    height: 40px;
+}
+
+.next_button:focus {
+    outline: 0;
+}
+
+.reveal_button:focus{
+    outline: 0;
+}
+
+.reset_all_button:focus{
+    outline: 0;
 }
 
 .reveal_button.how_to{
@@ -285,10 +297,10 @@
     font-weight: bold;
     cursor: pointer;
     position: absolute;
-    top: 95%;
-    left: 93%;
-    width: 55px;
-    height: 20px;
+    top: 90%;
+    left: 85%;
+    width: 100px;
+    height: 40px;
 }
 
 

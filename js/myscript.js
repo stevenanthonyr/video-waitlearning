@@ -494,9 +494,9 @@ var Ordered_Box = function(group) {
     var shuffledItems = {};
     var done = false;
     var ANSWER = items;
-    var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('reset all').attr('type', 'button');
+    var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('start over').attr('type', 'button');
     var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
-    var revealButton = $('<button>').addClass('reveal_button').addClass('how_to').text('reveal').attr('type', 'button');
+    var revealButton = $('<button>').addClass('reveal_button').addClass('how_to').text('give up').attr('type', 'button');
     var bigRight = $('<img>').addClass('big_right').addClass('how_to');
     var bigWrong = $('<img>').addClass('big_wrong').addClass('how_to');
     bigRight.attr('src', chrome.extension.getURL("static/bigright.png"));
@@ -602,7 +602,7 @@ var Ordered_Box = function(group) {
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var newLoc = $(this);
                 if (newLoc.is(':empty')) {
-//                    var movingFrom = $.inArray(item, userAnswer);
+ //                    var movingFrom = $.inArray(item, userAnswer);
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
@@ -681,7 +681,7 @@ var Ordered_Box = function(group) {
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var item = shuffledItems[initpos];
                 $(this).append(item.generateHTML());
-                item.makedraggable();
+                //item.makedraggable();
                 function attachClickHandler(item) {
                     item.onClick(function() {
                         moveItem(item);
@@ -711,7 +711,7 @@ var Ordered_Box = function(group) {
                 $('#ordered-bottom > .solid-subsection').each(function() {
                     var item = shuffledItems[initposi];
                     $(this).append(item.generateHTML());
-                    item.makedraggable();
+                    //item.makedraggable();
                     function attachClickHandler(item) {
                         item.onClick(function() {
                             moveItem(item);
@@ -754,7 +754,7 @@ var Ordered_Box = function(group) {
                     var item = ANSWER[index];
                     $(this).append(item.generateHTML());
 					
-                    item.makedraggable();
+                    //item.makedraggable();
                     for (var i in ANSWER) { userAnswer[i] = ANSWER[i]; };
                     compareAnswer();
                     function attachClickHandler(item) {
@@ -767,7 +767,7 @@ var Ordered_Box = function(group) {
                 });
             });
 
-            makedroppable();
+           // makedroppable();
         }
 
 
