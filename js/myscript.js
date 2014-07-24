@@ -395,6 +395,18 @@ var Item = function(helpText, path) {
     that.getInfo = function() {
         return {'helpText': helpText, 'path': path};
     }
+	
+	that.toTop = function() {
+		atTop = true;	
+	}
+	
+	that.toBottom = function() {
+		atTop = false;	
+	}
+	
+	that.toggleAtTop = function() {
+        atTop = !atTop;
+    }
 
     that.getAtTop = function() {
         return atTop;
@@ -408,11 +420,7 @@ var Item = function(helpText, path) {
         container.click(function() {
             handler();
         });
-    }
-
-    that.toggleAtTop = function() {
-        atTop = !atTop;
-    }
+	}
 
     that.reset = function() {
         container.empty();
@@ -537,6 +545,7 @@ var Ordered_Box = function(items) {
 
         if (equal) { //user is correct
             bigWrong.css('display', 'none');
+			revealButton.css('display', 'none');
             console.log('yay');
             setTimeout(function() { //wait for animation to finish
                 $('#ordered-top > .dashed-subsection').css('border-color', 'green');
@@ -545,7 +554,7 @@ var Ordered_Box = function(items) {
             }, 600);
 			
             nextButton.click(function() {
-
+				
             });
         }
         else {
@@ -598,6 +607,7 @@ var Ordered_Box = function(items) {
             bigRight.css('display', 'none');
             bigWrong.css('display', 'none');
             nextButton.css('display', 'none');
+			revealButton.css('display', 'inline');
             $('#ordered-top > .dashed-subsection').css('border-color', 'gray');
             done = false;
         }
@@ -756,7 +766,7 @@ var Ordered_Box = function(items) {
             });
 
             resetAllButton.click(function() {
-				$('.revealButton.fill_in_the_blank').css('display', 'none');
+				revealButton.css('display', 'inline');
 				bigRight.css('display', 'none');
 				bigWrong.css('display', 'none');
 				nextButton.css('display', 'none');
@@ -787,6 +797,36 @@ var Ordered_Box = function(items) {
 //                $('#ordered-bottom > .solid-subsection img:last-of-type').each(function() { $(this).remove(); });
 //                $('#ordered-bottom > .solid-subsection span:last-of-type').each(function() { $(this).remove(); });
             });
+			
+			nextButton.click(function() {
+				
+			});
+			
+			revealButton.click(function() {
+				$('#ordered-top > .dashed-subsection').each(function() { $(this).empty(); });
+                $('#ordered-bottom > .solid-subsection').each(function() { $(this).empty(); });
+				done = true;
+				
+				for (i in userItems) { userItems[i].reset(); }
+				
+				for (i in userItems) { userItems[i].toTop(); }
+				
+				var index = 0;
+                $('#ordered-top > .dashed-subsection').each(function() {
+                    var item = ANSWER[index];
+                    $(this).append(item.generateHTML());
+                    item.makedraggable();
+					for (var i in ANSWER) { userAnswer[i] = ANSWER[i]; };
+					compareAnswer();
+                    function attachClickHandler(item) {
+                        item.onClick(function() {
+                            moveItem(item);
+                        });
+                    }
+                    attachClickHandler(item);
+                    index++;
+                });
+			});
 
             makedroppable();
         }
