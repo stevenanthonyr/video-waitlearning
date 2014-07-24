@@ -1,4 +1,5 @@
 //HELPER METHODS
+var typeOfProblem = 'how_to'; //choose one of flashcard, fill_in_the_blank, or how_to
 
 function attach_css(){
     var link = document.createElement("link");
@@ -16,7 +17,7 @@ function getRandomInt(min, max) {
 //                      'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos};
 function parseMap(map) {
     if (map['type'] == 'flashcard') {
-        return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
+        return Flashcard(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
     }
     else if (map['type'] == 'fill_in_the_blank') {
         return Fill_In_The_Blank(map['leftpos'], map['toppos'], map['learningPanel'], map['model']);
@@ -106,12 +107,12 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
         while (selectNewCard) {
             var word = getRandomWord();
             var translationDict = word.getTranslationDict();
-            if (word.numUnderstood < 2) {
+            if (typeOfProblem == 'flashcard') {
                 map = {'type': 'flashcard', 'native': word.getEnglishWord(), 'foreign': translationDict[foreignLang],
                       'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos, 'model': model};
                 selectNewCard = false;
             }
-            else if (word.numUnderstood < 4) {
+            else if (typeOfProblem == 'fill_in_the_blank') {
                 map = {'type': 'fill_in_the_blank', 'native': word.getEnglishWord(), 'foreign': translationDict[foreignLang],
                       'learningPanel': learningPanel, 'leftpos': leftpos, 'toppos': toppos, 'model': model};
                 selectNewCard = false;
@@ -646,70 +647,12 @@ var Ordered_Box = function(items) {
             });
         }
 
-        /*for (i in ANSWER) {
-            console.log('ANSWER' + i + '= ' + ANSWER[i][0]);
-        }
-        for (i in userAnswer) {
-            console.log('userAnswer' + i + '= ' + userAnswer[i][0]);
-        }*/
-
         setTimeout(function() { //wait for animation to finish
             if (allAtTop()) {
                 compareAnswer();
             }
         }, 200);
-        console.log('after move: shuffled: ');
-        console.log($.map(shuffledItems, function(val, key) { return val; }));
-        console.log('after move: userAnswer: ' + userAnswer);
-        console.log($.map(userAnswer, function(val, key) { return val; }));
     }
-
-//    var moveItem = function(index, item) {
-//        var container = item.getContainer();
-//        var counter = 0;
-//        var newLoc;
-//
-//        if (done) {
-//            bigRight.css('display', 'none');
-//            bigWrong.css('display', 'none');
-//            nextButton.css('display', 'none');
-//            $('#ordered-top > .dashed-subsection').css('border-color', 'gray');
-//            done = false;
-//        }
-//
-//        if (item.getAtTop() == true) {
-//            newLoc = $('#ordered-bottom:nth-child(' + (index + 1) + ')')
-//            if (newLoc.is(':empty')) {
-//                item.toggleAtTop();
-//                container.toggle('puff', {percent:110}, 100, function() {
-//                    newLoc.append(container);
-//                    shuffledItems[index] = item;
-//                });
-//                container.toggle('puff', {percent:110}, 500);
-//                return false;
-//            }
-//        }
-//        else {
-//            newLoc = $('#ordered-bottom:nth-child(' + (index + 1) + ')')
-//            if (newLoc.is(':empty')) {
-//                item.toggleAtTop();
-//                container.toggle('puff', {percent:110}, 100, function() {
-//                    newLoc.append(container);
-//                    shuffledItems[index] = item;
-//                });
-//                container.toggle('puff', {percent:110}, 500);
-//                return false;
-//            }
-//        }
-//
-//        setTimeout(function() { //wait for animation to finish
-//            if (allAtTop()) {
-//                compareAnswer();
-//            }
-//        }, 200);
-//        console.log('after move: shuffled: ' + shuffledItems);
-//        console.log('after move: userAnswer: ' + userAnswer);
-//    }
 
     that.How_To = function(leftpos, toppos, learningPanel) {
         var self = this;
@@ -906,39 +849,35 @@ $(document).ready(function(){
     var learningPanel = $("<div>").attr("id", "learningPanel").addClass("learningPanel");
     learningPanel.insertBefore(controls);
 
-    //create the model object
-    var model = Model(learningPanel, vocab, flashcard_leftpos, flashcard_toppos);
-    var map = model.getExerciseMap(model);
-    var newCard = parseMap(map);
-    $('input[autocomplete]').removeAttr('autocomplete');
-    //UNCOMMENT ME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //newCard.showExercise(map['native'], map['foreign']);
+    if (typeOfProblem == 'flashcard' || typeOfProblem == 'fill_in_the_blank') {
+        //create the model object
+        var model = Model(learningPanel, vocab, flashcard_leftpos, flashcard_toppos);
+        var map = model.getExerciseMap(model);
+        var newCard = parseMap(map);
+        $('input[autocomplete]').removeAttr('autocomplete');
+        //UNCOMMENT ME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        newCard.showExercise(map['native'], map['foreign']);
+    }
+    else if (typeOfProblem == 'how_to') {
+        // create Flashcard object, giving it the learningPanel element
+        //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
+        //flashcard.showExercise("people", "personas");
+        var egg1 = Item('Prep the pan.', 'static/stepimages/egg1.png');
+        var egg2 = Item('Prep the egg.', 'static/stepimages/egg2.png');
+        var egg3 = Item('Put the egg on the pan.', 'static/stepimages/egg3.png');
+        var egg4 = Item('Cook egg.', 'static/stepimages/egg4.png');
+        var abs1 = Item('Eat food.', 'static/stepimages/abs1.png');
+        var abs2 = Item('Buy ab-hancer.', 'static/stepimages/abs2.png');
+        var abs3 = Item('???', 'static/stepimages/abs3.png');
+        var abs4 = Item('Profit.', 'static/stepimages/abs4.png');
+        var group = Group('eggs', [egg1, egg2, egg3, egg4]);
+        var group2 = Group('abs', [abs1, abs2, abs3, abs4]);
 
-    // create Flashcard object, giving it the learningPanel element
-    //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel);
-    //flashcard.showExercise("people", "personas");
-    var egg1 = Item('Prep the pan.', 'static/stepimages/egg1.png');
-    var egg2 = Item('Prep the egg.', 'static/stepimages/egg2.png');
-    var egg3 = Item('Put the egg on the pan.', 'static/stepimages/egg3.png');
-    var egg4 = Item('Cook egg.', 'static/stepimages/egg4.png');
-    var abs1 = Item('Eat food.', 'static/stepimages/abs1.png');
-    var abs2 = Item('Buy ab-hancer.', 'static/stepimages/abs2.png');
-    var abs3 = Item('???', 'static/stepimages/abs3.png');
-    var abs4 = Item('Profit.', 'static/stepimages/abs4.png');
-    var group = Group('eggs', [egg1, egg2, egg3, egg4]);
-    var group2 = Group('abs', [abs1, abs2, abs3, abs4]);
-    //console.log('egg ' + egg1.generateHTML().html());
-
-    //create HowTo
-    var ordered_box = Ordered_Box(group2.getItems());
-    var how_to = ordered_box.How_To(0, 0, learningPanel);
-    how_to.showExercise();
-
-    //create Fill_In_The_Blank object
-    //var fitb = Fill_In_The_Blank(flashcard_leftpos, flashcard_toppos, learningPanel)
-    //fitb.showExercise("people", "personas");
-    //var flashcard = Flashcard(flashcard_leftpos, flashcard_toppos, learningPanel, model);
-    //flashcard.showExercise("people", "personas");
+        //create HowTo
+        var ordered_box = Ordered_Box(group2.getItems());
+        var how_to = ordered_box.How_To(0, 0, learningPanel);
+        how_to.showExercise();
+    }
 
     // ------ other useful methods (currently these don't do anything) --------
     var videoElement = document.getElementsByClassName('video-stream')[0];
