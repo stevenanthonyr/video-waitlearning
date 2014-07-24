@@ -410,6 +410,15 @@ var Item = function(helpText, path) {
         });
     }
 
+    that.toggleAtTop = function() {
+        atTop = !atTop;
+    }
+
+    that.reset = function() {
+        container.empty();
+        atTop = false;
+    }
+
     that.getContainer = function() {
         return container;
     }
@@ -439,10 +448,6 @@ var Item = function(helpText, path) {
             cursor: 'move',
             snap: '.dashed-subsection,.solid-subsection'
         });
-    }
-
-    that.toggleAtTop = function() {
-        atTop = !atTop;
     }
 
     return that;
@@ -599,15 +604,14 @@ var Ordered_Box = function(items) {
 
         if (item.getAtTop() == true) {
             var index = getKeyFromValue(item); //return 0 through len(items) - 1, key from dict indicating position at top.
-            //console.log('before splice: ' + userAnswer);
-            //userAnswer.splice(index, 1);
-            //console.log('after splice: ' + userAnswer);
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var newLoc = $(this);
                 if (newLoc.is(':empty')) {
+//                    var movingFrom = $.inArray(item, userAnswer);
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
+//                        userAnswer[movingFrom] = null;
                         shuffledItems[counter] = item;
                     });
                     container.toggle('puff', {percent:110}, 500);
@@ -644,8 +648,58 @@ var Ordered_Box = function(items) {
                 compareAnswer();
             }
         }, 200);
+        console.log('after move: shuffled: ');
+        console.log($.map(shuffledItems, function(val, key) { return val; }));
+        console.log('after move: userAnswer: ' + userAnswer);
+        console.log($.map(userAnswer, function(val, key) { return val; }));
     }
 
+//    var moveItem = function(index, item) {
+//        var container = item.getContainer();
+//        var counter = 0;
+//        var newLoc;
+//
+//        if (done) {
+//            bigRight.css('display', 'none');
+//            bigWrong.css('display', 'none');
+//            nextButton.css('display', 'none');
+//            $('#ordered-top > .dashed-subsection').css('border-color', 'gray');
+//            done = false;
+//        }
+//
+//        if (item.getAtTop() == true) {
+//            newLoc = $('#ordered-bottom:nth-child(' + (index + 1) + ')')
+//            if (newLoc.is(':empty')) {
+//                item.toggleAtTop();
+//                container.toggle('puff', {percent:110}, 100, function() {
+//                    newLoc.append(container);
+//                    shuffledItems[index] = item;
+//                });
+//                container.toggle('puff', {percent:110}, 500);
+//                return false;
+//            }
+//        }
+//        else {
+//            newLoc = $('#ordered-bottom:nth-child(' + (index + 1) + ')')
+//            if (newLoc.is(':empty')) {
+//                item.toggleAtTop();
+//                container.toggle('puff', {percent:110}, 100, function() {
+//                    newLoc.append(container);
+//                    shuffledItems[index] = item;
+//                });
+//                container.toggle('puff', {percent:110}, 500);
+//                return false;
+//            }
+//        }
+//
+//        setTimeout(function() { //wait for animation to finish
+//            if (allAtTop()) {
+//                compareAnswer();
+//            }
+//        }, 200);
+//        console.log('after move: shuffled: ' + shuffledItems);
+//        console.log('after move: userAnswer: ' + userAnswer);
+//    }
 
     that.How_To = function(leftpos, toppos, learningPanel) {
         var self = this;
@@ -661,16 +715,11 @@ var Ordered_Box = function(items) {
 
         that.showExercise = function() {
             learningPanel.empty();
-            bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
+            			bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
             learningPanel.append(top).append(bottom);
 
             var userItems = $.extend([], ANSWER);
-            var i = 0;
             var trueArray = []; //if all elts in it are true, need to shuffle again.
-
-//            do {
-//                shuffle(userItems);
-//            } while (userItems == ANSWER);
 
             do {
                 shuffle(userItems);
@@ -678,7 +727,6 @@ var Ordered_Box = function(items) {
                     var result = userItems[i].itemEquals(ANSWER[i]);
                     trueArray.push(result);
                 }
-                console.log('tryyyyyuuuuuuu :' + trueArray);
                 if ($.inArray(false, trueArray, 0) > -1) {
                     break;
                 }
@@ -692,31 +740,8 @@ var Ordered_Box = function(items) {
                 shuffledItems[i] = userItems[i];
             }
 
-            resetAllButton.click(function() {
-				console.log('reset click');
-				for (var i in userAnswer) {
-					if (userAnswer[i] != null) {
-						setTimeout(function() {
-							moveItem(userAnswer[i]);
-						}, 101);
-					}
-				}
-			});
-                /*for (i in shuffledItems) {
-                var takenDivs = [];
-                for (i in shuffledItems) {
-                    var item = shuffledItems[i];
-                    if (item === null) {
-                        continue;
-                    }
-                    else if (item.getAtTop() == true) {
-                        setTimeout(moveItem(item), 100);
-                    }
-                }*/
-            //});
-
             //initial appending of items
-			var initpos = 0;
+            var initpos = 0;
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var item = shuffledItems[initpos];
                 $(this).append(item.generateHTML());
@@ -728,6 +753,39 @@ var Ordered_Box = function(items) {
                 }
                 attachClickHandler(item);
                 initpos++;
+            });
+
+            resetAllButton.click(function() {
+				$('.revealButton.fill_in_the_blank').css('display', 'none');
+				bigRight.css('display', 'none');
+				bigWrong.css('display', 'none');
+				nextButton.css('display', 'none');
+				$('#ordered-top > .dashed-subsection').css('border-color', 'gray');
+				done = false;
+				
+                for (i in userItems) {
+                    userItems[i].reset();
+                }
+                $('#ordered-top > .dashed-subsection').each(function() { $(this).empty(); });
+                $('#ordered-bottom > .solid-subsection').each(function() { $(this).empty(); });
+                userAnswer = {0: null, 1: null, 2: null, 3: null};
+                shuffledItems = {0: null, 1: null, 2: null, 3: null};
+                for (var i in userItems) { shuffledItems[i] = userItems[i]; }
+                var initposi = 0;
+                $('#ordered-bottom > .solid-subsection').each(function() {
+                    var item = shuffledItems[initposi];
+                    $(this).append(item.generateHTML());
+                    item.makedraggable();
+                    function attachClickHandler(item) {
+                        item.onClick(function() {
+                            moveItem(item);
+                        });
+                    }
+                    attachClickHandler(item);
+                    initposi++;
+                });
+//                $('#ordered-bottom > .solid-subsection img:last-of-type').each(function() { $(this).remove(); });
+//                $('#ordered-bottom > .solid-subsection span:last-of-type').each(function() { $(this).remove(); });
             });
 
             makedroppable();
