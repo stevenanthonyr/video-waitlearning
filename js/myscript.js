@@ -554,17 +554,11 @@ var Ordered_Box = function(group) {
                 bigRight.css('display', 'inline');
                 nextButton.css('display', 'inline');
             }, 600);
-
-            nextButton.click(function() {
-
-            });
         }
+
         else {
             bigWrong.css('display', 'inline');
             revealButton.css('display', 'inline');
-            revealButton.click(function() {
-
-            });
         }
     }
 
@@ -664,7 +658,7 @@ var Ordered_Box = function(group) {
 
         that.showExercise = function() {
             learningPanel.empty();
-                        bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
+            bottom.append(resetAllButton).append(nextButton).append(bigRight).append(bigWrong).append(revealButton);
             learningPanel.append(top).append(bottom);
 
             var userItems = $.extend([], ANSWER);
@@ -738,7 +732,21 @@ var Ordered_Box = function(group) {
             });
 
             nextButton.click(function() {
-
+                var currentGroupName = group.getName();
+                $('#ordered-top > .dashed-subsection').each(function() { $(this).empty(); });
+                $('#ordered-bottom > .solid-subsection').each(function() { $(this).empty(); });
+                for (i in userItems) { userItems[i].reset(); }
+                if (currentGroupName == 'eggs') {
+                    console.log('in eggs');
+                    var ob = Ordered_Box(absGroup);
+                    var ht = ob.How_To(0, 0, learningPanel);
+                    ht.showExercise();
+                }
+                else if (currentGroupName == 'abs') {
+                    var ob = Ordered_Box(eggGroup);
+                    var ht = ob.How_To(0, 0, learningPanel);
+                    ht.showExercise();
+                }
             });
 
             revealButton.click(function() {

@@ -142,7 +142,8 @@
 
 .answerStatus.fill_in_the_blank img{
     float: right;
-    height: 90%;
+    height: 56px;
+    width: 56px;
 }
 
 .fitb_translation {
@@ -151,7 +152,6 @@
     top: 14px;
 
 }
-
 
 .fitb_try_again::-webkit-input-placeholder {
   color: #cb2222;
