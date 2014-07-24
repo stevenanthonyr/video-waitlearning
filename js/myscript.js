@@ -1,5 +1,5 @@
 //HELPER METHODS
-var typeOfProblem = 'fill_in_the_blank'; //choose one of flashcard, fill_in_the_blank, or how_to
+var typeOfProblem = 'how_to'; //choose one of flashcard, fill_in_the_blank, or how_to
 
 function attach_css(){
     var link = document.createElement("link");
@@ -774,6 +774,9 @@ var Ordered_Box = function(group) {
                     attachClickHandler(item);
                     index++;
                 });
+                //601 because the setTimeout for visibility of bigRight in compareAnswer has duration 600.
+//                setTimeout(function() {bigRight.css('display', 'none');}, 601);
+                bigWrong.css('display', 'inline');
             });
 
            // makedroppable();
