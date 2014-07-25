@@ -1,5 +1,5 @@
 //HELPER METHODS
-var typeOfProblem = 'how_to'; //choose one of flashcard, fill_in_the_blank, or how_to
+var typeOfProblem = 'flashcard'; //choose one of flashcard, fill_in_the_blank, or how_to
 
 function attach_css(){
     var link = document.createElement("link");
@@ -506,14 +506,16 @@ var Ordered_Box = function(group) {
     var resetAllButton = $('<button>').addClass('reset_all_button').addClass('how_to').text('start over').attr('type', 'button');
     var nextButton = $('<button>').addClass('next_button').addClass('how_to').text('next').attr('type', 'button');
     var revealButton = $('<button>').addClass('reveal_button').addClass('how_to').text('give up').attr('type', 'button');
-	var one = $('<div>').addClass('ordered_box_num').text('1').attr('id', 'one');
+	
+	//for numbering dashed boxes
+	/*var one = $('<div>').addClass('ordered_box_num').text('1').attr('id', 'one');
 	var two = $('<div>').addClass('ordered_box_num').text('2').attr('id', 'two');
 	var three = $('<div>').addClass('ordered_box_num').text('3').attr('id', 'three');
 	var four = $('<div>').addClass('ordered_box_num').text('4').attr('id', 'four');
-	var nums = [one,two,three,four];
+	var nums = [one,two,three,four];*/
 	
-	/*//dummy spans for vertical centering of numbers
-	var dummySpan1 = $('<span>').addClass('dummy_span');
+	//dummy spans for vertical centering of numbers
+	/*var dummySpan1 = $('<span>').addClass('dummy_span');
 	var dummySpan2 = $('<span>').addClass('dummy_span');
 	var dummySpan3 = $('<span>').addClass('dummy_span');
 	var dummySpan4 = $('<span>').addClass('dummy_span');
@@ -624,7 +626,7 @@ var Ordered_Box = function(group) {
             $('#ordered-bottom > .solid-subsection').each(function() {
                 var newLoc = $(this);
                 if (newLoc.is(':empty')) {
-					nums[counter].css('display', 'none');
+					//nums[counter].css('display', 'none');
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
@@ -641,7 +643,7 @@ var Ordered_Box = function(group) {
             $('#ordered-top > .dashed-subsection').each(function() {
                 var newLoc = $(this);
                 if (newLoc.is(':empty')) {
-					nums[counter].css('display', 'none')
+					//nums[counter].css('display', 'none')
                     item.toggleAtTop();
                     container.toggle('puff', {percent:110}, 100, function() {
                         newLoc.append(container);
@@ -715,7 +717,7 @@ var Ordered_Box = function(group) {
             });
 			
 			//number dashed boxes
-			for (var i in nums) { learningPanel.append(nums[i]); }
+			//for (var i in nums) { learningPanel.append(nums[i]); }
 			
 			/*//number dashed boxes
 			var numsindex = 0
