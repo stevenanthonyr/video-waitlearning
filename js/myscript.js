@@ -1,4 +1,4 @@
-//HELPER METHODS
+//HELPER METHODS AND 'GLOBAL' VARIABLES
 var typeOfProblem = 'fill_in_the_blank'; //choose one of flashcard, fill_in_the_blank, or how_to
 var DEBUG = false;
 
@@ -73,7 +73,10 @@ var Word = function(englishWord, translationDict) {
     return that;
 }
 
+//learningPanel - div that contains the exercise elements.
 //vocab - list of Word objects
+//leftpos - an integer describing the left positioning of the learningPanel, in pixels.
+//toppos - an integer describing the top positioning of the learningPanel, in pixels.
 var Model = function(learningPanel, vocab, leftpos, toppos) {
     var that = {};
     var self = this;
@@ -139,6 +142,10 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
 //the Flashcard object is responsible for all UI interactions with the learningPanel
 //It is composed of a container div that is passed in (learningPanel) and other divs
 //that are created to store/display content for the questions.
+//leftpos - an integer describing the left positioning of the learningPanel, in pixels.
+//toppos - an integer describing the top positioning of the learningPanel, in pixels.
+//learningPanel - div that contains the exercise elements.
+//model - instance of the Model class, defined above.
 var Flashcard = function(leftpos, toppos, learningPanel, model){
     var that = {};
     var self = this;
@@ -808,6 +815,7 @@ var Ordered_Box = function(group) {
                 //601 because the setTimeout for visibility of bigRight in compareAnswer has duration 600.
 //                setTimeout(function() {bigRight.css('display', 'none');}, 601);
                 bigWrong.css('display', 'inline');
+                bigRight.css('display', 'none');
             });
 
            // makedroppable();
@@ -866,6 +874,7 @@ var computer = Word('computer', {'spanish': 'computadora'})
 var sad = Word('sad', {'spanish': 'triste'})
 var vocab = [people, government, thing, cat, war, computer, sad];
 
+//items initialized for how_to exercises.
 var egg1 = Item('Prep the pan.', 'static/stepimages/egg1.png');
 var egg2 = Item('Prep the egg.', 'static/stepimages/egg2.png');
 var egg3 = Item('Put the egg on the pan.', 'static/stepimages/egg3.png');
@@ -912,6 +921,11 @@ $(document).ready(function(){
         }
     }
 
+    //Allows us to see when dom elements change, when initialized with arguments.
+    //elem - element to observe changes in (note: this element should stay in the dom at all times, and this method
+    //will monitor changes in it's child elements) If using a jQuery selector, be sure to call .get(0) on it.
+    //listenattributes - boolean which determines if attributes of elements should be monitored as well.
+    //callback - function the observer calls upon creation.
     function observeStateChange(elem, listenattributes, callback){
 
         MutationObserver = window.WebKitMutationObserver;
@@ -934,9 +948,10 @@ $(document).ready(function(){
         return observer;
     }
 
-        // listen for changes
     //.videoAdUiAttribution gives us the time remaining for the ad
-    //className - STRING
+
+    //className - STRING className to look for mutation in, which is what launches the program
+    //(see first if statement in this function)
     var listenforAds = function(className){
         observeStateChange($('.ad-container').get(0), false, function(mutations){
 //            console.log(mutations);
