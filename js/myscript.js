@@ -1,6 +1,6 @@
-//HELPER METHODS
-var typeOfProblem = 'flashcard'; //choose one of flashcard, fill_in_the_blank, or how_to
+//HELPER METHODS AND 'GLOBAL' VARIABLES
 var DEBUG = false;
+var typeOfProblem = 'flashcard'; //choose one of flashcard, fill_in_the_blank, or how_to
 
 //attaches the css file to the document to allow us to style our extension.
 function attach_css(){
@@ -73,7 +73,10 @@ var Word = function(englishWord, translationDict) {
     return that;
 }
 
+//learningPanel - div that contains the exercise elements.
 //vocab - list of Word objects
+//leftpos - an integer describing the left positioning of the learningPanel, in pixels.
+//toppos - an integer describing the top positioning of the learningPanel, in pixels.
 var Model = function(learningPanel, vocab, leftpos, toppos) {
     var that = {};
     var self = this;
@@ -136,9 +139,12 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
 //Foreign Word (on top)
 //Native Word (on bottom)
 
-//the Flashcard object is responsible for all UI interactions with the learningPanel
-//It is composed of a container div that is passed in (learningPanel) and other divs
-//that are created to store/display content for the questions.
+//the Flashcard object is an exercise type that helps users first learn a word in
+//another language by allowing them to guess at the word in their head and reveal it.
+//leftpos - an integer describing the left positioning of the learningPanel, in pixels.
+//toppos - an integer describing the top positioning of the learningPanel, in pixels.
+//learningPanel - div that contains the exercise elements.
+//model - instance of the Model class, defined above.
 var Flashcard = function(leftpos, toppos, learningPanel, model){
     var that = {};
     var self = this;
@@ -239,7 +245,10 @@ var Flashcard = function(leftpos, toppos, learningPanel, model){
 
 //Fill_In_The_Blank is a question type that lets the user
 //type in their translation to a word, either native or foreign.
-//Takes in two position arguments (left and top) and a learningPanel div.
+//leftpos - an integer describing the left positioning of the learningPanel, in pixels.
+//toppos - an integer describing the top positioning of the learningPanel, in pixels.
+//learningPanel - div that contains the exercise elements.
+//model - instance of the Model class, defined above.
 var Fill_In_The_Blank = function(leftpos, toppos, learningPanel, model) {
     var that = {};
     //variables below used for showExercise method.
@@ -447,6 +456,7 @@ var Item = function(helpText, path) {
         return container;
     }
 
+    //Use this to test equality between two item instances.
     that.itemEquals = function(item2) {
         if (helpText === item2.getInfo()['helpText'] && path === item2.getInfo()['path']) {
             return true;
@@ -454,8 +464,6 @@ var Item = function(helpText, path) {
         return false;
     }
 
-//    var wrong = $("<img>").addClass("check")//.addClass("not-clickable");
-//    wrong.attr('src', chrome.extension.getURL('static/wrong.png'));
     that.generateHTML = function() {
         var image = $("<img>").addClass("item_image");
         image.attr('src', chrome.extension.getURL(path));
@@ -810,6 +818,7 @@ var Ordered_Box = function(group) {
                 //601 because the setTimeout for visibility of bigRight in compareAnswer has duration 600.
 //                setTimeout(function() {bigRight.css('display', 'none');}, 601);
                 bigWrong.css('display', 'inline');
+                bigRight.css('display', 'none');
             });
 
            // makedroppable();
@@ -840,24 +849,6 @@ var Ordered_Box = function(group) {
     return that;
 }
 
-//var Sentence_Order = function(leftpos, toppos, learningPanel, model) {
-//    var that = {};
-//
-//    var setPosition = function() {
-//        learningPanel.css("left", leftpos + "px");
-//        learningPanel.css("top", toppos + "px");
-//    }
-//
-//    that.showExercise = function(l1, l2) {
-//
-//    }
-//
-//    setPosition();
-//    Object.freeze(that);
-//    return that;
-//}
-//Sentence_Order.prototype = new Ordered_Box();
-
 //all vocab should be lowercase, no punctuation.
 var people = Word('people', {'spanish': 'personas'})
 var government = Word('government', {'spanish': 'gobierno'})
@@ -868,6 +859,7 @@ var computer = Word('computer', {'spanish': 'computadora'})
 var sad = Word('sad', {'spanish': 'triste'})
 var vocab = [people, government, thing, cat, war, computer, sad];
 
+//items initialized for how_to exercises.
 var egg1 = Item('Prep the pan.', 'static/stepimages/egg1.png');
 var egg2 = Item('Prep the egg.', 'static/stepimages/egg2.png');
 var egg3 = Item('Put the egg on the pan.', 'static/stepimages/egg3.png');
@@ -885,7 +877,7 @@ var absGroup = Group('abs', [abs1, abs2, abs3, abs4]);
 //design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
     attach_css();
-    function initializeProblems() {
+    function initializeProblems(timeLeft) {
         // get controls and position
         var controls = $(".html5-video-controls");
         var controls_leftpos = controls.position().left;
@@ -914,6 +906,11 @@ $(document).ready(function(){
         }
     }
 
+    //Allows us to see when dom elements change, when initialized with arguments.
+    //elem - element to observe changes in (note: this element should stay in the dom at all times, and this method
+    //will monitor changes in it's child elements) If using a jQuery selector, be sure to call .get(0) on it.
+    //listenattributes - boolean which determines if attributes of elements should be monitored as well.
+    //callback - function the observer calls upon creation.
     function observeStateChange(elem, listenattributes, callback){
         MutationObserver = window.WebKitMutationObserver;
 
@@ -937,24 +934,29 @@ $(document).ready(function(){
     // listen for changes
     //.videoAdUiAttribution gives us the time remaining for the ad
     //className - STRING
+    var flag = false;
+
+    //className - STRING className to look for mutation in, which is what launches the program
+    //(see first if statement in this function)
     var listenforAds = function(className){
         observeStateChange($('.ad-container').get(0), false, function(mutations){
-//            console.log(mutations);
             for(var i=0; i<mutations.length; ++i) {
                 // look through all added nodes of this mutation
                 for(var j=0; j<mutations[i].addedNodes.length; ++j) {
-//                    console.log('added node else')
-                    if(mutations[i].addedNodes[j].className == className) {
-                        console.log('added node '+className);
-                        initializeProblems();
-                        break;
+                    if ($('.' + className).length > 0 && flag == false) {
+                        flag = true;
+                        initializeProblems(); //TODO: add timeLeft as an argument by reading .videoAdUiAttribution
+                    }
+
+                    if(mutations[i].addedNodes[j].className == className && flag == false) {
+                        flag = true;
+                        initializeProblems(); //TODO: add timeLeft as an argument by reading .videoAdUiAttribution
                     }
                 }
 
                 for(var j = 0; j <mutations[i].removedNodes.length; ++j){
-//                    console.log('removed node else')
                     if(mutations[i].removedNodes[j].className==className){
-                        console.log('removed node '+className);
+                        $('#learningPanel').remove();
                     }
                 }
             }
@@ -967,7 +969,10 @@ $(document).ready(function(){
         initializeProblems();
     }
     else {
-        listenforAds("videoAdUI");
+        //TODO: this class isn't correct. Try moving initializeProblems around the first two for loops in the listenforAds
+        //method, and try using different classes. We had the best luck with this class, though the learningPanel
+        //seems to duplicate itself ad infinitum :/
+        listenforAds("videoAdUi");
     }
 
     // ------ other useful methods (currently these don't do anything) --------
