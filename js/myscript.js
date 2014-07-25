@@ -1,6 +1,8 @@
 //HELPER METHODS
 var typeOfProblem = 'flashcard'; //choose one of flashcard, fill_in_the_blank, or how_to
+var DEBUG = false;
 
+//attaches the css file to the document to allow us to style our extension.
 function attach_css(){
     var link = document.createElement("link");
     link.href = chrome.extension.getURL("css/learning.css");
@@ -26,6 +28,7 @@ function parseMap(map) {
 
 //+ Jonas Raoni Soares Silva
 //@ http://jsfromhell.com/array/shuffle [v1.0]
+//Fisher-Yates shuffle, shuffles a list in place.
 function shuffle(o){ //v1.0
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
 //    return o;
@@ -46,14 +49,16 @@ function getKeyFromValue(value) {
 //for the user to use in their exercises.
 //englishWord - the word in English
 //translationDict - a dictionary of the words translations, in the form {language: translation}
-//numUnderstood - number of times the user has said they understand this word.
+//numUnderstood - number of times the user has said they understand this word. (CURRENTLY NOT IMPLEMENTED FOR DEV PURPOSES)
 var Word = function(englishWord, translationDict) {
     var that = {};
     var self = this;
+    //TODO: add to numUnderstood upon clicking Got it in flashcard and correct answers in fill_in_the_blank
     that.numUnderstood = 0;
 
+    //Add a translation of an existing word.
     that.addTranslation = function(language, translation) {
-        translationDict[language] = translation;
+        translationDict[language.toLowerCase()] = translation.toLowerCase();
     }
 
     that.getEnglishWord = function () {
@@ -74,6 +79,7 @@ var Model = function(learningPanel, vocab, leftpos, toppos) {
     var self = this;
     var foreignLang = 'spanish';
     var nativeLang = 'english';
+    //add to this to support additional languages.
     var languageCodeDict = {'spanish': 'ESP', 'english': 'ENG', 'german': 'DEU', 'italian': 'ITA', 'portuguese': 'POR', 'elvish': 'elf'}
 
     //Gets a random Word object stored in vocab and returns it to the user.
@@ -520,7 +526,7 @@ var Ordered_Box = function(group) {
 	var dummySpan3 = $('<span>').addClass('dummy_span');
 	var dummySpan4 = $('<span>').addClass('dummy_span');
 	var dummySpans = [dummySpan1, dummySpan2, dummySpan3, dummySpan4];*/
-	
+
     var bigRight = $('<img>').addClass('big_right').addClass('how_to');
     var bigWrong = $('<img>').addClass('big_wrong').addClass('how_to');
     bigRight.attr('src', chrome.extension.getURL("static/bigright.png"));
@@ -715,7 +721,7 @@ var Ordered_Box = function(group) {
                 attachClickHandler(item);
                 initpos++;
             });
-			
+
 			//number dashed boxes
 			//for (var i in nums) { learningPanel.append(nums[i]); }
 			
@@ -879,33 +885,89 @@ var absGroup = Group('abs', [abs1, abs2, abs3, abs4]);
 //design based on this, so that our extension doesn't show when this selector returns null.
 $(document).ready(function(){
     attach_css();
+    function initializeProblems() {
+        // get controls and position
+        var controls = $(".html5-video-controls");
+        var controls_leftpos = controls.position().left;
+        var controls_toppos = controls.position().top;
 
-    // get controls and position
-    var controls = $(".html5-video-controls");
-    var controls_leftpos = controls.position().left;
-    var controls_toppos = controls.position().top;
+        // create and attach learningPanel before controls
+        var flashcard_leftpos = controls_leftpos;
+        var flashcard_toppos = controls_toppos - 131;
+        var learningPanel = $("<div>").attr("id", "learningPanel").addClass("learningPanel");
+        learningPanel.insertBefore(controls);
 
-    // create and attach learningPanel before controls
-    var flashcard_leftpos = controls_leftpos;
-    var flashcard_toppos = controls_toppos - 131;
-    var learningPanel = $("<div>").attr("id", "learningPanel").addClass("learningPanel");
-    learningPanel.insertBefore(controls);
+        if (typeOfProblem == 'flashcard' || typeOfProblem == 'fill_in_the_blank') {
+            //create the model object
+            var model = Model(learningPanel, vocab, flashcard_leftpos, flashcard_toppos);
+            var map = model.getExerciseMap(model);
+            var newCard = parseMap(map);
+            $('input[autocomplete]').removeAttr('autocomplete');
+            newCard.showExercise(map['native'], map['foreign']);
+        }
 
-
-    if (typeOfProblem == 'flashcard' || typeOfProblem == 'fill_in_the_blank') {
-        //create the model object
-        var model = Model(learningPanel, vocab, flashcard_leftpos, flashcard_toppos);
-        var map = model.getExerciseMap(model);
-        var newCard = parseMap(map);
-        $('input[autocomplete]').removeAttr('autocomplete');
-        //UNCOMMENT ME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        newCard.showExercise(map['native'], map['foreign']);
+        else if (typeOfProblem == 'how_to') {
+            //create HowTo
+            var ordered_box = Ordered_Box(eggGroup);
+            var how_to = ordered_box.How_To(0, 0, learningPanel);
+            how_to.showExercise();
+        }
     }
-    else if (typeOfProblem == 'how_to') {
-        //create HowTo
-        var ordered_box = Ordered_Box(eggGroup);
-        var how_to = ordered_box.How_To(0, 0, learningPanel);
-        how_to.showExercise();
+
+    function observeStateChange(elem, listenattributes, callback){
+        MutationObserver = window.WebKitMutationObserver;
+
+        var observer = new MutationObserver(function(mutations, observer) {
+            // fired when a mutation occurs
+            console.log(mutations, observer);
+            callback(mutations);
+        });
+
+        // define what element should be observed by the observer
+        // and what types of mutations trigger the callback
+        observer.observe(elem, {
+          subtree: true,
+          childList: true,
+          attributes: listenattributes,
+        });
+
+        return observer;
+    }
+
+    // listen for changes
+    //.videoAdUiAttribution gives us the time remaining for the ad
+    //className - STRING
+    var listenforAds = function(className){
+        observeStateChange($('.ad-container').get(0), false, function(mutations){
+//            console.log(mutations);
+            for(var i=0; i<mutations.length; ++i) {
+                // look through all added nodes of this mutation
+                for(var j=0; j<mutations[i].addedNodes.length; ++j) {
+//                    console.log('added node else')
+                    if(mutations[i].addedNodes[j].className == className) {
+                        console.log('added node '+className);
+                        initializeProblems();
+                        break;
+                    }
+                }
+
+                for(var j = 0; j <mutations[i].removedNodes.length; ++j){
+//                    console.log('removed node else')
+                    if(mutations[i].removedNodes[j].className==className){
+                        console.log('removed node '+className);
+                    }
+                }
+            }
+        });
+    };
+                			
+    //DEBUG is initialized in the top of this doc. If true, learningPanel and exercises show up on all videos.
+    //else, the program (should) act as normal, with exercises appearing over ads only.
+    if (DEBUG) {
+        initializeProblems();
+    }
+    else {
+        listenforAds("videoAdUI");
     }
 
     // ------ other useful methods (currently these don't do anything) --------

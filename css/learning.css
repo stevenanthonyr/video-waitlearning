@@ -226,31 +226,31 @@
 }
 
 .ordered_box_num {
-	position: absolute;
-	display: inline-block;
-	color: gray;
-	top: 100px;
-	z-index: 1
+    position: absolute;
+    display: inline-block;
+    color: gray;
+    top: 100px;
+    z-index: 1
 }
 
 #one {
-	left: 100px;
+    left: 100px;
 }
 
 #two {
-	left: 315px;
+    left: 315px;
 }
 
 #three {
-	left: 525px;
+    left: 525px;
 }
 
 #four {
-	left: 735px;
+    left: 735px;
 }
 
 .dashed-subsection {
-	text-align: center;
+    text-align: center;
     height: 100px;
     width: 180px;
     float: left;
@@ -268,8 +268,8 @@
 }
 
 .item_image {
-	position: relative;
-	z-index: 2;
+    position: relative;
+    z-index: 2;
     height: 100px;
     width: 180px;
     cursor: pointer;
